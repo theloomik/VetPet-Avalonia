@@ -7,14 +7,81 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="MyGameApp.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
-        Icon="/Assets/avalonia-logo.ico"
-        Title="VetPet">
+    Icon="/Assets/avalonia-logo.ico"
+    Title="VetPet"
+    Background="#2B2B2B">
 
 
-        <Grid Background="#ffffff" ColumnDefinitions="100, 100">
-            <Button Grid.Column="0" Content="Button1"> </Button>
-            <Button Grid.Column="1" Content="Button2"> </Button>
-        </Grid>
+        <Window.Styles>
+        <Style Selector="Button.MenuBtn">
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="Height" Value="45"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#CFCFCF"/>
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="Padding" Value="15,0"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.1"/>
+                </Transitions>
+            </Setter>
+        </Style>
+
+        <Style Selector="Button.MenuBtn:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#4A4D5A"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+
+        <Style Selector="Button.MenuBtn.Active /template/ ContentPresenter">
+            <Setter Property="Background" Value="#3E69B1"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+    </Window.Styles>
+
+    <Grid ColumnDefinitions="260, *" Background="#2B2B2B">
+        <Border Grid.Column="0" 
+                Background="#333333" 
+                Margin="15" 
+                CornerRadius="20">
+            <StackPanel x:Name="MenuPanel" Spacing="5" Margin="10, 20">
+                <TextBlock Text="Меню" 
+                           Foreground="White" 
+                           FontSize="18" 
+                           FontWeight="Bold" 
+                           HorizontalAlignment="Center" 
+                           Margin="0,0,0,20"/>
+
+                <Button Classes="MenuBtn Active" Content="Клієнти" Tag="0" Click="OnMenuButtonClick"/>
+                <Button Classes="MenuBtn" Content="Записи" Tag="1" Click="OnMenuButtonClick"/>
+                <Button Classes="MenuBtn" Content="Працівники" Tag="2" Click="OnMenuButtonClick"/>
+                <Button Classes="MenuBtn" Content="Провайдери" Tag="3" Click="OnMenuButtonClick"/>
+                <Button Classes="MenuBtn" Content="Склад" Tag="4" Click="OnMenuButtonClick"/>
+            </StackPanel>
+        </Border>
+
+        <Border Grid.Column="1" 
+                Background="#333333" 
+                Margin="0, 15, 15, 15" 
+                CornerRadius="20">
+            <Grid RowDefinitions="Auto, *">
+                <TextBlock Text="{Binding SelectedTabName}" 
+                           Foreground="White" 
+                           FontSize="20" 
+                           HorizontalAlignment="Center" 
+                           Margin="20"/>
+
+                <ContentControl Grid.Row="1" Margin="20">
+                    <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                        <TextBlock Text="{Binding SelectedTabName}" Foreground="#CFCFCF" FontSize="16" FontWeight="Bold" HorizontalAlignment="Left" Margin="0,0,0,10" />
+                        <Border Background="#2F2F2F" CornerRadius="8" Padding="20" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <TextBlock Text="{Binding SelectedTabName}" Foreground="#707070" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </StackPanel>
+                </ContentControl>
+            </Grid>
+        </Border>
+    </Grid>
 
 
 </Window>
