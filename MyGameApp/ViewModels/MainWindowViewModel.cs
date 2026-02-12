@@ -2,15 +2,12 @@
 
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Input;
-using MyGameApp.Models;
 
 public partial class MainWindowViewModel : ViewModelBase
 {
     public string Greeting { get; } = "Hello";
 
     public string ConnectionStatus { get; private set; } = "Not initialized";
-
-    private readonly MySqlService _db;
 
     private int _selectedIndex;
     public int SelectedIndex
@@ -37,17 +34,16 @@ public partial class MainWindowViewModel : ViewModelBase
 
     public IRelayCommand<int> ChangeTabCommand { get; }
 
-    public MainWindowViewModel(MySqlService db)
+    public MainWindowViewModel()
     {
-        _db = db;
         ChangeTabCommand = new RelayCommand<int>(i => SelectedIndex = i);
         _ = InitializeAsync();
     }
 
     private async Task InitializeAsync()
     {
-        var version = await _db.GetVersionAsync();
-        ConnectionStatus = version is not null ? $"Connected (MySQL {version})" : "Not connected";
+        // var version = await _db.GetVersionAsync();
+        // ConnectionStatus = version is not null ? $"Connected (MySQL {version})" : "Not connected";
         OnPropertyChanged(nameof(ConnectionStatus));
     }
 }

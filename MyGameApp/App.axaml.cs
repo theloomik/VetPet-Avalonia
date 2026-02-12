@@ -6,7 +6,6 @@ using System.Linq;
 using Avalonia.Markup.Xaml;
 using MyGameApp.ViewModels;
 using MyGameApp.Views;
-using MyGameApp.Models;
 using System;
 
 namespace MyGameApp;
@@ -28,11 +27,10 @@ public partial class App : Application
             // Create MySQL service using environment variable or fallback connection string.
             var connectionString = Environment.GetEnvironmentVariable("MYSQL_CONNECTION")
                                    ?? "Server=127.0.0.1;Port=3306;User=root;Password=pass;Database=test;";
-            var mysqlService = new MySqlService(connectionString);
 
             desktop.MainWindow = new MainWindow
             {
-                DataContext = new MainWindowViewModel(mysqlService),
+                DataContext = new MainWindowViewModel(),
             };
         }
 

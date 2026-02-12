@@ -37,8 +37,10 @@
             <Setter Property="Background" Value="#3E69B1"/>
             <Setter Property="Foreground" Value="White"/>
         </Style>
-    </Window.Styles>
 
+        </Window.Styles>
+
+        
     <Grid ColumnDefinitions="260, *" Background="#2B2B2B">
         <Border Grid.Column="0" 
                 Background="#333333" 

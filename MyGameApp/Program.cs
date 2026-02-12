@@ -1,5 +1,7 @@
 ﻿using Avalonia;
 using System;
+using System.Linq;
+using Microsoft.EntityFrameworkCore;
 
 namespace MyGameApp;
 
@@ -18,4 +20,6 @@ sealed class Program
             .UsePlatformDetect()
             .WithInterFont()
             .LogToTrace();
+
+    
 }
