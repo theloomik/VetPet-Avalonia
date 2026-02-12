@@ -1,9 +1,10 @@
 <Window xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:vm="using:MyGameApp.ViewModels"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:dataflow="using:System.Threading.Tasks.Dataflow"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:vm="using:MyGameApp.ViewModels"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:dataflow="using:System.Threading.Tasks.Dataflow"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="using:MyGameApp.Models"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="MyGameApp.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
@@ -76,8 +77,115 @@
                 <ContentControl Grid.Row="1" Margin="20">
                     <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                         <TextBlock Text="{Binding SelectedTabName}" Foreground="#CFCFCF" FontSize="16" FontWeight="Bold" HorizontalAlignment="Left" Margin="0,0,0,10" />
-                        <Border Background="#2F2F2F" CornerRadius="8" Padding="20" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                            <TextBlock Text="{Binding SelectedTabName}" Foreground="#707070" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+
+                        <!-- Пошук / Сортування / Створення -->
+                        <Grid Margin="0,0,0,12" ColumnDefinitions="*, Auto, Auto" HorizontalAlignment="Stretch">
+                            <TextBox Grid.Column="0" Height="36" Margin="0,0,10,0" VerticalAlignment="Center" Watermark="Пошук..."/>
+                            <Button Grid.Column="1" Width="40" Height="36" Margin="0,0,10,0">A▾</Button>
+                            <Button Grid.Column="2" Width="80" Height="36">Новий</Button>
+                        </Grid>
+
+                        <Border Background="#2F2F2F" CornerRadius="8" Padding="10" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                                <Grid>
+                                    <!-- Клієнти -->
+                                    <ItemsControl ItemsSource="{Binding Clients}" IsVisible="{Binding IsClients}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate DataType="models:Client">
+                                                <Border Padding="10" Margin="0,0,0,8" Background="#333333" CornerRadius="6">
+                                                    <Grid ColumnDefinitions="*, 220, 48">
+                                                        <StackPanel Grid.Column="0" Orientation="Vertical">
+                                                            <TextBlock Text="{Binding Phone}" Foreground="#EDEDED" FontSize="14" />
+                                                        </StackPanel>
+
+                                                        <StackPanel Grid.Column="1" Orientation="Vertical" HorizontalAlignment="Left">
+                                                            <TextBlock Text="{Binding LastName}" Foreground="#EDEDED" FontSize="14" />
+                                                            <TextBlock Text="{Binding FirstName}" Foreground="#BFBFBF" FontSize="12" />
+                                                        </StackPanel>
+
+                                                        <Button Grid.Column="2" Width="36" Height="36" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                                            <Path Data="M0,0 L0,10 L7,5 Z" Fill="White" Stretch="Uniform" RenderTransformOrigin="0.5,0.5"/>
+                                                        </Button>
+                                                    </Grid>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+
+                                    <!-- Записи -->
+                                    <ItemsControl ItemsSource="{Binding Appointments}" IsVisible="{Binding IsAppointments}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate DataType="models:Appointment">
+                                                <Border Padding="10" Margin="0,0,0,8" Background="#333333" CornerRadius="6">
+                                                    <Grid ColumnDefinitions="180, 200, 120, 48">
+                                                        <TextBlock Grid.Column="0" Text="{Binding Date, StringFormat='{}{0:dd.MM.yyyy HH:mm}'}" Foreground="#EDEDED" />
+                                                        <TextBlock Grid.Column="1" Text="{Binding Client.Phone}" Foreground="#EDEDED" />
+                                                        <TextBlock Grid.Column="2" Text="{Binding Pet.Name}" Foreground="#EDEDED" />
+                                                        <Button Grid.Column="3" Width="36" Height="36" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                                            <Path Data="M0,0 L0,10 L7,5 Z" Fill="White" Stretch="Uniform" />
+                                                        </Button>
+                                                    </Grid>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+
+                                    <!-- Працівники -->
+                                    <ItemsControl ItemsSource="{Binding StaffMembers}" IsVisible="{Binding IsStaff}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate DataType="models:Staff">
+                                                <Border Padding="10" Margin="0,0,0,8" Background="#333333" CornerRadius="6">
+                                                    <Grid ColumnDefinitions="*, 220, 48">
+                                                        <TextBlock Grid.Column="0" Text="{Binding Phone}" Foreground="#EDEDED" />
+                                                        <StackPanel Grid.Column="1" Orientation="Vertical">
+                                                            <TextBlock Text="{Binding LastName}" Foreground="#EDEDED" />
+                                                            <TextBlock Text="{Binding FirstName}" Foreground="#BFBFBF" />
+                                                        </StackPanel>
+                                                        <Button Grid.Column="2" Width="36" Height="36" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                                            <Path Data="M0,0 L0,10 L7,5 Z" Fill="White" Stretch="Uniform" />
+                                                        </Button>
+                                                    </Grid>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+
+                                    <!-- Провайдери -->
+                                    <ItemsControl ItemsSource="{Binding Providers}" IsVisible="{Binding IsProviders}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate DataType="models:Provider">
+                                                <Border Padding="10" Margin="0,0,0,8" Background="#333333" CornerRadius="6">
+                                                    <Grid ColumnDefinitions="*, 220, 48">
+                                                        <TextBlock Grid.Column="0" Text="{Binding Phone}" Foreground="#EDEDED" />
+                                                        <TextBlock Grid.Column="1" Text="{Binding Name}" Foreground="#EDEDED" />
+                                                        <Button Grid.Column="2" Width="36" Height="36" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                                            <Path Data="M0,0 L0,10 L7,5 Z" Fill="White" Stretch="Uniform" />
+                                                        </Button>
+                                                    </Grid>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+
+                                    <!-- Склад -->
+                                    <ItemsControl ItemsSource="{Binding Stocks}" IsVisible="{Binding IsStock}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate DataType="models:Stock">
+                                                <Border Padding="10" Margin="0,0,0,8" Background="#333333" CornerRadius="6">
+                                                    <Grid ColumnDefinitions="*, 120, 80, 48">
+                                                        <TextBlock Grid.Column="0" Text="{Binding Medicine.Name}" Foreground="#EDEDED" />
+                                                        <TextBlock Grid.Column="1" Text="{Binding Medicine.Price, StringFormat='{}{0:0.00} ₴'}" Foreground="#EDEDED" />
+                                                        <TextBlock Grid.Column="2" Text="{Binding Quantity}" Foreground="#EDEDED" />
+                                                        <Button Grid.Column="3" Width="36" Height="36" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                                            <Path Data="M0,0 L0,10 L7,5 Z" Fill="White" Stretch="Uniform" />
+                                                        </Button>
+                                                    </Grid>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </Grid>
+                            </ScrollViewer>
                         </Border>
                     </StackPanel>
                 </ContentControl>
