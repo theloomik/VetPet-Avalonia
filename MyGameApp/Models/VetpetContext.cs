@@ -481,7 +481,7 @@ public partial class VetpetContext : DbContext
                 .HasMaxLength(255)
                 .HasColumnName("password_hash");
             entity.Property(e => e.Phone)
-                .HasMaxLength(20)
+                .HasMaxLength(25)
                 .HasColumnName("phone");
             entity.Property(e => e.Role)
                 .HasColumnType("enum('admin','vet')")
