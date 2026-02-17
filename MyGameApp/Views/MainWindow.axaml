@@ -105,15 +105,16 @@
                 </Grid>
 
                 <Panel Grid.Row="2" Margin="10,0,25,10">
+                    
                     <Grid ColumnDefinitions="200, 20, *, 60" IsVisible="{Binding IsClients}">
                         <TextBlock Grid.Column="0" Text="Номер телефону" Classes="Header"/>
                         <TextBlock Grid.Column="2" Text="Прізвище та Ім’я" Classes="Header"/>
                     </Grid>
 
-                    <Grid ColumnDefinitions="160, *, 120, 60" IsVisible="{Binding IsAppointments}">
+                    <Grid ColumnDefinitions="170, 180, *, 60" IsVisible="{Binding IsAppointments}">
                         <TextBlock Grid.Column="0" Text="Дата та час" Classes="Header"/>
                         <TextBlock Grid.Column="1" Text="Телефон клієнта" Classes="Header"/>
-                        <TextBlock Grid.Column="2" Text="Тварина" HorizontalAlignment="Right" Margin="0,0,20,0" Classes="Header"/>
+                        <TextBlock Grid.Column="2" Text="Тварина" Classes="Header"/>
                     </Grid>
 
                     <Grid ColumnDefinitions="200, 20, *, 60" IsVisible="{Binding IsStaff}">
@@ -126,7 +127,7 @@
                         <TextBlock Grid.Column="2" Text="Назва / Представник" Classes="Header"/>
                     </Grid>
 
-                    <Grid ColumnDefinitions="200, *, 100, 60" IsVisible="{Binding IsStock}">
+                    <Grid ColumnDefinitions="350, 150, *, 60" IsVisible="{Binding IsStock}">
                         <TextBlock Grid.Column="0" Text="Назва препарату" Classes="Header"/>
                         <TextBlock Grid.Column="1" Text="Ціна" Classes="Header"/>
                         <TextBlock Grid.Column="2" Text="Кількість" Classes="Header"/>
@@ -161,10 +162,14 @@
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate DataType="models:Appointment">
                                     <StackPanel>
-                                        <Grid ColumnDefinitions="160, *, 120, 60" Height="55" VerticalAlignment="Center" Margin="10,0,10,0">
+                                        <Grid ColumnDefinitions="170, 180, *, 60" Height="55" VerticalAlignment="Center" Margin="10,0,10,0">
+                                            
                                             <TextBlock Grid.Column="0" Text="{Binding Date, StringFormat='{}{0:dd.MM HH:mm}'}" Foreground="#E0E0E0" VerticalAlignment="Center"/>
+                                            
                                             <TextBlock Grid.Column="1" Text="{Binding Client.Phone}" Foreground="#CCCCCC" VerticalAlignment="Center"/>
-                                            <TextBlock Grid.Column="2" Text="{Binding Pet.Name}" Foreground="#A0A0A0" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,20,0"/>
+                                            
+                                            <TextBlock Grid.Column="2" Text="{Binding Pet.Name}" Foreground="#A0A0A0" VerticalAlignment="Center"/>
+                                            
                                             <Button Grid.Column="3" Classes="ArrowBtn" Margin="0,0,5,0">
                                                 <TextBlock Text="→" Foreground="#BBBBBB" FontSize="20"/>
                                             </Button>
@@ -218,10 +223,14 @@
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate DataType="models:Stock">
                                     <StackPanel>
-                                        <Grid ColumnDefinitions="200, *, 100, 60" Height="55" VerticalAlignment="Center" Margin="10,0,10,0">
+                                        <Grid ColumnDefinitions="350, 150, *, 60" Height="55" VerticalAlignment="Center" Margin="10,0,10,0">
+                                            
                                             <TextBlock Grid.Column="0" Text="{Binding Medicine.Name}" Foreground="#E0E0E0" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                            
                                             <TextBlock Grid.Column="1" Text="{Binding Medicine.Price, StringFormat='{}{0:0.00} ₴'}" Foreground="#E0E0E0" VerticalAlignment="Center"/>
+                                            
                                             <TextBlock Grid.Column="2" Text="{Binding Quantity, StringFormat='{}x{0}'}" Foreground="#A0A0A0" VerticalAlignment="Center"/>
+                                            
                                             <Button Grid.Column="3" Classes="ArrowBtn" Margin="0,0,5,0">
                                                 <TextBlock Text="→" Foreground="#BBBBBB" FontSize="20"/>
                                             </Button>
