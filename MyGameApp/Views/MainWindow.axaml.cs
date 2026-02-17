@@ -21,9 +21,10 @@ public partial class MainWindow : Window
         else if (b.Tag is int i)
             idx = i;
 
+        // Передаємо індекс у ViewModel -> Вона сама оновить списки, очистить пошук і т.д.
         vm.SelectedIndex = idx;
 
-        // Toggle Active class on menu buttons
+        // Візуальне перемикання активної кнопки (Active class)
         var menu = this.FindControl<StackPanel>("MenuPanel");
         if (menu != null)
         {
