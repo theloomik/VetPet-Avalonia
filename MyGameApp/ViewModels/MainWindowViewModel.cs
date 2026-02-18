@@ -67,7 +67,7 @@ namespace MyGameApp.ViewModels
         public bool IsProviders => SelectedIndex == 3;
         public bool IsStock => SelectedIndex == 4;
 
-        // === ПОШУК ТА СОРТУВАННЯ ===
+        // пошук
         private string _searchText = "";
         public string SearchText
         {
@@ -81,6 +81,7 @@ namespace MyGameApp.ViewModels
             }
         }
 
+        // сортування
         private string _sortLabel = "A ↓";
         public string SortLabel
         {
