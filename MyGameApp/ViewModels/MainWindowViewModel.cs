@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input; // Важливо для RelayCommand
+using CommunityToolkit.Mvvm.Input; 
 using Microsoft.EntityFrameworkCore;
 using MyGameApp.Models;
 
@@ -12,21 +12,21 @@ namespace MyGameApp.ViewModels
 {
     public partial class MainWindowViewModel : ViewModelBase
     {
-        // === ПРИВАТНІ СПИСКИ (Повні дані з БД) ===
+
         private List<Client> _allClients = new();
         private List<Appointment> _allAppointments = new();
         private List<Staff> _allStaff = new();
         private List<Provider> _allProviders = new();
         private List<Stock> _allStock = new();
 
-        // === ПУБЛІЧНІ КОЛЕКЦІЇ (Для UI) ===
+
         public ObservableCollection<Client> Clients { get; } = new();
         public ObservableCollection<Appointment> Appointments { get; } = new();
         public ObservableCollection<Staff> StaffMembers { get; } = new();
         public ObservableCollection<Provider> Providers { get; } = new();
         public ObservableCollection<Stock> Stocks { get; } = new();
 
-        // === СТАН ВІКНА ТА ВКЛАДОК ===
+
         private int _selectedIndex;
         public int SelectedIndex
         {
@@ -35,7 +35,7 @@ namespace MyGameApp.ViewModels
             {
                 if (SetProperty(ref _selectedIndex, value))
                 {
-                    // Оновлюємо видимість вкладок
+
                     OnPropertyChanged(nameof(SelectedTabName));
                     OnPropertyChanged(nameof(IsClients));
                     OnPropertyChanged(nameof(IsAppointments));
@@ -43,12 +43,9 @@ namespace MyGameApp.ViewModels
                     OnPropertyChanged(nameof(IsProviders));
                     OnPropertyChanged(nameof(IsStock));
 
-                    // Скидаємо пошук і сортування при зміні вкладки
-                    SearchText = "";
                     _isSortAscending = true;
                     SortLabel = "A ↓";
                     
-                    // Оновлюємо список для нової вкладки
                     UpdateList();
                 }
             }
@@ -64,7 +61,6 @@ namespace MyGameApp.ViewModels
             _ => ""
         };
 
-        // Властивості видимості
         public bool IsClients => SelectedIndex == 0;
         public bool IsAppointments => SelectedIndex == 1;
         public bool IsStaff => SelectedIndex == 2;
@@ -80,7 +76,7 @@ namespace MyGameApp.ViewModels
             {
                 if (SetProperty(ref _searchText, value))
                 {
-                    UpdateList(); // Авто-оновлення при введенні тексту
+                    UpdateList();
                 }
             }
         }
@@ -94,11 +90,9 @@ namespace MyGameApp.ViewModels
 
         private bool _isSortAscending = true; // true = А-Я, false = Я-А
 
-        // Команди
         public IRelayCommand<int> ChangeTabCommand { get; }
         public IRelayCommand ToggleSortCommand { get; }
 
-        // Конструктор
         public MainWindowViewModel()
         {
             ChangeTabCommand = new RelayCommand<int>(i => SelectedIndex = i);
@@ -114,7 +108,6 @@ namespace MyGameApp.ViewModels
             UpdateList();
         }
 
-        // === ГОЛОВНА ЛОГІКА ОНОВЛЕННЯ СПИСКІВ ===
         private void UpdateList()
         {
             string search = SearchText?.ToLower().Trim() ?? "";
@@ -213,12 +206,11 @@ namespace MyGameApp.ViewModels
                 var stocks = await db.Stocks.AsNoTracking().Include(s => s.Medicine).ToListAsync();
                 _allStock = stocks;
 
-                // Оновлюємо UI
                 UpdateList();
             }
             catch (Exception)
             {
-                // Тут можна додати логування помилки
+
             }
         }
     }
