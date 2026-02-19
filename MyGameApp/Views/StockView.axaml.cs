@@ -1,8 +1,10 @@
 using Avalonia.Controls;
+
 namespace MyGameApp.Views;
-public partial class MainWindow : Window
+
+public partial class StockView : UserControl
 {
-    public MainWindow()
+    public StockView()
     {
         InitializeComponent();
     }

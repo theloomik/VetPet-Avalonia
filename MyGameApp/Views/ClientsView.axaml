@@ -1,0 +1,58 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:MyGameApp.ViewModels"
+             x:Class="MyGameApp.Views.ClientsView"
+             x:DataType="vm:ClientsViewModel">
+
+    <Grid RowDefinitions="Auto,*" Margin="25">
+
+        <!-- Верхня панель -->
+        <Grid ColumnDefinitions="*,10,Auto,10,Auto"
+              Height="42"
+              Margin="0,0,0,20">
+
+            <TextBox Grid.Column="0"
+                     Watermark="Пошук клієнта..."
+                     Text="{Binding SearchText}" />
+
+            <Button Grid.Column="2"
+                    Width="60"
+                    Command="{Binding ToggleSortCommand}">
+                <TextBlock Text="{Binding SortLabel}" />
+            </Button>
+
+            <Button Grid.Column="4"
+                    Width="100"
+                    Command="{Binding AddClientCommand}">
+                <TextBlock Text="Новий" />
+            </Button>
+
+        </Grid>
+
+        <!-- Список -->
+        <ItemsControl Grid.Row="1"
+                      ItemsSource="{Binding Clients}">
+
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Border Padding="12"
+                            Margin="0,0,0,8"
+                            Background="#2E2E2E"
+                            CornerRadius="8">
+
+                        <StackPanel>
+                            <TextBlock Text="{Binding LastName}"
+                                       FontWeight="Bold"/>
+                            <TextBlock Text="{Binding FirstName}"/>
+                            <TextBlock Text="{Binding Phone}"
+                                       Opacity="0.7"/>
+                        </StackPanel>
+
+                    </Border>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+
+        </ItemsControl>
+
+    </Grid>
+</UserControl>

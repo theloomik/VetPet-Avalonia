@@ -1,8 +1,10 @@
 using Avalonia.Controls;
+
 namespace MyGameApp.Views;
-public partial class MainWindow : Window
+
+public partial class StaffView : UserControl
 {
-    public MainWindow()
+    public StaffView()
     {
         InitializeComponent();
     }

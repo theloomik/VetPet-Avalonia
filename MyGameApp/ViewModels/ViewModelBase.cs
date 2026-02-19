@@ -1,7 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-
-namespace MyGameApp.ViewModels;
-
-public abstract class ViewModelBase : ObservableObject
+﻿namespace MyGameApp.ViewModels;
+using CommunityToolkit.Mvvm.ComponentModel;
+public partial class ViewModelBase : ObservableObject
 {
 }

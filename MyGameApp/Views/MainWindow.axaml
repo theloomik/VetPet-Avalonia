@@ -1,301 +1,50 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:vm="using:MyGameApp.ViewModels"
-        xmlns:models="using:MyGameApp.Models"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="1000" d:DesignHeight="600"
+        xmlns:vm="clr-namespace:MyGameApp.ViewModels"
+        xmlns:views="clr-namespace:MyGameApp.Views"
         x:Class="MyGameApp.Views.MainWindow"
-        x:DataType="vm:MainWindowViewModel"
-        Icon="/Assets/avalonia-logo.ico"
-        Title="VetPet"
-        Background="#2E2E2E">
-
-    <Window.Styles>
-        <Style Selector="Button.MenuBtn">
-            <Setter Property="HorizontalAlignment" Value="Stretch"/>
-            <Setter Property="Height" Value="45"/>
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Foreground" Value="#B0B0B0"/>
-            <Setter Property="CornerRadius" Value="10"/>
-            <Setter Property="HorizontalContentAlignment" Value="Left"/>
-            <Setter Property="Padding" Value="20,0"/>
-            <Setter Property="VerticalContentAlignment" Value="Center"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="FontSize" Value="16"/>
-        </Style>
-        
-        <Style Selector="Button.MenuBtn:pointerover /template/ ContentPresenter">
-            <Setter Property="Foreground" Value="#FFFFFF"/>
-            <Setter Property="Background" Value="#454545"/>
-        </Style>
-        
-        <Style Selector="Button.MenuBtn.Active">
-            <Setter Property="Foreground" Value="#FFFFFF"/>
-            <Setter Property="Background" Value="#454545"/> 
-        </Style>
-
-        <Style Selector="Button.ArrowBtn">
-            <Setter Property="Width" Value="42"/>
-            <Setter Property="Height" Value="38"/>
-            <Setter Property="Background" Value="#454545"/>
-            <Setter Property="CornerRadius" Value="10"/>
-            <Setter Property="Padding" Value="0"/>
-            <Setter Property="HorizontalAlignment" Value="Right"/>
-            <Setter Property="VerticalAlignment" Value="Center"/>
-        </Style>
-        <Style Selector="Button.ArrowBtn:pointerover /template/ ContentPresenter">
-            <Setter Property="Background" Value="#555555"/>
-        </Style>
-        
-        <Style Selector="TextBlock.Header">
-            <Setter Property="Foreground" Value="#888888"/>
-            <Setter Property="FontSize" Value="13"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="VerticalAlignment" Value="Center"/>
-        </Style>
-    </Window.Styles>
-
-
-
-
-
-
-    <Grid>
-        <Border>
-            <Border.Effect>
-                <BlurEffect Radius="{Binding BlurRadius}"/>
-            </Border.Effect>
-        <Grid ColumnDefinitions="260, *" Margin="15">
-            
-            <Border Grid.Column="0" Classes="Card" Margin="0,0,15,0">
-                <StackPanel Spacing="10" Margin="15, 25" Name="MenuPanel">
-                    <TextBlock Text="Меню" 
-                            Foreground="White" 
-                            FontSize="20" 
-                            FontWeight="Bold" 
-                            HorizontalAlignment="Center" 
-                            Margin="0,0,0,20"/>
-
-                    <Button Classes="MenuBtn Active" Content="Клієнти" Tag="0" Click="OnMenuButtonClick"/>
-                    <Button Classes="MenuBtn" Content="Записи" Tag="1" Click="OnMenuButtonClick"/>
-                    <Button Classes="MenuBtn" Content="Працівники" Tag="2" Click="OnMenuButtonClick"/>
-                    <Button Classes="MenuBtn" Content="Провайдери" Tag="3" Click="OnMenuButtonClick"/>
-                    <Button Classes="MenuBtn" Content="Склад" Tag="4" Click="OnMenuButtonClick"/>
-                </StackPanel>
-            </Border>
-
-            <Border Grid.Column="1" Classes="Card">
-                <Grid RowDefinitions="Auto, Auto, Auto, *" Margin="30, 25">
-                    
-                    <TextBlock Grid.Row="0"
-                            Text="{Binding SelectedTabName}" 
-                            Foreground="White" 
-                            FontSize="28" 
-                            FontWeight="Bold"
-                            Margin="0,0,0,25"/>
-
-                    <Grid Grid.Row="1" ColumnDefinitions="*, 10, Auto, 10, Auto" Height="42" Margin="0,0,0,25">
-                        
-                        <TextBox Grid.Column="0" 
-                                Watermark="Пошук..." 
-                                Classes="DarkInput"
-                                Text="{Binding SearchText}"/>
-
-                        <Button Grid.Column="2" 
-                                Width="60" 
-                                Height="42"
-                                Command="{Binding ToggleSortCommand}">
-                            <TextBlock Text="{Binding SortLabel}" FontWeight="Bold"/>
-                        </Button>
-
-                        <Button Grid.Column="4"
-                                Width="100"
-                                Height="42"
-                                Command="{Binding OpenAddClientCommand}">
-                            <TextBlock Text="Новий" FontWeight="SemiBold"/>
-                        </Button>
-
-                    </Grid>
-
-                    <Panel Grid.Row="2" Margin="10,0,25,10">
-                        
-                        <Grid ColumnDefinitions="200, 20, *, 60" IsVisible="{Binding IsClients}">
-                            <TextBlock Grid.Column="0" Text="Номер телефону" Classes="Header"/>
-                            <TextBlock Grid.Column="2" Text="Прізвище та Ім’я" Classes="Header"/>
-                        </Grid>
-
-                        <Grid ColumnDefinitions="170, 180, *, 60" IsVisible="{Binding IsAppointments}">
-                            <TextBlock Grid.Column="0" Text="Дата та час" Classes="Header"/>
-                            <TextBlock Grid.Column="1" Text="Телефон клієнта" Classes="Header"/>
-                            <TextBlock Grid.Column="2" Text="Тварина" Classes="Header"/>
-                        </Grid>
-
-                        <Grid ColumnDefinitions="200, 20, *, 60" IsVisible="{Binding IsStaff}">
-                            <TextBlock Grid.Column="0" Text="Номер телефону" Classes="Header"/>
-                            <TextBlock Grid.Column="2" Text="Прізвище та Ім’я" Classes="Header"/>
-                        </Grid>
-
-                        <Grid ColumnDefinitions="200, 20, *, 60" IsVisible="{Binding IsProviders}">
-                            <TextBlock Grid.Column="0" Text="Номер телефону" Classes="Header"/>
-                            <TextBlock Grid.Column="2" Text="Назва / Представник" Classes="Header"/>
-                        </Grid>
-
-                        <Grid ColumnDefinitions="350, 150, *, 60" IsVisible="{Binding IsStock}">
-                            <TextBlock Grid.Column="0" Text="Назва препарату" Classes="Header"/>
-                            <TextBlock Grid.Column="1" Text="Ціна" Classes="Header"/>
-                            <TextBlock Grid.Column="2" Text="Кількість" Classes="Header"/>
-                        </Grid>
-                    </Panel>
-
-                    <ScrollViewer Grid.Row="3" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
-                        <StackPanel>
-                            
-                            <ItemsControl ItemsSource="{Binding Clients}" IsVisible="{Binding IsClients}">
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate DataType="models:Client">
-                                        <StackPanel>
-                                            <Grid ColumnDefinitions="200, 20, *, 60" Height="55" VerticalAlignment="Center" Margin="10,0,10,0">
-                                                <TextBlock Grid.Column="0" Text="{Binding Phone}" Foreground="#E0E0E0" FontSize="15" VerticalAlignment="Center"/>
-                                                <Border Grid.Column="1" Width="1" Background="White" Opacity="0.1" Margin="0,12" HorizontalAlignment="Center"/>
-                                                <StackPanel Grid.Column="2" VerticalAlignment="Center" Spacing="2">
-                                                    <TextBlock Text="{Binding LastName}" Foreground="#FFFFFF" FontSize="15" FontWeight="Medium"/>
-                                                    <TextBlock Text="{Binding FirstName}" Foreground="#999999" FontSize="13"/>
-                                                </StackPanel>
-                                                <Button Grid.Column="3" Classes="ArrowBtn" Margin="0,0,5,0">
-                                                    <TextBlock Text="→" Foreground="#ffffff" FontSize="20" FontWeight="Light" Margin="0,-2,0,0"/>
-                                                </Button>
-                                            </Grid>
-                                            <Border Height="1" Background="White" Opacity="0.05" Margin="0"/>
-                                        </StackPanel>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-
-                            <ItemsControl ItemsSource="{Binding Appointments}" IsVisible="{Binding IsAppointments}">
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate DataType="models:Appointment">
-                                        <StackPanel>
-                                            <Grid ColumnDefinitions="170, 180, *, 60" Height="55" VerticalAlignment="Center" Margin="10,0,10,0">
-                                                
-                                                <TextBlock Grid.Column="0" Text="{Binding Date, StringFormat='{}{0:dd.MM HH:mm}'}" Foreground="#E0E0E0" VerticalAlignment="Center"/>
-                                                
-                                                <TextBlock Grid.Column="1" Text="{Binding Client.Phone}" Foreground="#CCCCCC" VerticalAlignment="Center"/>
-                                                
-                                                <TextBlock Grid.Column="2" Text="{Binding Pet.Name}" Foreground="#A0A0A0" VerticalAlignment="Center"/>
-                                                
-                                                <Button Grid.Column="3" Classes="ArrowBtn" Margin="0,0,5,0">
-                                                    <TextBlock Text="→" Foreground="#BBBBBB" FontSize="20"/>
-                                                </Button>
-                                            </Grid>
-                                            <Border Height="1" Background="White" Opacity="0.05"/>
-                                        </StackPanel>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-
-                            <ItemsControl ItemsSource="{Binding StaffMembers}" IsVisible="{Binding IsStaff}">
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate DataType="models:Staff">
-                                        <StackPanel>
-                                            <Grid ColumnDefinitions="200, 20, *, 60" Height="55" VerticalAlignment="Center" Margin="10,0,10,0">
-                                                <TextBlock Grid.Column="0" Text="{Binding Phone}" Foreground="#E0E0E0" FontSize="15" VerticalAlignment="Center"/>
-                                                <Border Grid.Column="1" Width="1" Background="White" Opacity="0.1" Margin="0,12" HorizontalAlignment="Center"/>
-                                                <StackPanel Grid.Column="2" VerticalAlignment="Center">
-                                                    <TextBlock Text="{Binding LastName}" Foreground="#FFFFFF"/>
-                                                    <TextBlock Text="{Binding FirstName}" Foreground="#999999" FontSize="12"/>
-                                                </StackPanel>
-                                                <Button Grid.Column="3" Classes="ArrowBtn" Margin="0,0,5,0">
-                                                    <TextBlock Text="→" Foreground="#BBBBBB" FontSize="20"/>
-                                                </Button>
-                                            </Grid>
-                                            <Border Height="1" Background="White" Opacity="0.05"/>
-                                        </StackPanel>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-
-                            <ItemsControl ItemsSource="{Binding Providers}" IsVisible="{Binding IsProviders}">
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate DataType="models:Provider">
-                                        <StackPanel>
-                                            <Grid ColumnDefinitions="200, 20, *, 60" Height="55" VerticalAlignment="Center" Margin="10,0,10,0">
-                                                <TextBlock Grid.Column="0" Text="{Binding Phone}" Foreground="#E0E0E0" FontSize="15" VerticalAlignment="Center"/>
-                                                <Border Grid.Column="1" Width="1" Background="White" Opacity="0.1" Margin="0,12" HorizontalAlignment="Center"/>
-                                                <TextBlock Grid.Column="2" Text="{Binding Name}" Foreground="#E0E0E0" VerticalAlignment="Center"/>
-                                                <Button Grid.Column="3" Classes="ArrowBtn" Margin="0,0,5,0">
-                                                    <TextBlock Text="→" Foreground="#BBBBBB" FontSize="20"/>
-                                                </Button>
-                                            </Grid>
-                                            <Border Height="1" Background="White" Opacity="0.05"/>
-                                        </StackPanel>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-
-                            <ItemsControl ItemsSource="{Binding Stocks}" IsVisible="{Binding IsStock}">
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate DataType="models:Stock">
-                                        <StackPanel>
-                                            <Grid ColumnDefinitions="350, 150, *, 60" Height="55" VerticalAlignment="Center" Margin="10,0,10,0">
-                                                
-                                                <TextBlock Grid.Column="0" Text="{Binding Medicine.Name}" Foreground="#E0E0E0" FontWeight="SemiBold" VerticalAlignment="Center"/>
-                                                
-                                                <TextBlock Grid.Column="1" Text="{Binding Medicine.Price, StringFormat='{}{0:0.00} ₴'}" Foreground="#E0E0E0" VerticalAlignment="Center"/>
-                                                
-                                                <TextBlock Grid.Column="2" Text="{Binding Quantity, StringFormat='{}x{0}'}" Foreground="#A0A0A0" VerticalAlignment="Center"/>
-                                                
-                                                <Button Grid.Column="3" Classes="ArrowBtn" Margin="0,0,5,0">
-                                                    <TextBlock Text="→" Foreground="#BBBBBB" FontSize="20"/>
-                                                </Button>
-                                            </Grid>
-                                            <Border Height="1" Background="White" Opacity="0.05"/>
-                                        </StackPanel>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-
-                        </StackPanel>
-                    </ScrollViewer>
-                </Grid>
-            </Border>
-        </Grid>
-        </Border>
-        <Border IsVisible="{Binding IsAddClientOpen}"
-        Background="#80000000"
-        ZIndex="100">
-
-    <Grid HorizontalAlignment="Stretch"
-          VerticalAlignment="Stretch">
-
-        <!-- СПЛИВАЮЧЕ ВІКНО -->
-        <Border Width="400"
-                Padding="20"
-                Background="#2E2E2E"
-                CornerRadius="12"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center">
-
-            <StackPanel Spacing="12">
-
-                <TextBlock Text="Новий клієнт"
-                           FontSize="20"
-                           Foreground="White"
-                           HorizontalAlignment="Center"/>
-
-                <TextBox Watermark="Прізвище"/>
-                <TextBox Watermark="Ім’я"/>
-                <TextBox Watermark="Телефон"/>
-                <TextBox Watermark="Email"/>
-
-                <Button Content="Закрити"
-                        Command="{Binding CloseAddClientCommand}"/>
-
+        Title="MyGameApp">
+    <Window.DataContext>
+        <vm:MainWindowViewModel/>
+    </Window.DataContext>
+    <Window.DataTemplates>
+        <DataTemplate DataType="vm:ClientsViewModel">
+            <views:ClientsView/>
+        </DataTemplate>
+        <DataTemplate DataType="vm:StaffViewModel">
+            <views:StaffView/>
+        </DataTemplate>
+        <DataTemplate DataType="vm:AppointmentsViewModel">
+            <views:AppointmentsView/>
+        </DataTemplate>
+        <DataTemplate DataType="vm:ProvidersViewModel">
+            <views:ProvidersView/>
+        </DataTemplate>
+        <DataTemplate DataType="vm:StockViewModel">
+            <views:StockView/>
+        </DataTemplate>
+    </Window.DataTemplates>
+    <Grid ColumnDefinitions="260,*">
+        <Border Background="#2B2B2B">
+            <StackPanel Margin="15" Spacing="10">
+                <Button Content="Клієнти"
+                        Command="{Binding ChangeTabCommand}"
+                        CommandParameter="0"/>
+                <Button Content="Записи"
+                        Command="{Binding ChangeTabCommand}"
+                        CommandParameter="1"/>
+                <Button Content="Працівники"
+                        Command="{Binding ChangeTabCommand}"
+                        CommandParameter="2"/>
+                <Button Content="Провайдери"
+                        Command="{Binding ChangeTabCommand}"
+                        CommandParameter="3"/>
+                <Button Content="Склад"
+                        Command="{Binding ChangeTabCommand}"
+                        CommandParameter="4"/>
             </StackPanel>
-
         </Border>
-
-    </Grid>
-</Border>
+        <ContentControl Grid.Column="1"
+                        Content="{Binding CurrentViewModel}"/>
     </Grid>
 </Window>

@@ -1,0 +1,33 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:MyGameApp.ViewModels"
+             x:Class="MyGameApp.Views.ProvidersView"
+             x:DataType="vm:ProvidersViewModel">
+
+    <Grid RowDefinitions="Auto,*" Margin="25">
+
+        <TextBox Watermark="Пошук провайдера..."
+                 Text="{Binding SearchText}"
+                 Height="42"
+                 Margin="0,0,0,20"/>
+
+        <ItemsControl Grid.Row="1"
+                      ItemsSource="{Binding Providers}">
+
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Border Padding="12"
+                            Margin="0,0,0,8"
+                            Background="#2E2E2E"
+                            CornerRadius="8">
+
+                        <TextBlock Text="{Binding Name}" />
+
+                    </Border>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+
+        </ItemsControl>
+
+    </Grid>
+</UserControl>
