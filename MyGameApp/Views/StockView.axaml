@@ -1,37 +1,65 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:MyGameApp.ViewModels"
+             xmlns:models="using:MyGameApp.Models"
              x:Class="MyGameApp.Views.StockView"
              x:DataType="vm:StockViewModel">
 
-    <Grid RowDefinitions="Auto,*" Margin="25">
+    <Grid RowDefinitions="Auto,Auto,Auto,*" Margin="30,25">
 
-        <TextBox Watermark="Пошук препарату..."
-                 Text="{Binding SearchText}"
+        <TextBlock Grid.Row="0"
+                   Text="Склад"
+                   Foreground="White"
+                   FontSize="26"
+                   FontWeight="Bold"
+                   Margin="0,0,0,20"/>
+
+        <TextBox Grid.Row="1"
+                 Watermark="Пошук препарату..."
+                 Classes="DarkInput"
                  Height="42"
+                 Text="{Binding SearchText}"
                  Margin="0,0,0,20"/>
 
-        <ItemsControl Grid.Row="1"
-                      ItemsSource="{Binding Stocks}">
+        <Grid Grid.Row="2" ColumnDefinitions="350,150,*,60" Margin="10,0,10,8">
+            <TextBlock Grid.Column="0" Text="НАЗВА ПРЕПАРАТУ" Classes="Header"/>
+            <TextBlock Grid.Column="1" Text="ЦІНА"           Classes="Header"/>
+            <TextBlock Grid.Column="2" Text="КІЛЬКІСТЬ"      Classes="Header"/>
+        </Grid>
 
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <Border Padding="12"
-                            Margin="0,0,0,8"
-                            Background="#2E2E2E"
-                            CornerRadius="8">
-
+        <ScrollViewer Grid.Row="3" HorizontalScrollBarVisibility="Disabled">
+            <ItemsControl ItemsSource="{Binding Stocks}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="models:Stock">
                         <StackPanel>
-                            <TextBlock Text="{Binding Medicine.Name}" />
-                            <TextBlock Text="{Binding Quantity}"
-                                       Opacity="0.7"/>
+                            <Grid ColumnDefinitions="350,150,*,60"
+                                  Height="55" Margin="10,0,10,0"
+                                  VerticalAlignment="Center">
+                                <TextBlock Grid.Column="0"
+                                           Text="{Binding Medicine.Name}"
+                                           Foreground="#E0E0E0"
+                                           FontWeight="SemiBold"
+                                           VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="1"
+                                           Text="{Binding Medicine.Price, StringFormat='{}{0:0.00} ₴'}"
+                                           Foreground="#E0E0E0"
+                                           VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="2"
+                                           Text="{Binding Quantity, StringFormat='{}x{0}'}"
+                                           Foreground="#A0A0A0"
+                                           VerticalAlignment="Center"/>
+                                <Button Grid.Column="3"
+                                        Classes="ArrowBtn"
+                                        Margin="0,0,5,0">
+                                    <TextBlock Text="→" Foreground="#BBBBBB" FontSize="18"/>
+                                </Button>
+                            </Grid>
+                            <Border Height="1" Background="White" Opacity="0.05"/>
                         </StackPanel>
-
-                    </Border>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-
-        </ItemsControl>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
 
     </Grid>
 </UserControl>

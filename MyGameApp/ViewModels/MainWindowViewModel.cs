@@ -12,23 +12,20 @@ namespace MyGameApp.ViewModels
             set => SetProperty(ref _currentViewModel, value);
         }
 
-        public IRelayCommand<string> ChangeTabCommand { get; }
-
         public MainWindowViewModel()
         {
             CurrentViewModel = new ClientsViewModel();
-            ChangeTabCommand = new RelayCommand<string>(ChangeTab);
         }
 
-        private void ChangeTab(string? index)
+        public void ChangeTab(int index)
         {
             CurrentViewModel = index switch
             {
-                "0" => new ClientsViewModel(),
-                "1" => new AppointmentsViewModel(),
-                "2" => new StaffViewModel(),
-                "3" => new ProvidersViewModel(),
-                "4" => new StockViewModel(),
+                0 => new ClientsViewModel(),
+                1 => new AppointmentsViewModel(),
+                2 => new StaffViewModel(),
+                3 => new ProvidersViewModel(),
+                4 => new StockViewModel(),
                 _ => new ClientsViewModel()
             };
         }

@@ -1,12 +1,76 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:vm="clr-namespace:MyGameApp.ViewModels"
+        xmlns:vm="using:MyGameApp.ViewModels"
         xmlns:views="clr-namespace:MyGameApp.Views"
         x:Class="MyGameApp.Views.MainWindow"
-        Title="MyGameApp">
-    <Window.DataContext>
-        <vm:MainWindowViewModel/>
-    </Window.DataContext>
+        x:DataType="vm:MainWindowViewModel"
+        Title="VetPet"
+        Background="#1E1E1E"
+        Width="1100" Height="680"
+        MinWidth="900" MinHeight="500">
+
+    <Window.Styles>
+        <Style Selector="Button.MenuBtn">
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="Height" Value="45"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#B0B0B0"/>
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="Padding" Value="20,0"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="BorderThickness" Value="0"/>
+        </Style>
+        <Style Selector="Button.MenuBtn:pointerover /template/ ContentPresenter">
+            <Setter Property="Foreground" Value="#FFFFFF"/>
+            <Setter Property="Background" Value="#3A3A3A"/>
+        </Style>
+        <Style Selector="Button.MenuBtn.Active /template/ ContentPresenter">
+            <Setter Property="Foreground" Value="#FFFFFF"/>
+            <Setter Property="Background" Value="#454545"/>
+        </Style>
+
+        <Style Selector="Border.Card">
+            <Setter Property="Background" Value="#2B2B2B"/>
+            <Setter Property="CornerRadius" Value="14"/>
+        </Style>
+
+        <Style Selector="TextBox.DarkInput">
+            <Setter Property="Background" Value="#3A3A3A"/>
+            <Setter Property="Foreground" Value="#FFFFFF"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="Padding" Value="14,0"/>
+            <Setter Property="CaretBrush" Value="White"/>
+        </Style>
+        <Style Selector="TextBox.DarkInput /template/ TextBlock#PART_Watermark">
+            <Setter Property="Foreground" Value="#666666"/>
+        </Style>
+
+        <Style Selector="Button.ArrowBtn">
+            <Setter Property="Width" Value="36"/>
+            <Setter Property="Height" Value="36"/>
+            <Setter Property="Background" Value="#3A3A3A"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="HorizontalAlignment" Value="Right"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+        <Style Selector="Button.ArrowBtn:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#555555"/>
+        </Style>
+
+        <Style Selector="TextBlock.Header">
+            <Setter Property="Foreground" Value="#666666"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+    </Window.Styles>
+
     <Window.DataTemplates>
         <DataTemplate DataType="vm:ClientsViewModel">
             <views:ClientsView/>
@@ -24,27 +88,31 @@
             <views:StockView/>
         </DataTemplate>
     </Window.DataTemplates>
-    <Grid ColumnDefinitions="260,*">
-        <Border Background="#2B2B2B">
-            <StackPanel Margin="15" Spacing="10">
-                <Button Content="Клієнти"
-                        Command="{Binding ChangeTabCommand}"
-                        CommandParameter="0"/>
-                <Button Content="Записи"
-                        Command="{Binding ChangeTabCommand}"
-                        CommandParameter="1"/>
-                <Button Content="Працівники"
-                        Command="{Binding ChangeTabCommand}"
-                        CommandParameter="2"/>
-                <Button Content="Провайдери"
-                        Command="{Binding ChangeTabCommand}"
-                        CommandParameter="3"/>
-                <Button Content="Склад"
-                        Command="{Binding ChangeTabCommand}"
-                        CommandParameter="4"/>
+
+    <Grid ColumnDefinitions="260,*" Margin="15">
+
+        <!-- Ліва панель меню -->
+        <Border Grid.Column="0" Classes="Card" Margin="0,0,12,0">
+            <StackPanel Spacing="6" Margin="12,20" Name="MenuPanel">
+                <TextBlock Text="VetPet"
+                           Foreground="White"
+                           FontSize="22"
+                           FontWeight="Bold"
+                           HorizontalAlignment="Center"
+                           Margin="0,0,0,20"/>
+
+                <Button Classes="MenuBtn Active" Content="🐾  Клієнти"     Tag="0" Click="OnMenuButtonClick"/>
+                <Button Classes="MenuBtn"        Content="📅  Записи"      Tag="1" Click="OnMenuButtonClick"/>
+                <Button Classes="MenuBtn"        Content="👤  Працівники"  Tag="2" Click="OnMenuButtonClick"/>
+                <Button Classes="MenuBtn"        Content="🏭  Провайдери"  Tag="3" Click="OnMenuButtonClick"/>
+                <Button Classes="MenuBtn"        Content="💊  Склад"       Tag="4" Click="OnMenuButtonClick"/>
             </StackPanel>
         </Border>
-        <ContentControl Grid.Column="1"
-                        Content="{Binding CurrentViewModel}"/>
+
+        <!-- Права частина — вміст -->
+        <Border Grid.Column="1" Classes="Card">
+            <ContentControl Content="{Binding CurrentViewModel}"/>
+        </Border>
+
     </Grid>
 </Window>

@@ -1,50 +1,80 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:MyGameApp.ViewModels"
+             xmlns:models="using:MyGameApp.Models"
              x:Class="MyGameApp.Views.StaffView"
              x:DataType="vm:StaffViewModel">
 
-    <Grid RowDefinitions="Auto,*" Margin="25">
+    <Grid RowDefinitions="Auto,Auto,Auto,*" Margin="30,25">
 
-        <Grid ColumnDefinitions="*,10,Auto"
-              Height="42"
-              Margin="0,0,0,20">
+        <TextBlock Grid.Row="0"
+                   Text="Працівники"
+                   Foreground="White"
+                   FontSize="26"
+                   FontWeight="Bold"
+                   Margin="0,0,0,20"/>
 
+        <Grid Grid.Row="1" ColumnDefinitions="*,10,Auto" Height="42" Margin="0,0,0,20">
             <TextBox Grid.Column="0"
                      Watermark="Пошук працівника..."
-                     Text="{Binding SearchText}" />
-
+                     Classes="DarkInput"
+                     Text="{Binding SearchText}"/>
             <Button Grid.Column="2"
-                    Width="100"
+                    Width="100" Height="42"
+                    Background="#3A3A3A"
+                    CornerRadius="10"
+                    BorderThickness="0"
                     Command="{Binding AddStaffCommand}">
-                <TextBlock Text="Новий" />
+                <TextBlock Text="+ Новий" Foreground="White" FontWeight="SemiBold"/>
             </Button>
-
         </Grid>
 
-        <ItemsControl Grid.Row="1"
-                      ItemsSource="{Binding StaffMembers}">
+        <Grid Grid.Row="2" ColumnDefinitions="200,20,*,60" Margin="10,0,10,8">
+            <TextBlock Grid.Column="0" Text="ТЕЛЕФОН"         Classes="Header"/>
+            <TextBlock Grid.Column="2" Text="ПРІЗВИЩЕ ТА ІМ'Я" Classes="Header"/>
+        </Grid>
 
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <Border Padding="12"
-                            Margin="0,0,0,8"
-                            Background="#2E2E2E"
-                            CornerRadius="8">
-
+        <ScrollViewer Grid.Row="3" HorizontalScrollBarVisibility="Disabled">
+            <ItemsControl ItemsSource="{Binding StaffMembers}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="models:Staff">
                         <StackPanel>
-                            <TextBlock Text="{Binding LastName}"
-                                       FontWeight="Bold"/>
-                            <TextBlock Text="{Binding FirstName}"/>
-                            <TextBlock Text="{Binding Phone}"
-                                       Opacity="0.7"/>
+                            <Grid ColumnDefinitions="200,20,*,60"
+                                  Height="55" Margin="10,0,10,0"
+                                  VerticalAlignment="Center">
+                                <TextBlock Grid.Column="0"
+                                           Text="{Binding Phone}"
+                                           Foreground="#E0E0E0"
+                                           FontSize="15"
+                                           VerticalAlignment="Center"/>
+                                <Border Grid.Column="1"
+                                        Width="1" Background="White"
+                                        Opacity="0.08"
+                                        Margin="0,12"
+                                        HorizontalAlignment="Center"/>
+                                <StackPanel Grid.Column="2"
+                                            VerticalAlignment="Center"
+                                            Spacing="2">
+                                    <TextBlock Text="{Binding LastName}"
+                                               Foreground="#FFFFFF"
+                                               FontSize="15"
+                                               FontWeight="Medium"/>
+                                    <TextBlock Text="{Binding FirstName}"
+                                               Foreground="#999999"
+                                               FontSize="13"/>
+                                </StackPanel>
+                                <Button Grid.Column="3"
+                                        Classes="ArrowBtn"
+                                        Margin="0,0,5,0">
+                                    <TextBlock Text="→" Foreground="#FFFFFF" FontSize="18"/>
+                                </Button>
+                            </Grid>
+                            <Border Height="1" Background="White" Opacity="0.05"/>
                         </StackPanel>
-
-                    </Border>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-
-        </ItemsControl>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
 
     </Grid>
 </UserControl>
