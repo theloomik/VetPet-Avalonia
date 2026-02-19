@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using Microsoft.EntityFrameworkCore;
 using MyGameApp.Models;
 
@@ -12,38 +14,39 @@ namespace MyGameApp.ViewModels
         private List<Provider> _allProviders = new();
         public ObservableCollection<Provider> Providers { get; } = new();
 
-        private string _searchText = "";
-        public string SearchText
-        {
-            get => _searchText;
-            set
-            {
-                if (SetProperty(ref _searchText, value))
-                    UpdateList();
-            }
-        }
+        [ObservableProperty] private string _searchText = "";
+        [ObservableProperty] private bool _isAddOpen = false;
+        [ObservableProperty] private AddProviderViewModel? _addForm;
+
+        public IRelayCommand AddProviderCommand { get; }
 
         public ProvidersViewModel()
         {
-            _ = InitializeAsync();
+            AddProviderCommand = new RelayCommand(OpenAdd);
+            _ = ReloadAsync();
+        }
+
+        partial void OnSearchTextChanged(string value) => UpdateList();
+
+        private void OpenAdd()
+        {
+            AddForm = new AddProviderViewModel(this);
+            IsAddOpen = true;
         }
 
         private void UpdateList()
         {
-            var query = _allProviders
-                .Where(p => p.Name != null &&
-                            p.Name.ToLower().Contains(SearchText.ToLower()));
+            var q = _allProviders.Where(p =>
+                string.IsNullOrWhiteSpace(SearchText) ||
+                (p.Name != null && p.Name.Contains(SearchText, System.StringComparison.OrdinalIgnoreCase)));
             Providers.Clear();
-            foreach (var item in query)
-                Providers.Add(item);
+            foreach (var item in q) Providers.Add(item);
         }
 
-        private async Task InitializeAsync()
+        public async Task ReloadAsync()
         {
             using var db = new VetpetContext();
-            _allProviders = await db.Providers
-                .AsNoTracking()
-                .ToListAsync();
+            _allProviders = await db.Providers.AsNoTracking().ToListAsync();
             UpdateList();
         }
     }

@@ -1,7 +1,8 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.EntityFrameworkCore;
 using MyGameApp.Models;
@@ -13,16 +14,9 @@ namespace MyGameApp.ViewModels
         private List<Client> _allClients = new();
         public ObservableCollection<Client> Clients { get; } = new();
 
-        private string _searchText = "";
-        public string SearchText
-        {
-            get => _searchText;
-            set
-            {
-                if (SetProperty(ref _searchText, value))
-                    UpdateList();
-            }
-        }
+        [ObservableProperty] private string _searchText = "";
+        [ObservableProperty] private bool _isAddOpen = false;
+        [ObservableProperty] private AddClientViewModel? _addForm;
 
         private bool _sortAsc = true;
         public string SortLabel => _sortAsc ? "А→Я" : "Я→А";
@@ -33,9 +27,11 @@ namespace MyGameApp.ViewModels
         public ClientsViewModel()
         {
             ToggleSortCommand = new RelayCommand(ToggleSort);
-            AddClientCommand = new RelayCommand(OpenAddClient);
-            _ = InitializeAsync();
+            AddClientCommand = new RelayCommand(OpenAdd);
+            _ = ReloadAsync();
         }
+
+        partial void OnSearchTextChanged(string value) => UpdateList();
 
         private void ToggleSort()
         {
@@ -44,23 +40,24 @@ namespace MyGameApp.ViewModels
             UpdateList();
         }
 
-        private void OpenAddClient() { /* заглушка */ }
+        private void OpenAdd()
+        {
+            AddForm = new AddClientViewModel(this);
+            IsAddOpen = true;
+        }
 
         private void UpdateList()
         {
-            var query = _allClients
-                .Where(c => c.LastName != null &&
-                            c.LastName.ToLower().Contains(SearchText.ToLower()));
-            query = _sortAsc
-                ? query.OrderBy(c => c.LastName)
-                : query.OrderByDescending(c => c.LastName);
-
+            var q = _allClients.Where(c =>
+                string.IsNullOrWhiteSpace(SearchText) ||
+                (c.LastName != null && c.LastName.Contains(SearchText, System.StringComparison.OrdinalIgnoreCase)) ||
+                (c.Phone != null && c.Phone.Contains(SearchText)));
+            q = _sortAsc ? q.OrderBy(c => c.LastName) : q.OrderByDescending(c => c.LastName);
             Clients.Clear();
-            foreach (var item in query)
-                Clients.Add(item);
+            foreach (var item in q) Clients.Add(item);
         }
 
-        private async Task InitializeAsync()
+        public async Task ReloadAsync()
         {
             using var db = new VetpetContext();
             _allClients = await db.Clients.AsNoTracking().ToListAsync();
