@@ -6,7 +6,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.EntityFrameworkCore;
 using MyGameApp.Models;
-
+ 
 namespace MyGameApp.ViewModels
 {
     public partial class StaffViewModel : ViewModelBase
@@ -18,10 +18,16 @@ namespace MyGameApp.ViewModels
         [ObservableProperty] private bool _isAddOpen = false;
         [ObservableProperty] private AddStaffViewModel? _addForm;
 
+
+        private bool _sortAsc = true;
+        public string SortLabel => _sortAsc ? "А → Я" : "Я → А";
+
+        public IRelayCommand ToggleSortCommand { get; }
         public IRelayCommand AddStaffCommand { get; }
 
         public StaffViewModel()
         {
+            ToggleSortCommand = new RelayCommand(ToggleSort);
             AddStaffCommand = new RelayCommand(OpenAdd);
             _ = ReloadAsync();
         }
@@ -34,12 +40,19 @@ namespace MyGameApp.ViewModels
             IsAddOpen = true;
         }
 
+        private void ToggleSort()
+        {
+            _sortAsc = !_sortAsc;
+            OnPropertyChanged(nameof(SortLabel));
+            UpdateList();
+        }
         private void UpdateList()
         {
             var q = _allStaff.Where(s =>
                 string.IsNullOrWhiteSpace(SearchText) ||
                 (s.LastName != null && s.LastName.Contains(SearchText, System.StringComparison.OrdinalIgnoreCase)) ||
                 (s.Phone != null && s.Phone.Contains(SearchText)));
+            q = _sortAsc ? q.OrderBy(c => c.LastName) : q.OrderByDescending(c => c.LastName);
             StaffMembers.Clear();
             foreach (var item in q) StaffMembers.Add(item);
         }

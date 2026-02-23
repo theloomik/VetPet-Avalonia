@@ -10,8 +10,9 @@
             <TextBlock Grid.Row="0" Text="Клієнти"
                        Foreground="White" FontSize="26" FontWeight="Bold"
                        Margin="0,0,0,20"/>
+
             <Grid Grid.Row="1" ColumnDefinitions="*,10,Auto,10,Auto" Height="42" Margin="0,0,0,20">
-                <TextBox Grid.Column="0" Watermark="Пошук клієнта..."
+                <TextBox Grid.Column="0" Watermark="Пошук за номером телефону"
                          Classes="DarkInput" Text="{Binding SearchText}"/>
                 <Button Grid.Column="2" Width="60" Height="42"
                         Background="#3A3A3A" CornerRadius="10" BorderThickness="0"
@@ -24,6 +25,7 @@
                     <TextBlock Text="+ Новий" Foreground="White" FontWeight="SemiBold"/>
                 </Button>
             </Grid>
+
             <Grid Grid.Row="2" ColumnDefinitions="200,20,*,60" Margin="10,0,10,8">
                 <TextBlock Grid.Column="0" Text="ТЕЛЕФОН" Classes="Header"/>
                 <TextBlock Grid.Column="2" Text="ПРІЗВИЩЕ ТА ІМ'Я" Classes="Header"/>

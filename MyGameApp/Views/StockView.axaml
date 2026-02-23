@@ -10,16 +10,23 @@
             <TextBlock Grid.Row="0" Text="Склад"
                        Foreground="White" FontSize="26" FontWeight="Bold"
                        Margin="0,0,0,20"/>
-            <Grid Grid.Row="1" ColumnDefinitions="*,10,Auto" Height="42" Margin="0,0,0,20">
-                <TextBox Grid.Column="0" Watermark="Пошук препарату..."
+            <Grid Grid.Row="1" ColumnDefinitions="*,10,Auto,10,Auto" Height="42" Margin="0,0,0,20">
+
+                <TextBox Grid.Column="0" Watermark="Пошук за назвою"
                          Classes="DarkInput" Text="{Binding SearchText}"/>
-                <Button Grid.Column="2" Width="100" Height="42"
+                <Button Grid.Column="2" Width="60" Height="42"
+                        Background="#3A3A3A" CornerRadius="10" BorderThickness="0"
+                        Command="{Binding ToggleSortCommand}">
+                    <TextBlock Text="{Binding SortLabel}" Foreground="White" FontWeight="Bold"/>
+                </Button>
+                <Button Grid.Column="4" Width="100" Height="42"
                         Background="#3A3A3A" CornerRadius="10" BorderThickness="0"
                         Command="{Binding AddStockCommand}">
                     <TextBlock Text="+ Новий" Foreground="White" FontWeight="SemiBold"/>
                 </Button>
             </Grid>
-            <Grid Grid.Row="2" ColumnDefinitions="350,150,*,60" Margin="10,0,10,8">
+
+            <Grid Grid.Row="2" ColumnDefinitions="200,150,*,60" Margin="10,0,10,8">
                 <TextBlock Grid.Column="0" Text="НАЗВА ПРЕПАРАТУ" Classes="Header"/>
                 <TextBlock Grid.Column="1" Text="ЦІНА" Classes="Header"/>
                 <TextBlock Grid.Column="2" Text="КІЛЬКІСТЬ" Classes="Header"/>
@@ -29,7 +36,7 @@
                     <ItemsControl.ItemTemplate>
                         <DataTemplate DataType="models:Stock">
                             <StackPanel>
-                                <Grid ColumnDefinitions="350,150,*,60" Height="55"
+                                <Grid ColumnDefinitions="200,150,*,60" Height="55"
                                       Margin="10,0,10,0" VerticalAlignment="Center">
                                     <TextBlock Grid.Column="0" Text="{Binding Medicine.Name}"
                                                Foreground="#E0E0E0" FontWeight="SemiBold" VerticalAlignment="Center"/>
@@ -39,8 +46,8 @@
                                     <TextBlock Grid.Column="2"
                                                Text="{Binding Quantity, StringFormat='{}x{0}'}"
                                                Foreground="#A0A0A0" VerticalAlignment="Center"/>
-                                    <Button Grid.Column="3" Classes="ArrowBtn" Margin="0,0,5,0">
-                                        <TextBlock Text="→" Foreground="#BBBBBB" FontSize="18"/>
+                                    <Button Grid.Column="3" Classes="ArrowBtn" Margin="0,0,10,0">
+                                        <TextBlock Text="→" Foreground="#FFFFFF" FontSize="18"/>
                                     </Button>
                                 </Grid>
                                 <Border Height="1" Background="White" Opacity="0.05"/>

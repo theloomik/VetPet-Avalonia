@@ -1,3 +1,3 @@
 {
-  "avalonia.enablePreview": false
+    "editor.codeLens": false
 }

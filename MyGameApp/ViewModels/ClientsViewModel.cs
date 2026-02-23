@@ -17,9 +17,9 @@ namespace MyGameApp.ViewModels
         [ObservableProperty] private string _searchText = "";
         [ObservableProperty] private bool _isAddOpen = false;
         [ObservableProperty] private AddClientViewModel? _addForm;
-
+ 
         private bool _sortAsc = true;
-        public string SortLabel => _sortAsc ? "А→Я" : "Я→А";
+        public string SortLabel => _sortAsc ? "А → Я" : "Я → А";
 
         public IRelayCommand ToggleSortCommand { get; }
         public IRelayCommand AddClientCommand { get; }
@@ -30,7 +30,7 @@ namespace MyGameApp.ViewModels
             AddClientCommand = new RelayCommand(OpenAdd);
             _ = ReloadAsync();
         }
-
+ 
         partial void OnSearchTextChanged(string value) => UpdateList();
 
         private void ToggleSort()

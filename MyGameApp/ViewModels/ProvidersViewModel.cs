@@ -18,12 +18,24 @@ namespace MyGameApp.ViewModels
         [ObservableProperty] private bool _isAddOpen = false;
         [ObservableProperty] private AddProviderViewModel? _addForm;
 
+        private bool _sortAsc = true;
+        public string SortLabel => _sortAsc ? "А → Я" : "Я → А";
+
+        public IRelayCommand ToggleSortCommand { get; }
         public IRelayCommand AddProviderCommand { get; }
 
         public ProvidersViewModel()
         {
+            ToggleSortCommand = new RelayCommand(ToggleSort);
             AddProviderCommand = new RelayCommand(OpenAdd);
             _ = ReloadAsync();
+        }
+
+        private void ToggleSort()
+        {
+            _sortAsc = !_sortAsc;
+            OnPropertyChanged(nameof(SortLabel));
+            UpdateList();
         }
 
         partial void OnSearchTextChanged(string value) => UpdateList();
@@ -39,6 +51,7 @@ namespace MyGameApp.ViewModels
             var q = _allProviders.Where(p =>
                 string.IsNullOrWhiteSpace(SearchText) ||
                 (p.Name != null && p.Name.Contains(SearchText, System.StringComparison.OrdinalIgnoreCase)));
+            q = _sortAsc ? q.OrderBy(c => c.Name) : q.OrderByDescending(c => c.Name);
             Providers.Clear();
             foreach (var item in q) Providers.Add(item);
         }

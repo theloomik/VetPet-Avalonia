@@ -6,20 +6,18 @@
              x:DataType="vm:AppointmentsViewModel">
 
     <Grid RowDefinitions="Auto,Auto,Auto,*" Margin="30,25">
+        <TextBlock Grid.Row="0" Text="Записи"
+                   Foreground="White" FontSize="26" FontWeight="Bold" Margin="0,0,0,20"/>
 
-        <TextBlock Grid.Row="0"
-                   Text="Записи"
-                   Foreground="White"
-                   FontSize="26"
-                   FontWeight="Bold"
-                   Margin="0,0,0,20"/>
-
-        <TextBox Grid.Row="1"
-                 Watermark="Пошук по телефону клієнта..."
-                 Classes="DarkInput"
-                 Height="42"
-                 Text="{Binding SearchText}"
-                 Margin="0,0,0,20"/>
+            <Grid Grid.Row="1" ColumnDefinitions="*,10,Auto,10,Auto" Height="42" Margin="0,0,0,20">
+                <TextBox Grid.Column="0" Watermark="Пошук за номером телефону"
+                         Classes="DarkInput" Text="{Binding SearchText}"/>
+                <Button Grid.Column="2" Width="75" Height="42"
+                        Background="#3A3A3A" CornerRadius="10" BorderThickness="0"
+                        Command="{Binding ToggleSortCommand}">
+                    <TextBlock Text="{Binding SortLabel}" Foreground="White" FontWeight="Bold"/>
+                </Button>
+            </Grid>
 
         <Grid Grid.Row="2" ColumnDefinitions="170,180,*,60" Margin="10,0,10,8">
             <TextBlock Grid.Column="0" Text="ДАТА ТА ЧАС"      Classes="Header"/>
@@ -36,7 +34,7 @@
                                   Height="55" Margin="10,0,10,0"
                                   VerticalAlignment="Center">
                                 <TextBlock Grid.Column="0"
-                                           Text="{Binding Date, StringFormat='{}{0:dd.MM HH:mm}'}"
+                                           Text="{Binding Date, StringFormat='{}{0:dd.MM.yyyy HH:mm}'}"
                                            Foreground="#E0E0E0"
                                            VerticalAlignment="Center"/>
                                 <TextBlock Grid.Column="1"
@@ -50,7 +48,7 @@
                                 <Button Grid.Column="3"
                                         Classes="ArrowBtn"
                                         Margin="0,0,5,0">
-                                    <TextBlock Text="→" Foreground="#BBBBBB" FontSize="18"/>
+                                    <TextBlock Text="→" Foreground="#FFFFFF" FontSize="18"/>
                                 </Button>
                             </Grid>
                             <Border Height="1" Background="White" Opacity="0.05"/>

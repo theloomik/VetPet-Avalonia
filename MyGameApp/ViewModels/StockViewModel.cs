@@ -18,15 +18,28 @@ namespace MyGameApp.ViewModels
         [ObservableProperty] private bool _isAddOpen = false;
         [ObservableProperty] private AddStockViewModel? _addForm;
 
+        private bool _sortAsc = true;
+        public string SortLabel => _sortAsc ? "А → Я" : "Я → А";
+
+        public IRelayCommand ToggleSortCommand { get; }
+
         public IRelayCommand AddStockCommand { get; }
 
         public StockViewModel()
         {
+            ToggleSortCommand = new RelayCommand(ToggleSort);
             AddStockCommand = new RelayCommand(OpenAdd);
             _ = ReloadAsync();
         }
 
         partial void OnSearchTextChanged(string value) => UpdateList();
+
+        private void ToggleSort()
+        {
+            _sortAsc = !_sortAsc;
+            OnPropertyChanged(nameof(SortLabel));
+            UpdateList();
+        }
 
         private void OpenAdd()
         {
@@ -39,6 +52,7 @@ namespace MyGameApp.ViewModels
             var q = _allStock.Where(s =>
                 string.IsNullOrWhiteSpace(SearchText) ||
                 (s.Medicine?.Name != null && s.Medicine.Name.Contains(SearchText, System.StringComparison.OrdinalIgnoreCase)));
+            q = _sortAsc ? q.OrderBy(c => c.Medicine?.Name) : q.OrderByDescending(c => c.Medicine?.Name);
             Stocks.Clear();
             foreach (var item in q) Stocks.Add(item);
         }
