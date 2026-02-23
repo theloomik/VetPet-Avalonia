@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
 namespace MyGameApp.ViewModels
@@ -28,6 +28,13 @@ namespace MyGameApp.ViewModels
                 4 => new StockViewModel(),
                 _ => new ClientsViewModel()
             };
+        }
+
+        [RelayCommand]
+        public void OpenClientDetails(MyGameApp.Models.Client client)
+        {
+            // Передаємо себе (mainVm) щоб ClientDetailsViewModel міг зробити GoBack
+            CurrentViewModel = new ClientDetailsViewModel(client, this);
         }
     }
 }

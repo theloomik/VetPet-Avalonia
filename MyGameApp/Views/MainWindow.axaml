@@ -87,6 +87,9 @@
         <DataTemplate DataType="vm:StockViewModel">
             <views:StockView/>
         </DataTemplate>
+        <DataTemplate DataType="vm:ClientDetailsViewModel">
+            <views:ClientDetailsView/>
+        </DataTemplate>
     </Window.DataTemplates>
 
     <Grid ColumnDefinitions="260,*" Margin="15">

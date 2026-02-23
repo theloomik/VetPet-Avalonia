@@ -47,7 +47,13 @@
                                                    FontSize="15" FontWeight="Medium"/>
                                         <TextBlock Text="{Binding FirstName}" Foreground="#999999" FontSize="13"/>
                                     </StackPanel>
-                                    <Button Grid.Column="5"  VerticalAlignment="Center" Classes="ArrowBtn" Margin="0,0,5,0">
+                                    <Button Grid.Column="5" 
+                                            VerticalAlignment="Center" 
+                                            Classes="ArrowBtn" 
+                                            Margin="0,0,5,0"
+                                            x:CompileBindings="False"
+                                            Command="{Binding $parent[Window].DataContext.OpenClientDetailsCommand}"
+                                            CommandParameter="{Binding}">
                                         <TextBlock Text="→" Foreground="#FFFFFF" FontSize="18"/>
                                     </Button>
                                 </Grid>
