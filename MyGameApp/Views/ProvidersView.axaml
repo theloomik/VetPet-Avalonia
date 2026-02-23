@@ -26,24 +26,25 @@
                 </Button>
             </Grid>
 
-            <Grid Grid.Row="2" ColumnDefinitions="200,20,*,60" Margin="10,0,10,8">
-                <TextBlock Grid.Column="0" Text="ТЕЛЕФОН" Classes="Header"/>
-                <TextBlock Grid.Column="2" Text="НАЗВА / ПРЕДСТАВНИК" Classes="Header"/>
+            <Grid Grid.Row="2" ColumnDefinitions="150,20,200,*,60" Margin="10,0,10,8">
+                <TextBlock Grid.Column="0" Text="ТЕЛЕФОН" Classes="Header" HorizontalAlignment="Center"/>
+                <TextBlock Grid.Column="2" Text="НАЗВА / ПРЕДСТАВНИК" Classes="Header" HorizontalAlignment="Center"/>
             </Grid>
+
             <ScrollViewer Grid.Row="3" HorizontalScrollBarVisibility="Disabled">
                 <ItemsControl ItemsSource="{Binding Providers}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate DataType="models:Provider">
                             <StackPanel>
-                                <Grid ColumnDefinitions="200,20,*,60" Height="55"
+                                <Grid ColumnDefinitions="150,20,35,200,*,60" Height="55"
                                       Margin="10,0,10,0" VerticalAlignment="Center">
                                     <TextBlock Grid.Column="0" Text="{Binding Phone}"
-                                               Foreground="#E0E0E0" FontSize="15" VerticalAlignment="Center"/>
+                                               Foreground="#E0E0E0" FontSize="15" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                                     <Border Grid.Column="1" Width="1" Background="White"
                                             Opacity="0.08" Margin="0,12" HorizontalAlignment="Center"/>
-                                    <TextBlock Grid.Column="2" Text="{Binding Name}"
+                                    <TextBlock Grid.Column="3" Text="{Binding Name}"
                                                Foreground="#E0E0E0" VerticalAlignment="Center"/>
-                                    <Button Grid.Column="3" Classes="ArrowBtn" Margin="0,0,5,0">
+                                    <Button Grid.Column="5" Classes="ArrowBtn" Margin="0,0,5,0">
                                         <TextBlock Text="→" Foreground="#FFFFFF" FontSize="18"/>
                                     </Button>
                                 </Grid>

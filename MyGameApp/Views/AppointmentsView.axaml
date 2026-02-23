@@ -19,7 +19,7 @@
                 </Button>
             </Grid>
 
-        <Grid Grid.Row="2" ColumnDefinitions="170,10,170,10,170,*,60" Margin="10,0,10,8">
+        <Grid Grid.Row="2" ColumnDefinitions="150,10,150,10,150,*,60" Margin="10,0,10,8">
             <TextBlock Grid.Column="0" Text="ДАТА ТА ЧАС"      Classes="Header" HorizontalAlignment="Center"/>
             <TextBlock Grid.Column="2" Text="ТЕЛЕФОН КЛІЄНТА"  Classes="Header" HorizontalAlignment="Center"/>
             <TextBlock Grid.Column="4" Text="ТВАРИНА"          Classes="Header" HorizontalAlignment="Center"/>
@@ -30,7 +30,7 @@
                 <ItemsControl.ItemTemplate>
                     <DataTemplate DataType="models:Appointment">
                         <StackPanel>
-                            <Grid ColumnDefinitions="170,10,170,10,170,*,60"
+                            <Grid ColumnDefinitions="150,10,150,10,150,*,60"
                                   Height="55" Margin="10,0,10,0"
                                   VerticalAlignment="Center">
                                 <TextBlock Grid.Column="0"
