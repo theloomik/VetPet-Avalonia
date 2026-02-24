@@ -9,6 +9,7 @@
         <vm:EqualityToBoolConverter x:Key="IsTab0" Expected="0"/>
         <vm:EqualityToBoolConverter x:Key="IsTab1" Expected="1"/>
         <vm:EqualityToBoolConverter x:Key="IsTab2" Expected="2"/>
+        <vm:CountToBoolConverter x:Key="HasItems"/>
     </UserControl.Resources>
 
     <Panel>
@@ -84,8 +85,8 @@
                     <TextBlock Text="У клієнта ще немає тварин"
                                Foreground="#888888" FontSize="14"
                                HorizontalAlignment="Center" VerticalAlignment="Center"
-                               IsVisible="{Binding Pets.Count, Converter={x:Static ObjectConverters.IsZero}}"/>
-                    <ScrollViewer IsVisible="{Binding Pets.Count, Converter={x:Static ObjectConverters.IsNotZero}}">
+                               IsVisible="{Binding Pets.Count, Converter={StaticResource HasItems}, ConverterParameter=invert}"/>
+                    <ScrollViewer IsVisible="{Binding Pets.Count, Converter={StaticResource HasItems}}">
                         <ItemsControl ItemsSource="{Binding Pets}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate DataType="models:Pet">
@@ -109,8 +110,8 @@
                     <TextBlock Text="У клієнта ще немає записів"
                                Foreground="#888888" FontSize="14"
                                HorizontalAlignment="Center" VerticalAlignment="Center"
-                               IsVisible="{Binding Appointments.Count, Converter={x:Static ObjectConverters.IsZero}}"/>
-                    <ScrollViewer IsVisible="{Binding Appointments.Count, Converter={x:Static ObjectConverters.IsNotZero}}">
+                               IsVisible="{Binding Appointments.Count, Converter={StaticResource HasItems}, ConverterParameter=invert}"/>
+                    <ScrollViewer IsVisible="{Binding Appointments.Count, Converter={StaticResource HasItems}}">
                         <ItemsControl ItemsSource="{Binding Appointments}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate DataType="vm:AppointmentRow">
@@ -137,8 +138,8 @@
                     <TextBlock Text="У клієнта ще немає рахунків"
                                Foreground="#888888" FontSize="14"
                                HorizontalAlignment="Center" VerticalAlignment="Center"
-                               IsVisible="{Binding Bills.Count, Converter={x:Static ObjectConverters.IsZero}}"/>
-                    <ScrollViewer IsVisible="{Binding Bills.Count, Converter={x:Static ObjectConverters.IsNotZero}}">
+                               IsVisible="{Binding Bills.Count, Converter={StaticResource HasItems}, ConverterParameter=invert}"/>
+                    <ScrollViewer IsVisible="{Binding Bills.Count, Converter={StaticResource HasItems}}">
                         <ItemsControl ItemsSource="{Binding Bills}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate DataType="vm:BillRow">
