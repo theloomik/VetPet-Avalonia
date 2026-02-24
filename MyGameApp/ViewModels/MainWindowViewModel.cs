@@ -1,3 +1,4 @@
+using System;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
@@ -33,7 +34,11 @@ namespace MyGameApp.ViewModels
         [RelayCommand]
         public void OpenClientDetails(MyGameApp.Models.Client? client)
         {
-            if (client == null || client.Id == 0) return;
+            if (client == null)
+                throw new ArgumentNullException(nameof(client));
+
+            if (client.Id <= 0)
+                return;
             CurrentViewModel = new ClientDetailsViewModel(client, this);
         }
     }
