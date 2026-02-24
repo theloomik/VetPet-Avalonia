@@ -31,9 +31,9 @@ namespace MyGameApp.ViewModels
         }
 
         [RelayCommand]
-        public void OpenClientDetails(MyGameApp.Models.Client client)
+        public void OpenClientDetails(MyGameApp.Models.Client? client)
         {
-
+            if (client == null || client.Id == 0) return;
             CurrentViewModel = new ClientDetailsViewModel(client, this);
         }
     }

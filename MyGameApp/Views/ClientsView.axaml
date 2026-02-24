@@ -1,10 +1,10 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:vm="using:MyGameApp.ViewModels"
-             xmlns:models="using:MyGameApp.Models"
+             xmlns:vm="clr-namespace:MyGameApp.ViewModels"
+             xmlns:models="clr-namespace:MyGameApp.Models"
              x:Class="MyGameApp.Views.ClientsView"
-             x:DataType="vm:ClientsViewModel"
-             x:Name="Root">
+             x:DataType="vm:ClientsViewModel">
+
     <Panel>
         <Grid RowDefinitions="Auto,Auto,Auto,*" Margin="30,25"
               IsEnabled="{Binding !IsAddOpen}">
@@ -49,10 +49,9 @@
                                         <TextBlock Text="{Binding FirstName}" Foreground="#999999" FontSize="13"/>
                                     </StackPanel>
                                     <Button Grid.Column="5" 
-                                            VerticalAlignment="Center" 
                                             Classes="ArrowBtn" 
-                                            Margin="0,0,5,0"
-                                            Click="OnDetailsClick">
+                                            Command="{Binding $parent[UserControl].((vm:ClientsViewModel)DataContext).GoToDetailsCommand}"
+                                            CommandParameter="{Binding}">
                                         <TextBlock Text="→" Foreground="#FFFFFF" FontSize="18"/>
                                     </Button>
                                 </Grid>

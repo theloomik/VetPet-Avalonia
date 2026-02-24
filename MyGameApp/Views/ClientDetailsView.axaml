@@ -11,16 +11,11 @@
         <vm:EqualityToBoolConverter x:Key="IsTab2" Expected="2"/>
     </UserControl.Resources>
 
-    <Grid RowDefinitions="Auto,Auto,Auto,*" Margin="30,25" Background="Transparent">
-
+    <Grid RowDefinitions="Auto,Auto,Auto,*" Margin="30,25">
         <Grid Grid.Row="0" ColumnDefinitions="42,*,Auto" Margin="0,0,0,22">
-            <Button Grid.Column="0" Width="42" Height="42"
-                    Background="#3A3A3A" CornerRadius="10"
-                    Command="{Binding GoBackCommand}">
-                <TextBlock Text="←" Foreground="White" FontSize="18" 
-                           HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            <Button Grid.Column="0" Width="42" Height="42" Background="#3A3A3A" CornerRadius="10" Command="{Binding GoBackCommand}">
+                <TextBlock Text="←" Foreground="White" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center"/>
             </Button>
-
             <StackPanel Grid.Column="1" Margin="16,0,0,0" VerticalAlignment="Center">
                 <TextBlock FontSize="22" FontWeight="Bold" Foreground="White">
                     <TextBlock.Text>
@@ -30,65 +25,80 @@
                         </MultiBinding>
                     </TextBlock.Text>
                 </TextBlock>
-                <StackPanel Orientation="Horizontal" Spacing="14">
-                    <TextBlock Text="{Binding SelectedClient.Phone}" Foreground="#888888" FontSize="13"/>
-                    <TextBlock Text="{Binding SelectedClient.Email}" Foreground="#888888" FontSize="13"
-                               IsVisible="{Binding SelectedClient.Email, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
-                </StackPanel>
+                <TextBlock Text="{Binding SelectedClient.Phone}" Foreground="#888888" FontSize="13"/>
             </StackPanel>
-
-            <Button Grid.Column="2" Height="42" Padding="18,0"
-                    Background="#3A3A3A" CornerRadius="10"
-                    Command="{Binding StartEditCommand}">
+            <Button Grid.Column="2" Height="42" Padding="18,0" Background="#3A3A3A" CornerRadius="10" Command="{Binding StartEditCommand}">
                 <TextBlock Text="✏ Редагувати" Foreground="White" FontWeight="SemiBold"/>
             </Button>
         </Grid>
 
         <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="6" Margin="0,0,0,16">
-            <Button Height="38" Padding="20,0" CornerRadius="10"
-                    Command="{Binding SetTabCommand}" CommandParameter="0"
-                    Background="{Binding ActiveTab, Converter={StaticResource IsTab0}, ConverterParameter=bg}">
-                <TextBlock Text="🐾 Тварини" FontWeight="SemiBold"
-                           Foreground="{Binding ActiveTab, Converter={StaticResource IsTab0}, ConverterParameter=fg}"/>
+            <Button Command="{Binding SetTabCommand}" CommandParameter="0" Background="{Binding ActiveTab, Converter={StaticResource IsTab0}, ConverterParameter=bg}">
+                <TextBlock Text="🐾 Тварини" Foreground="{Binding ActiveTab, Converter={StaticResource IsTab0}, ConverterParameter=fg}"/>
             </Button>
-            <Button Height="38" Padding="20,0" CornerRadius="10"
-                    Command="{Binding SetTabCommand}" CommandParameter="1"
-                    Background="{Binding ActiveTab, Converter={StaticResource IsTab1}, ConverterParameter=bg}">
-                <TextBlock Text="📅 Записи" FontWeight="SemiBold"
-                           Foreground="{Binding ActiveTab, Converter={StaticResource IsTab1}, ConverterParameter=fg}"/>
+            <Button Command="{Binding SetTabCommand}" CommandParameter="1" Background="{Binding ActiveTab, Converter={StaticResource IsTab1}, ConverterParameter=bg}">
+                <TextBlock Text="📅 Записи" Foreground="{Binding ActiveTab, Converter={StaticResource IsTab1}, ConverterParameter=fg}"/>
             </Button>
-            <Button Height="38" Padding="20,0" CornerRadius="10"
-                    Command="{Binding SetTabCommand}" CommandParameter="2"
-                    Background="{Binding ActiveTab, Converter={StaticResource IsTab2}, ConverterParameter=bg}">
-                <TextBlock Text="💳 Рахунки" FontWeight="SemiBold"
-                           Foreground="{Binding ActiveTab, Converter={StaticResource IsTab2}, ConverterParameter=fg}"/>
+            <Button Command="{Binding SetTabCommand}" CommandParameter="2" Background="{Binding ActiveTab, Converter={StaticResource IsTab2}, ConverterParameter=bg}">
+                <TextBlock Text="💳 Рахунки" Foreground="{Binding ActiveTab, Converter={StaticResource IsTab2}, ConverterParameter=fg}"/>
             </Button>
         </StackPanel>
 
         <Border Grid.Row="2" Height="1" Background="White" Opacity="0.07" Margin="0,0,0,14"/>
 
         <Panel Grid.Row="3">
-            <Grid IsVisible="{Binding ActiveTab, Converter={StaticResource IsTab0}}">
-                <ScrollViewer>
-                    <ItemsControl ItemsSource="{Binding Pets}">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate DataType="models:Pet">
-                                <Border Padding="10" BorderBrush="White" BorderThickness="0,0,0,1" Opacity="0.8">
-                                    <Grid ColumnDefinitions="*,150,130">
-                                        <StackPanel Grid.Column="0">
-                                            <TextBlock Text="{Binding Name}" Foreground="White" FontSize="15" FontWeight="Medium"/>
-                                            <TextBlock Text="{Binding Gender}" Foreground="#888888" FontSize="12"/>
-                                        </StackPanel>
-                                        <TextBlock Grid.Column="1" Text="{Binding PetType.Species}" Foreground="#AAAAAA" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                                        <TextBlock Grid.Column="2" Text="{Binding BirthDate, StringFormat='{}{0:dd.MM.yyyy}'}" Foreground="#AAAAAA" VerticalAlignment="Center" HorizontalAlignment="Right"/>
-                                    </Grid>
-                                </Border>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                </ScrollViewer>
-            </Grid>
+            <ScrollViewer IsVisible="{Binding ActiveTab, Converter={StaticResource IsTab0}}">
+                <ItemsControl ItemsSource="{Binding Pets}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate DataType="models:Pet">
+                            <Border Padding="10" BorderBrush="White" BorderThickness="0,0,0,1" Opacity="0.8">
+                                <Grid ColumnDefinitions="*,150,130">
+                                    <TextBlock Grid.Column="0" Text="{Binding Name}" Foreground="White" FontSize="15"/>
+                                    <TextBlock Grid.Column="1" Text="{Binding PetType.Species}" Foreground="#AAAAAA" HorizontalAlignment="Center"/>
+                                    <TextBlock Grid.Column="2" Text="{Binding BirthDate, StringFormat='{}{0:dd.MM.yyyy}'}" Foreground="#AAAAAA" HorizontalAlignment="Right"/>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
 
-            </Panel>
+            <ScrollViewer IsVisible="{Binding ActiveTab, Converter={StaticResource IsTab1}}">
+                <ItemsControl ItemsSource="{Binding Appointments}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate DataType="vm:AppointmentRow">
+                            <Border Padding="10" BorderBrush="White" BorderThickness="0,0,0,1" Opacity="0.8">
+                                <Grid ColumnDefinitions="130,*,160,110">
+                                    <TextBlock Grid.Column="0" Text="{Binding Date}" Foreground="#AAAAAA"/>
+                                    <TextBlock Grid.Column="1" Text="{Binding ServiceName}" Foreground="White" HorizontalAlignment="Center"/>
+                                    <TextBlock Grid.Column="2" Text="{Binding StaffName}" Foreground="#AAAAAA" HorizontalAlignment="Center"/>
+                                    <Border Grid.Column="3" Background="{Binding StatusColor}" CornerRadius="4" Padding="5,2">
+                                        <TextBlock Text="{Binding Status}" Foreground="White" FontSize="12" HorizontalAlignment="Center"/>
+                                    </Border>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+
+            <ScrollViewer IsVisible="{Binding ActiveTab, Converter={StaticResource IsTab2}}">
+                <ItemsControl ItemsSource="{Binding Bills}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate DataType="vm:BillRow">
+                            <Border Padding="10" BorderBrush="White" BorderThickness="0,0,0,1" Opacity="0.8">
+                                <Grid ColumnDefinitions="180,*,160">
+                                    <TextBlock Grid.Column="0" Text="{Binding Date}" Foreground="#AAAAAA"/>
+                                    <TextBlock Grid.Column="1" Text="{Binding Amount}" Foreground="White" FontWeight="Bold" HorizontalAlignment="Center"/>
+                                    <Border Grid.Column="2" Background="{Binding PaidColor}" CornerRadius="4" Padding="5,2" HorizontalAlignment="Right">
+                                        <TextBlock Text="{Binding Paid}" Foreground="White" FontSize="12"/>
+                                    </Border>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+        </Panel>
     </Grid>
 </UserControl>

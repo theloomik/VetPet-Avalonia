@@ -138,7 +138,6 @@
                         </Border>
                     </StackPanel>
 
-                    <!-- Графік - дні тижня -->
                     <StackPanel Spacing="8">
                         <TextBlock Text="РОБОЧІ ДНІ" Classes="Header"/>
                         <WrapPanel>
