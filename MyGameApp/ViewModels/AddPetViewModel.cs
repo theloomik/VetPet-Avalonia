@@ -16,20 +16,29 @@ namespace MyGameApp.ViewModels
         private List<PetType> _allPetTypes = new();
 
         [ObservableProperty] private string _name = "";
-        [ObservableProperty] private string? _birthDate;
         [ObservableProperty] private string? _selectedGender;
         [ObservableProperty] private string? _selectedSpecies;
         [ObservableProperty] private string? _selectedBreed;
-        [ObservableProperty] private string? _newSpeciesName;
+        [ObservableProperty] private string _newSpeciesName = "";
+        [ObservableProperty] private string _newBreedName = "";
+        [ObservableProperty] private bool _isAddingSpecies;
+        [ObservableProperty] private bool _isAddingBreed;
+        [ObservableProperty] private int? _selectedBirthDay;
+        [ObservableProperty] private int? _selectedBirthMonth;
+        [ObservableProperty] private int? _selectedBirthYear;
         [ObservableProperty] private string? _errorMessage;
 
         public ObservableCollection<string> SpeciesOptions { get; } = new();
         public ObservableCollection<string> BreedOptions { get; } = new();
         public ObservableCollection<string> Genders { get; } = new() { "Самець", "Самка" };
+        public ObservableCollection<int> BirthDays { get; } = new();
+        public ObservableCollection<int> BirthMonths { get; } = new();
+        public ObservableCollection<int> BirthYears { get; } = new();
 
         public AddPetViewModel(ClientDetailsViewModel parent)
         {
             _parent = parent;
+            SeedDateOptions();
             _ = LoadPetTypesAsync();
             SelectedGender = Genders[0];
         }
@@ -37,6 +46,23 @@ namespace MyGameApp.ViewModels
         partial void OnSelectedSpeciesChanged(string? value)
         {
             ReloadBreedsForSpecies(value);
+            IsAddingBreed = false;
+            NewBreedName = string.Empty;
+        }
+
+        private void SeedDateOptions()
+        {
+            BirthDays.Clear();
+            for (var i = 1; i <= 31; i++)
+                BirthDays.Add(i);
+
+            BirthMonths.Clear();
+            for (var i = 1; i <= 12; i++)
+                BirthMonths.Add(i);
+
+            BirthYears.Clear();
+            for (var year = 2026; year >= 1950; year--)
+                BirthYears.Add(year);
         }
 
         private async Task LoadPetTypesAsync()
@@ -86,7 +112,22 @@ namespace MyGameApp.ViewModels
         }
 
         [RelayCommand]
-        private async Task AddSpecies()
+        private void ShowAddSpecies()
+        {
+            NewSpeciesName = string.Empty;
+            ErrorMessage = null;
+            IsAddingSpecies = true;
+        }
+
+        [RelayCommand]
+        private void CancelAddSpecies()
+        {
+            IsAddingSpecies = false;
+            NewSpeciesName = string.Empty;
+        }
+
+        [RelayCommand]
+        private void SaveSpecies()
         {
             var newSpecies = NewSpeciesName?.Trim();
             if (string.IsNullOrWhiteSpace(newSpecies))
@@ -110,9 +151,65 @@ namespace MyGameApp.ViewModels
                 SelectedSpecies = existing;
             }
 
+            IsAddingSpecies = false;
             NewSpeciesName = string.Empty;
             ErrorMessage = null;
-            await Task.CompletedTask;
+        }
+
+        [RelayCommand]
+        private void ShowAddBreed()
+        {
+            if (string.IsNullOrWhiteSpace(SelectedSpecies))
+            {
+                ErrorMessage = "Спочатку оберіть вид";
+                return;
+            }
+
+            NewBreedName = string.Empty;
+            ErrorMessage = null;
+            IsAddingBreed = true;
+        }
+
+        [RelayCommand]
+        private void CancelAddBreed()
+        {
+            IsAddingBreed = false;
+            NewBreedName = string.Empty;
+        }
+
+        [RelayCommand]
+        private void SaveBreed()
+        {
+            var newBreed = NewBreedName?.Trim();
+            if (string.IsNullOrWhiteSpace(newBreed))
+            {
+                ErrorMessage = "Вкажіть назву породи";
+                return;
+            }
+
+            var existing = BreedOptions.FirstOrDefault(b => string.Equals(b, newBreed, StringComparison.OrdinalIgnoreCase));
+            if (existing == null)
+            {
+                BreedOptions.Add(newBreed);
+                var ordered = BreedOptions
+                    .Where(b => b != "(без породи)")
+                    .OrderBy(b => b)
+                    .ToList();
+
+                BreedOptions.Clear();
+                BreedOptions.Add("(без породи)");
+                foreach (var item in ordered)
+                    BreedOptions.Add(item);
+                SelectedBreed = newBreed;
+            }
+            else
+            {
+                SelectedBreed = existing;
+            }
+
+            IsAddingBreed = false;
+            NewBreedName = string.Empty;
+            ErrorMessage = null;
         }
 
         [RelayCommand]
@@ -133,15 +230,20 @@ namespace MyGameApp.ViewModels
             }
 
             DateOnly? parsedDate = null;
-            if (!string.IsNullOrWhiteSpace(BirthDate))
+            if (SelectedBirthDay.HasValue || SelectedBirthMonth.HasValue || SelectedBirthYear.HasValue)
             {
-                if (DateOnly.TryParse(BirthDate, out var d))
-                    parsedDate = d;
-                else
+                if (!SelectedBirthDay.HasValue || !SelectedBirthMonth.HasValue || !SelectedBirthYear.HasValue)
                 {
-                    ErrorMessage = "Невірний формат дати (рррр-мм-дд)";
+                    ErrorMessage = "Оберіть день, місяць і рік або залиште дату порожньою";
                     return;
                 }
+
+                if (!DateOnly.TryParse($"{SelectedBirthYear:0000}-{SelectedBirthMonth:00}-{SelectedBirthDay:00}", out var date))
+                {
+                    ErrorMessage = "Невірна дата народження";
+                    return;
+                }
+                parsedDate = date;
             }
 
             var breed = string.Equals(SelectedBreed, "(без породи)", StringComparison.Ordinal)

@@ -134,34 +134,76 @@
 
         <Panel IsVisible="{Binding IsAddPetOpen}">
             <Border Background="#88000000"/>
-            <Border Width="420" Padding="28" Background="#2B2B2B" CornerRadius="14" HorizontalAlignment="Center" VerticalAlignment="Center" DataContext="{Binding AddPetForm}" x:DataType="vm:AddPetViewModel">
-                <StackPanel Spacing="12">
-                    <TextBlock Text="Нова тварина" FontSize="20" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center" Margin="0,0,0,6"/>
+            <Border Width="460" Padding="28" Background="#2B2B2B" CornerRadius="14" HorizontalAlignment="Center" VerticalAlignment="Center" DataContext="{Binding AddPetForm}" x:DataType="vm:AddPetViewModel">
+                <StackPanel Spacing="14">
+                    <TextBlock Text="Нова тварина" FontSize="20" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center" Margin="0,0,0,4"/>
                     <TextBox Watermark="Кличка *" Classes="DarkInput" Text="{Binding Name}" Height="42"/>
 
                     <StackPanel Spacing="6">
-                        <TextBlock Text="Вид тварини" Foreground="#AFAFAF" FontSize="12"/>
-                        <ComboBox ItemsSource="{Binding SpeciesOptions}" SelectedItem="{Binding SelectedSpecies}" Height="42"/>
-                        <Grid ColumnDefinitions="*,8,Auto">
-                            <TextBox Grid.Column="0" Watermark="Додати новий вид" Classes="DarkInput" Text="{Binding NewSpeciesName}" Height="42"/>
-                            <Button Grid.Column="2" Content="+ Додати" Height="42" Padding="14,0" Background="#3A3A3A" CornerRadius="10" BorderThickness="0" Foreground="White" Command="{Binding AddSpeciesCommand}"/>
+                        <TextBlock Text="ВИД ТВАРИНИ *" Classes="Header"/>
+                        <Grid ColumnDefinitions="*,8,Auto" IsVisible="{Binding !IsAddingSpecies}">
+                            <ComboBox Grid.Column="0" ItemsSource="{Binding SpeciesOptions}" SelectedItem="{Binding SelectedSpecies}" Height="42"
+                                      Background="#3A3A3A" BorderThickness="0" CornerRadius="10"/>
+                            <Button Grid.Column="2" Content="+ Вид" Height="42" Padding="14,0"
+                                    Background="#3A3A3A" CornerRadius="10" BorderThickness="0"
+                                    Foreground="White" FontWeight="SemiBold"
+                                    Command="{Binding ShowAddSpeciesCommand}"/>
+                        </Grid>
+
+                        <Border IsVisible="{Binding IsAddingSpecies}" Background="#252525" CornerRadius="10" Padding="12">
+                            <StackPanel Spacing="10">
+                                <TextBlock Text="Новий вид" Foreground="#CFCFCF" FontSize="12" FontWeight="SemiBold"/>
+                                <TextBox Watermark="Назва виду" Classes="DarkInput" Text="{Binding NewSpeciesName}" Height="40"/>
+                                <Grid ColumnDefinitions="*,8,*">
+                                    <Button Grid.Column="0" Content="Скасувати" Height="38" Background="#3A3A3A" CornerRadius="8" BorderThickness="0" Foreground="#AAAAAA" Command="{Binding CancelAddSpeciesCommand}"/>
+                                    <Button Grid.Column="2" Content="Зберегти" Height="38" Background="#4A7C59" CornerRadius="8" BorderThickness="0" Foreground="White" FontWeight="SemiBold" Command="{Binding SaveSpeciesCommand}"/>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+
+                    <StackPanel Spacing="6">
+                        <TextBlock Text="ПОРОДА" Classes="Header"/>
+                        <Grid ColumnDefinitions="*,8,Auto" IsVisible="{Binding !IsAddingBreed}">
+                            <ComboBox Grid.Column="0" ItemsSource="{Binding BreedOptions}" SelectedItem="{Binding SelectedBreed}" Height="42"
+                                      IsEnabled="{Binding SelectedSpecies, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                                      Background="#3A3A3A" BorderThickness="0" CornerRadius="10"/>
+                            <Button Grid.Column="2" Content="+ Порода" Height="42" Padding="14,0"
+                                    Background="#3A3A3A" CornerRadius="10" BorderThickness="0"
+                                    Foreground="White" FontWeight="SemiBold"
+                                    IsEnabled="{Binding SelectedSpecies, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                                    Command="{Binding ShowAddBreedCommand}"/>
+                        </Grid>
+
+                        <Border IsVisible="{Binding IsAddingBreed}" Background="#252525" CornerRadius="10" Padding="12">
+                            <StackPanel Spacing="10">
+                                <TextBlock Text="Нова порода" Foreground="#CFCFCF" FontSize="12" FontWeight="SemiBold"/>
+                                <TextBox Watermark="Назва породи" Classes="DarkInput" Text="{Binding NewBreedName}" Height="40"/>
+                                <Grid ColumnDefinitions="*,8,*">
+                                    <Button Grid.Column="0" Content="Скасувати" Height="38" Background="#3A3A3A" CornerRadius="8" BorderThickness="0" Foreground="#AAAAAA" Command="{Binding CancelAddBreedCommand}"/>
+                                    <Button Grid.Column="2" Content="Зберегти" Height="38" Background="#4A7C59" CornerRadius="8" BorderThickness="0" Foreground="White" FontWeight="SemiBold" Command="{Binding SaveBreedCommand}"/>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+
+                    <StackPanel Spacing="6">
+                        <TextBlock Text="ДАТА НАРОДЖЕННЯ" Classes="Header"/>
+                        <Grid ColumnDefinitions="*,8,*,8,*">
+                            <ComboBox Grid.Column="0" ItemsSource="{Binding BirthDays}" SelectedItem="{Binding SelectedBirthDay}" Watermark="День" Height="42" Background="#3A3A3A" BorderThickness="0" CornerRadius="10"/>
+                            <ComboBox Grid.Column="2" ItemsSource="{Binding BirthMonths}" SelectedItem="{Binding SelectedBirthMonth}" Watermark="Місяць" Height="42" Background="#3A3A3A" BorderThickness="0" CornerRadius="10"/>
+                            <ComboBox Grid.Column="4" ItemsSource="{Binding BirthYears}" SelectedItem="{Binding SelectedBirthYear}" Watermark="Рік" Height="42" Background="#3A3A3A" BorderThickness="0" CornerRadius="10"/>
                         </Grid>
                     </StackPanel>
 
                     <StackPanel Spacing="6">
-                        <TextBlock Text="Порода" Foreground="#AFAFAF" FontSize="12"/>
-                        <ComboBox ItemsSource="{Binding BreedOptions}" SelectedItem="{Binding SelectedBreed}" Height="42" IsEnabled="{Binding SelectedSpecies, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
-                    </StackPanel>
-
-                    <TextBox Watermark="Дата народження (рррр-мм-дд)" Classes="DarkInput" Text="{Binding BirthDate}" Height="42"/>
-
-                    <StackPanel Spacing="6">
-                        <TextBlock Text="Стать" Foreground="#AFAFAF" FontSize="12"/>
-                        <ComboBox ItemsSource="{Binding Genders}" SelectedItem="{Binding SelectedGender}" Height="42"/>
+                        <TextBlock Text="СТАТЬ" Classes="Header"/>
+                        <ComboBox ItemsSource="{Binding Genders}" SelectedItem="{Binding SelectedGender}" Height="42"
+                                  Background="#3A3A3A" BorderThickness="0" CornerRadius="10"/>
                     </StackPanel>
 
                     <TextBlock Text="{Binding ErrorMessage}" Foreground="#FF6B6B" IsVisible="{Binding ErrorMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" FontSize="13" HorizontalAlignment="Center"/>
-                    <Grid ColumnDefinitions="*,10,*" Margin="0,8,0,0">
+                    <Grid ColumnDefinitions="*,10,*" Margin="0,4,0,0">
                         <Button Grid.Column="0" Content="Скасувати" Height="42" Background="#3A3A3A" CornerRadius="10" BorderThickness="0" Foreground="#AAAAAA" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Command="{Binding CancelCommand}"/>
                         <Button Grid.Column="2" Content="Зберегти" Height="42" Background="#4A7C59" CornerRadius="10" BorderThickness="0" Foreground="White" FontWeight="SemiBold" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Command="{Binding SaveCommand}"/>
                     </Grid>
@@ -169,7 +211,7 @@
             </Border>
         </Panel>
 
-        <Panel IsVisible="{Binding IsEditMode}">
+<Panel IsVisible="{Binding IsEditMode}">
             <Border Background="#88000000"/>
             <Border Width="460" Padding="28" Background="#2B2B2B" CornerRadius="14" HorizontalAlignment="Center" VerticalAlignment="Center">
                 <StackPanel Spacing="14">
