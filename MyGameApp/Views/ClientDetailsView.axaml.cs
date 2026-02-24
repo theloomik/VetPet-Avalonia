@@ -1,6 +1,8 @@
+using Avalonia.Controls;
+
 namespace MyGameApp.Views
 {
-    public partial class ClientDetailsView : Avalonia.Controls.UserControl
+    public partial class ClientDetailsView : UserControl
     {
         public ClientDetailsView()
         {

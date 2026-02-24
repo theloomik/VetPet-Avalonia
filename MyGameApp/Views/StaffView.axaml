@@ -142,32 +142,29 @@
                     <StackPanel Spacing="8">
                         <TextBlock Text="РОБОЧІ ДНІ" Classes="Header"/>
                         <WrapPanel>
-                            <ToggleButton Margin="3"
-                                          Width="48" Height="36"
-                                          CornerRadius="8"
-                                          Content="Пн"/>
-
-                            <ToggleButton Width="48" Height="36" CornerRadius="8"
-                                          Content="Пн" IsChecked="{Binding DayMon}"
-                                          FontSize="13" FontWeight="SemiBold"/>
-                            <ToggleButton Width="48" Height="36" CornerRadius="8"
-                                          Content="Вт" IsChecked="{Binding DayTue}"
-                                          FontSize="13" FontWeight="SemiBold"/>
-                            <ToggleButton Width="48" Height="36" CornerRadius="8"
-                                          Content="Ср" IsChecked="{Binding DayWed}"
-                                          FontSize="13" FontWeight="SemiBold"/>
-                            <ToggleButton Width="48" Height="36" CornerRadius="8"
-                                          Content="Чт" IsChecked="{Binding DayThu}"
-                                          FontSize="13" FontWeight="SemiBold"/>
-                            <ToggleButton Width="48" Height="36" CornerRadius="8"
-                                          Content="Пт" IsChecked="{Binding DayFri}"
-                                          FontSize="13" FontWeight="SemiBold"/>
-                            <ToggleButton Width="48" Height="36" CornerRadius="8"
-                                          Content="Сб" IsChecked="{Binding DaySat}"
-                                          FontSize="13" FontWeight="SemiBold"/>
-                            <ToggleButton Width="48" Height="36" CornerRadius="8"
-                                          Content="Нд" IsChecked="{Binding DaySun}"
-                                          FontSize="13" FontWeight="SemiBold"/>
+                            <Grid ColumnDefinitions="58,58,58,58,58,58,58" Margin="5,0,5,0">
+                                <ToggleButton Grid.Column="0" Width="48" Height="36" CornerRadius="8"
+                                            Content="Пн" IsChecked="{Binding DayMon}"
+                                            FontSize="13" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                                <ToggleButton Grid.Column="1" Width="48" Height="36" CornerRadius="8"
+                                            Content="Вт" IsChecked="{Binding DayTue}"
+                                            FontSize="13" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                                <ToggleButton Grid.Column="2" Width="48" Height="36" CornerRadius="8"
+                                            Content="Ср" IsChecked="{Binding DayWed}"
+                                            FontSize="13" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                                <ToggleButton Grid.Column="3" Width="48" Height="36" CornerRadius="8"
+                                            Content="Чт" IsChecked="{Binding DayThu}"
+                                            FontSize="13" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                                <ToggleButton Grid.Column="4" Width="48" Height="36" CornerRadius="8"
+                                            Content="Пт" IsChecked="{Binding DayFri}"
+                                            FontSize="13" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                                <ToggleButton Grid.Column="5" Width="48" Height="36" CornerRadius="8"
+                                            Content="Сб" IsChecked="{Binding DaySat}"
+                                            FontSize="13" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                                <ToggleButton Grid.Column="6" Width="48" Height="36" CornerRadius="8"
+                                            Content="Нд" IsChecked="{Binding DaySun}"
+                                            FontSize="13" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                            </Grid>
                         </WrapPanel>
                     </StackPanel>
 

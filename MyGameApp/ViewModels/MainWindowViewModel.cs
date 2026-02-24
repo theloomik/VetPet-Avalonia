@@ -14,26 +14,26 @@ namespace MyGameApp.ViewModels
 
         public MainWindowViewModel()
         {
-            CurrentViewModel = new ClientsViewModel();
+            CurrentViewModel = new ClientsViewModel(this);
         }
 
         public void ChangeTab(int index)
         {
             CurrentViewModel = index switch
             {
-                0 => new ClientsViewModel(),
+                0 => new ClientsViewModel(this),
                 1 => new AppointmentsViewModel(),
                 2 => new StaffViewModel(),
                 3 => new ProvidersViewModel(),
                 4 => new StockViewModel(),
-                _ => new ClientsViewModel()
+                _ => new ClientsViewModel(this)
             };
         }
 
         [RelayCommand]
         public void OpenClientDetails(MyGameApp.Models.Client client)
         {
-            // Передаємо себе (mainVm) щоб ClientDetailsViewModel міг зробити GoBack
+
             CurrentViewModel = new ClientDetailsViewModel(client, this);
         }
     }

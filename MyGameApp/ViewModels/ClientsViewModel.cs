@@ -11,6 +11,8 @@ namespace MyGameApp.ViewModels
 {
     public partial class ClientsViewModel : ViewModelBase
     {
+        private readonly MainWindowViewModel _mainVm;
+
         private List<Client> _allClients = new();
         public ObservableCollection<Client> Clients { get; } = new();
 
@@ -24,11 +26,19 @@ namespace MyGameApp.ViewModels
         public IRelayCommand ToggleSortCommand { get; }
         public IRelayCommand AddClientCommand { get; }
 
-        public ClientsViewModel()
+
+        public ClientsViewModel(MainWindowViewModel mainVm)
         {
+            _mainVm = mainVm;
             ToggleSortCommand = new RelayCommand(ToggleSort);
             AddClientCommand = new RelayCommand(OpenAdd);
             _ = ReloadAsync();
+        }
+
+        [RelayCommand]
+        public void GoToDetails(Client client)
+        {
+            _mainVm.OpenClientDetails(client);
         }
  
         partial void OnSearchTextChanged(string value) => UpdateList();

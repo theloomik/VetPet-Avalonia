@@ -13,21 +13,15 @@ namespace MyGameApp.ViewModels
     {
         private readonly MainWindowViewModel _mainVm;
 
-        [ObservableProperty] private Client _selectedClient;
-        [ObservableProperty] private int _activeTab = 0; // 0=Тварини, 1=Записи, 2=Рахунки
+        [ObservableProperty] private Client _selectedClient = null!;
+        [ObservableProperty] private int _activeTab = 0;
 
-        // --- Тварини ---
         public ObservableCollection<Pet> Pets { get; } = new();
-        [ObservableProperty] private bool _isAddPetOpen = false;
-        [ObservableProperty] private AddPetViewModel? _addPetForm;
-
-        // --- Записи ---
         public ObservableCollection<AppointmentRow> Appointments { get; } = new();
-
-        // --- Рахунки ---
         public ObservableCollection<BillRow> Bills { get; } = new();
 
-        // --- Редагування клієнта ---
+        [ObservableProperty] private bool _isAddPetOpen = false;
+        [ObservableProperty] private AddPetViewModel? _addPetForm;
         [ObservableProperty] private bool _isEditMode = false;
         [ObservableProperty] private string _editFirstName = "";
         [ObservableProperty] private string _editLastName = "";
@@ -35,22 +29,23 @@ namespace MyGameApp.ViewModels
         [ObservableProperty] private string _editEmail = "";
         [ObservableProperty] private string? _editError;
 
-        public ClientDetailsViewModel(Client client, MainWindowViewModel mainVm)
+        public ClientDetailsViewModel(Client? client = null, MainWindowViewModel? mainVm = null)
         {
-            SelectedClient = client;
-            _mainVm = mainVm;
-            _ = LoadAllAsync();
+            _mainVm = mainVm!;
+            SelectedClient = client ?? new Client();
+            
+            if (client != null && client.Id > 0)
+            {
+                _ = LoadAllAsync();
+            }
         }
 
-        // ── Навігація назад ──────────────────────────────────────────────
         [RelayCommand]
-        private void GoBack() => _mainVm.CurrentViewModel = new ClientsViewModel();
+        private void GoBack() => _mainVm.CurrentViewModel = new ClientsViewModel(_mainVm);
 
-        // ── Вкладки ─────────────────────────────────────────────────────
         [RelayCommand]
         private void SetTab(int tab) => ActiveTab = tab;
 
-        // ── Завантаження ────────────────────────────────────────────────
         public async Task LoadAllAsync()
         {
             await LoadPetsAsync();
@@ -63,6 +58,7 @@ namespace MyGameApp.ViewModels
             using var db = new VetpetContext();
             var list = await db.Pets
                 .Where(p => p.ClientId == SelectedClient.Id)
+                .Include(p => p.PetType)
                 .AsNoTracking()
                 .ToListAsync();
             Pets.Clear();
@@ -81,8 +77,7 @@ namespace MyGameApp.ViewModels
                 .AsNoTracking()
                 .ToListAsync();
             Appointments.Clear();
-            foreach (var a in list)
-                Appointments.Add(new AppointmentRow(a));
+            foreach (var a in list) Appointments.Add(new AppointmentRow(a));
         }
 
         public async Task LoadBillsAsync()
@@ -95,11 +90,9 @@ namespace MyGameApp.ViewModels
                 .AsNoTracking()
                 .ToListAsync();
             Bills.Clear();
-            foreach (var b in list)
-                Bills.Add(new BillRow(b));
+            foreach (var b in list) Bills.Add(new BillRow(b));
         }
 
-        // ── Додати тварину ───────────────────────────────────────────────
         [RelayCommand]
         private void OpenAddPet()
         {
@@ -107,7 +100,6 @@ namespace MyGameApp.ViewModels
             IsAddPetOpen = true;
         }
 
-        // ── Редагування клієнта ──────────────────────────────────────────
         [RelayCommand]
         private void StartEdit()
         {
@@ -138,8 +130,6 @@ namespace MyGameApp.ViewModels
             client.Phone     = EditPhone.Trim();
             client.Email     = string.IsNullOrWhiteSpace(EditEmail) ? null : EditEmail.Trim();
             await db.SaveChangesAsync();
-
-            // Оновлюємо локальний об'єкт
             SelectedClient.FirstName = client.FirstName;
             SelectedClient.LastName  = client.LastName;
             SelectedClient.Phone     = client.Phone;
@@ -149,21 +139,19 @@ namespace MyGameApp.ViewModels
         }
     }
 
-    // ── Допоміжні Row-класи для відображення ─────────────────────────────
-
     public class AppointmentRow
     {
         public Appointment Source { get; }
-        public string Date        => Source.Date.ToString("dd.MM.yyyy HH:mm");
-        public string PetName     => Source.Pet?.Name ?? "—";
-        public string StaffName   => Source.Staff != null ? $"{Source.Staff.LastName} {Source.Staff.FirstName}" : "—";
+        public string Date => Source.Date.ToString("dd.MM.yyyy HH:mm");
+        public string PetName => Source.Pet?.Name ?? "—";
+        public string StaffName => Source.Staff != null ? $"{Source.Staff.LastName} {Source.Staff.FirstName}" : "—";
         public string ServiceName => Source.Service?.Name ?? "—";
-        public string Status      => Source.Status ?? "—";
+        public string Status => Source.Status ?? "—";
         public string StatusColor => Source.Status switch
         {
-            "виконано"    => "#4A7C59",
-            "скасовано"   => "#7C4A4A",
-            _             => "#7C6E4A"
+            "виконано" => "#4A7C59",
+            "скасовано" => "#7C4A4A",
+            _ => "#7C6E4A"
         };
         public AppointmentRow(Appointment a) => Source = a;
     }
@@ -171,9 +159,9 @@ namespace MyGameApp.ViewModels
     public class BillRow
     {
         public Bill Source { get; }
-        public string Date    => Source.Date?.ToString("dd.MM.yyyy HH:mm") ?? "—";
-        public string Amount  => $"{Source.TotalAmount:0.00} ₴";
-        public string Paid    => Source.Paid ?? "без оплати";
+        public string Date => Source.Date?.ToString("dd.MM.yyyy HH:mm") ?? "—";
+        public string Amount => $"{Source.TotalAmount:0.00} ₴";
+        public string Paid => Source.Paid ?? "без оплати";
         public string PaidColor => Source.Paid == "оплачено" ? "#4A7C59" : "#7C4A4A";
         public BillRow(Bill b) => Source = b;
     }
