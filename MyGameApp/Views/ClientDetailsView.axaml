@@ -189,10 +189,15 @@
 
                     <StackPanel Spacing="6">
                         <TextBlock Text="ДАТА НАРОДЖЕННЯ" Classes="Header"/>
+                        <Grid ColumnDefinitions="*,8,*,8,*" Margin="0,0,0,2">
+                            <TextBlock Grid.Column="0" Text="День" Foreground="#666666" FontSize="11" HorizontalAlignment="Center"/>
+                            <TextBlock Grid.Column="2" Text="Місяць" Foreground="#666666" FontSize="11" HorizontalAlignment="Center"/>
+                            <TextBlock Grid.Column="4" Text="Рік" Foreground="#666666" FontSize="11" HorizontalAlignment="Center"/>
+                        </Grid>
                         <Grid ColumnDefinitions="*,8,*,8,*">
-                            <ComboBox Grid.Column="0" ItemsSource="{Binding BirthDays}" SelectedItem="{Binding SelectedBirthDay}" Watermark="День" Height="42" Background="#3A3A3A" BorderThickness="0" CornerRadius="10"/>
-                            <ComboBox Grid.Column="2" ItemsSource="{Binding BirthMonths}" SelectedItem="{Binding SelectedBirthMonth}" Watermark="Місяць" Height="42" Background="#3A3A3A" BorderThickness="0" CornerRadius="10"/>
-                            <ComboBox Grid.Column="4" ItemsSource="{Binding BirthYears}" SelectedItem="{Binding SelectedBirthYear}" Watermark="Рік" Height="42" Background="#3A3A3A" BorderThickness="0" CornerRadius="10"/>
+                            <ComboBox Grid.Column="0" ItemsSource="{Binding BirthDays}" SelectedItem="{Binding SelectedBirthDay}" Height="42" Background="#3A3A3A" BorderThickness="0" CornerRadius="10"/>
+                            <ComboBox Grid.Column="2" ItemsSource="{Binding BirthMonths}" SelectedItem="{Binding SelectedBirthMonth}" Height="42" Background="#3A3A3A" BorderThickness="0" CornerRadius="10"/>
+                            <ComboBox Grid.Column="4" ItemsSource="{Binding BirthYears}" SelectedItem="{Binding SelectedBirthYear}" Height="42" Background="#3A3A3A" BorderThickness="0" CornerRadius="10"/>
                         </Grid>
                     </StackPanel>
 
