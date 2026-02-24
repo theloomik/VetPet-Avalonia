@@ -15,10 +15,16 @@ namespace MyGameApp.ViewModels
 
         [ObservableProperty] private Client _selectedClient = null!;
         [ObservableProperty] private int _activeTab = 0;
+        [ObservableProperty] private string _searchText = "";
+        [ObservableProperty] private string? _actionInfo;
 
         public ObservableCollection<Pet> Pets { get; } = new();
         public ObservableCollection<AppointmentRow> Appointments { get; } = new();
         public ObservableCollection<BillRow> Bills { get; } = new();
+
+        public ObservableCollection<Pet> FilteredPets { get; } = new();
+        public ObservableCollection<AppointmentRow> FilteredAppointments { get; } = new();
+        public ObservableCollection<BillRow> FilteredBills { get; } = new();
 
         [ObservableProperty] private bool _isAddPetOpen = false;
         [ObservableProperty] private AddPetViewModel? _addPetForm;
@@ -29,15 +35,41 @@ namespace MyGameApp.ViewModels
         [ObservableProperty] private string _editEmail = "";
         [ObservableProperty] private string? _editError;
 
+        public string SearchHint => ActiveTab switch
+        {
+            0 => "Пошук тварини за кличкою",
+            1 => "Пошук запису за датою (дд.мм.рррр)",
+            2 => "Пошук рахунку за датою (дд.мм.рррр)",
+            _ => "Пошук"
+        };
+
+        public string AddButtonText => ActiveTab switch
+        {
+            0 => "+ Тварина",
+            1 => "+ Запис",
+            2 => "+ Рахунок",
+            _ => "+ Додати"
+        };
+
         public ClientDetailsViewModel(Client? client = null, MainWindowViewModel? mainVm = null)
         {
-            _mainVm = mainVm!;
+            _mainVm = mainVm ?? throw new ArgumentNullException(nameof(mainVm));
             SelectedClient = client ?? new Client();
-            
-            if (client != null && client.Id > 0)
+
+            if (SelectedClient.Id > 0)
             {
                 _ = LoadAllAsync();
             }
+        }
+
+        partial void OnSearchTextChanged(string value) => ApplyFilters();
+
+        partial void OnActiveTabChanged(int value)
+        {
+            ActionInfo = null;
+            OnPropertyChanged(nameof(SearchHint));
+            OnPropertyChanged(nameof(AddButtonText));
+            ApplyFilters();
         }
 
         [RelayCommand]
@@ -45,6 +77,21 @@ namespace MyGameApp.ViewModels
 
         [RelayCommand]
         private void SetTab(int tab) => ActiveTab = tab;
+
+        [RelayCommand]
+        private void AddByActiveTab()
+        {
+            ActionInfo = null;
+            if (ActiveTab == 0)
+            {
+                OpenAddPet();
+                return;
+            }
+
+            ActionInfo = ActiveTab == 1
+                ? "Додавання запису буде в наступному оновленні."
+                : "Створення рахунку буде в наступному оновленні.";
+        }
 
         public async Task LoadAllAsync()
         {
@@ -63,6 +110,7 @@ namespace MyGameApp.ViewModels
                 .ToListAsync();
             Pets.Clear();
             foreach (var p in list) Pets.Add(p);
+            ApplyFilters();
         }
 
         public async Task LoadAppointmentsAsync()
@@ -78,6 +126,7 @@ namespace MyGameApp.ViewModels
                 .ToListAsync();
             Appointments.Clear();
             foreach (var a in list) Appointments.Add(new AppointmentRow(a));
+            ApplyFilters();
         }
 
         public async Task LoadBillsAsync()
@@ -91,6 +140,34 @@ namespace MyGameApp.ViewModels
                 .ToListAsync();
             Bills.Clear();
             foreach (var b in list) Bills.Add(new BillRow(b));
+            ApplyFilters();
+        }
+
+        private void ApplyFilters()
+        {
+            var q = SearchText?.Trim() ?? "";
+
+            var pets = string.IsNullOrWhiteSpace(q)
+                ? Pets
+                : new ObservableCollection<Pet>(Pets.Where(p => (p.Name ?? "").Contains(q, StringComparison.OrdinalIgnoreCase)));
+            Sync(FilteredPets, pets);
+
+            var appointments = string.IsNullOrWhiteSpace(q)
+                ? Appointments
+                : new ObservableCollection<AppointmentRow>(Appointments.Where(a => a.Source.Date.ToString("dd.MM.yyyy").Contains(q, StringComparison.OrdinalIgnoreCase)));
+            Sync(FilteredAppointments, appointments);
+
+            var bills = string.IsNullOrWhiteSpace(q)
+                ? Bills
+                : new ObservableCollection<BillRow>(Bills.Where(b => (b.Source.Date?.ToString("dd.MM.yyyy") ?? "").Contains(q, StringComparison.OrdinalIgnoreCase)));
+            Sync(FilteredBills, bills);
+        }
+
+        private static void Sync<T>(ObservableCollection<T> target, System.Collections.Generic.IEnumerable<T> source)
+        {
+            target.Clear();
+            foreach (var item in source)
+                target.Add(item);
         }
 
         [RelayCommand]
@@ -104,11 +181,11 @@ namespace MyGameApp.ViewModels
         private void StartEdit()
         {
             EditFirstName = SelectedClient.FirstName ?? "";
-            EditLastName  = SelectedClient.LastName  ?? "";
-            EditPhone     = SelectedClient.Phone     ?? "";
-            EditEmail     = SelectedClient.Email     ?? "";
-            EditError     = null;
-            IsEditMode    = true;
+            EditLastName = SelectedClient.LastName ?? "";
+            EditPhone = SelectedClient.Phone ?? "";
+            EditEmail = SelectedClient.Email ?? "";
+            EditError = null;
+            IsEditMode = true;
         }
 
         [RelayCommand]
@@ -126,14 +203,14 @@ namespace MyGameApp.ViewModels
             var client = await db.Clients.FindAsync(SelectedClient.Id);
             if (client == null) return;
             client.FirstName = EditFirstName.Trim();
-            client.LastName  = EditLastName.Trim();
-            client.Phone     = EditPhone.Trim();
-            client.Email     = string.IsNullOrWhiteSpace(EditEmail) ? null : EditEmail.Trim();
+            client.LastName = EditLastName.Trim();
+            client.Phone = EditPhone.Trim();
+            client.Email = string.IsNullOrWhiteSpace(EditEmail) ? null : EditEmail.Trim();
             await db.SaveChangesAsync();
             SelectedClient.FirstName = client.FirstName;
-            SelectedClient.LastName  = client.LastName;
-            SelectedClient.Phone     = client.Phone;
-            SelectedClient.Email     = client.Email;
+            SelectedClient.LastName = client.LastName;
+            SelectedClient.Phone = client.Phone;
+            SelectedClient.Email = client.Email;
             OnPropertyChanged(nameof(SelectedClient));
             IsEditMode = false;
         }
