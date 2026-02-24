@@ -15,10 +15,15 @@ namespace MyGameApp.ViewModels
 
         [ObservableProperty] private Client _selectedClient = null!;
         [ObservableProperty] private int _activeTab = 0;
+        [ObservableProperty] private string _searchText = string.Empty;
+        [ObservableProperty] private string? _hintMessage;
 
         public ObservableCollection<Pet> Pets { get; } = new();
         public ObservableCollection<AppointmentRow> Appointments { get; } = new();
         public ObservableCollection<BillRow> Bills { get; } = new();
+        private readonly ObservableCollection<Pet> _allPets = new();
+        private readonly ObservableCollection<AppointmentRow> _allAppointments = new();
+        private readonly ObservableCollection<BillRow> _allBills = new();
 
         [ObservableProperty] private bool _isAddPetOpen = false;
         [ObservableProperty] private AddPetViewModel? _addPetForm;
@@ -46,6 +51,27 @@ namespace MyGameApp.ViewModels
         [RelayCommand]
         private void SetTab(int tab) => ActiveTab = tab;
 
+        public bool IsPetsTab => ActiveTab == 0;
+        public bool IsAppointmentsTab => ActiveTab == 1;
+        public bool IsBillsTab => ActiveTab == 2;
+
+        public string SearchWatermark => ActiveTab == 0 ? "Пошук за кличкою" : "Пошук за датою (дд.мм.рррр)";
+        partial void OnActiveTabChanged(int value)
+        {
+            OnPropertyChanged(nameof(IsPetsTab));
+            OnPropertyChanged(nameof(IsAppointmentsTab));
+            OnPropertyChanged(nameof(IsBillsTab));
+            OnPropertyChanged(nameof(SearchWatermark));
+            SearchText = string.Empty;
+            HintMessage = null;
+            ApplyFilter();
+        }
+
+        partial void OnSearchTextChanged(string value)
+        {
+            ApplyFilter();
+        }
+
         public async Task LoadAllAsync()
         {
             await LoadPetsAsync();
@@ -61,8 +87,9 @@ namespace MyGameApp.ViewModels
                 .Include(p => p.PetType)
                 .AsNoTracking()
                 .ToListAsync();
-            Pets.Clear();
-            foreach (var p in list) Pets.Add(p);
+            _allPets.Clear();
+            foreach (var p in list) _allPets.Add(p);
+            ApplyFilter();
         }
 
         public async Task LoadAppointmentsAsync()
@@ -76,8 +103,9 @@ namespace MyGameApp.ViewModels
                 .OrderByDescending(a => a.Date)
                 .AsNoTracking()
                 .ToListAsync();
-            Appointments.Clear();
-            foreach (var a in list) Appointments.Add(new AppointmentRow(a));
+            _allAppointments.Clear();
+            foreach (var a in list) _allAppointments.Add(new AppointmentRow(a));
+            ApplyFilter();
         }
 
         public async Task LoadBillsAsync()
@@ -89,8 +117,9 @@ namespace MyGameApp.ViewModels
                 .OrderByDescending(b => b.Date)
                 .AsNoTracking()
                 .ToListAsync();
-            Bills.Clear();
-            foreach (var b in list) Bills.Add(new BillRow(b));
+            _allBills.Clear();
+            foreach (var b in list) _allBills.Add(new BillRow(b));
+            ApplyFilter();
         }
 
         [RelayCommand]
@@ -101,14 +130,34 @@ namespace MyGameApp.ViewModels
         }
 
         [RelayCommand]
+        private void AddByTab()
+        {
+            HintMessage = null;
+
+            if (ActiveTab == 0)
+            {
+                OpenAddPet();
+                return;
+            }
+
+            if (ActiveTab == 1)
+            {
+                _mainVm.ChangeTab(1);
+                return;
+            }
+
+            HintMessage = "Рахунок створюється в межах конкретного запису клієнта.";
+        }
+
+        [RelayCommand]
         private void StartEdit()
         {
             EditFirstName = SelectedClient.FirstName ?? "";
-            EditLastName  = SelectedClient.LastName  ?? "";
-            EditPhone     = SelectedClient.Phone     ?? "";
-            EditEmail     = SelectedClient.Email     ?? "";
-            EditError     = null;
-            IsEditMode    = true;
+            EditLastName = SelectedClient.LastName ?? "";
+            EditPhone = SelectedClient.Phone ?? "";
+            EditEmail = SelectedClient.Email ?? "";
+            EditError = null;
+            IsEditMode = true;
         }
 
         [RelayCommand]
@@ -126,16 +175,40 @@ namespace MyGameApp.ViewModels
             var client = await db.Clients.FindAsync(SelectedClient.Id);
             if (client == null) return;
             client.FirstName = EditFirstName.Trim();
-            client.LastName  = EditLastName.Trim();
-            client.Phone     = EditPhone.Trim();
-            client.Email     = string.IsNullOrWhiteSpace(EditEmail) ? null : EditEmail.Trim();
+            client.LastName = EditLastName.Trim();
+            client.Phone = EditPhone.Trim();
+            client.Email = string.IsNullOrWhiteSpace(EditEmail) ? null : EditEmail.Trim();
             await db.SaveChangesAsync();
             SelectedClient.FirstName = client.FirstName;
-            SelectedClient.LastName  = client.LastName;
-            SelectedClient.Phone     = client.Phone;
-            SelectedClient.Email     = client.Email;
+            SelectedClient.LastName = client.LastName;
+            SelectedClient.Phone = client.Phone;
+            SelectedClient.Email = client.Email;
             OnPropertyChanged(nameof(SelectedClient));
             IsEditMode = false;
+        }
+
+        private void ApplyFilter()
+        {
+            var query = SearchText?.Trim() ?? string.Empty;
+            var dateOnly = query.Length > 10 ? query[..10] : query;
+
+            Pets.Clear();
+            foreach (var pet in _allPets.Where(p => string.IsNullOrWhiteSpace(query) || (p.Name?.Contains(query, StringComparison.OrdinalIgnoreCase) ?? false)))
+            {
+                Pets.Add(pet);
+            }
+
+            Appointments.Clear();
+            foreach (var appointment in _allAppointments.Where(a => string.IsNullOrWhiteSpace(query) || a.Source.Date.ToString("dd.MM.yyyy").Contains(dateOnly)))
+            {
+                Appointments.Add(appointment);
+            }
+
+            Bills.Clear();
+            foreach (var bill in _allBills.Where(b => string.IsNullOrWhiteSpace(query) || (b.Source.Date?.ToString("dd.MM.yyyy").Contains(dateOnly) ?? false)))
+            {
+                Bills.Add(bill);
+            }
         }
     }
 
