@@ -31,10 +31,10 @@ namespace MyGameApp.ViewModels
 
         public ClientDetailsViewModel(Client? client = null, MainWindowViewModel? mainVm = null)
         {
-            _mainVm = mainVm!;
+            _mainVm = mainVm ?? throw new ArgumentNullException(nameof(mainVm));
             SelectedClient = client ?? new Client();
-            
-            if (client != null && client.Id > 0)
+
+            if (SelectedClient.Id > 0)
             {
                 _ = LoadAllAsync();
             }
