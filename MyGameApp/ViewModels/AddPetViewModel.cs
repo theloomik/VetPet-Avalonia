@@ -30,7 +30,7 @@ namespace MyGameApp.ViewModels
 
         public ObservableCollection<string> SpeciesOptions { get; } = new();
         public ObservableCollection<string> BreedOptions { get; } = new();
-        public ObservableCollection<string> Genders { get; } = new() { "Самець", "Самка" };
+        public ObservableCollection<string> Genders { get; } = new() { "male", "female" };
         public ObservableCollection<int> BirthDays { get; } = new();
         public ObservableCollection<int> BirthMonths { get; } = new();
         public ObservableCollection<int> BirthYears { get; } = new();
