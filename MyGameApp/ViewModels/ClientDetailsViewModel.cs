@@ -11,7 +11,7 @@ namespace MyGameApp.ViewModels
 {
     public partial class ClientDetailsViewModel : ViewModelBase
     {
-        private readonly MainWindowViewModel _mainVm;
+        private readonly MainWindowViewModel? _mainVm;
 
         [ObservableProperty] private Client _selectedClient = null!;
         [ObservableProperty] private int _activeTab = 0;
@@ -36,7 +36,7 @@ namespace MyGameApp.ViewModels
 
         public ClientDetailsViewModel(Client? client = null, MainWindowViewModel? mainVm = null)
         {
-            _mainVm = mainVm ?? throw new ArgumentNullException(nameof(mainVm));
+            _mainVm = mainVm;
             SelectedClient = client ?? new Client();
 
             if (SelectedClient.Id > 0)
@@ -46,7 +46,13 @@ namespace MyGameApp.ViewModels
         }
 
         [RelayCommand]
-        private void GoBack() => _mainVm.CurrentViewModel = new ClientsViewModel(_mainVm);
+        private void GoBack()
+        {
+            if (_mainVm == null)
+                return;
+
+            _mainVm.CurrentViewModel = new ClientsViewModel(_mainVm);
+        }
 
         [RelayCommand]
         private void SetTab(int tab) => ActiveTab = tab;
@@ -142,6 +148,9 @@ namespace MyGameApp.ViewModels
 
             if (ActiveTab == 1)
             {
+                if (_mainVm == null)
+                    return;
+
                 _mainVm.ChangeTab(1);
                 return;
             }
