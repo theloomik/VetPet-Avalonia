@@ -36,8 +36,11 @@ namespace MyGameApp.ViewModels
         }
 
         [RelayCommand]
-        public void GoToDetails(Client client)
+        public void GoToDetails(Client? client)
         {
+            if (client == null)
+                return;
+
             _mainVm.OpenClientDetails(client);
         }
  
