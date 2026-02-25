@@ -3,7 +3,8 @@
              xmlns:vm="using:MyGameApp.ViewModels"
              xmlns:models="using:MyGameApp.Models"
              x:Class="MyGameApp.Views.ProvidersView"
-             x:DataType="vm:ProvidersViewModel">
+             x:DataType="vm:ProvidersViewModel"
+             x:Name="Root">
     <Panel>
         <Grid RowDefinitions="Auto,Auto,Auto,*" Margin="30,25"
               IsEnabled="{Binding !IsAddOpen}">
@@ -44,7 +45,9 @@
                                             Opacity="0.08" Margin="0,12" HorizontalAlignment="Center"/>
                                     <TextBlock Grid.Column="3" Text="{Binding Name}"
                                                Foreground="#E0E0E0" VerticalAlignment="Center"/>
-                                    <Button Grid.Column="5" Classes="ArrowBtn" Margin="0,0,5,0">
+                                    <Button Grid.Column="5" Classes="ArrowBtn" Margin="0,0,5,0"
+                                            Command="{Binding DataContext.GoToDetailsCommand, ElementName=Root}"
+                                            CommandParameter="{Binding}">
                                         <TextBlock Text="→" Foreground="#FFFFFF" FontSize="18"/>
                                     </Button>
                                 </Grid>
@@ -56,7 +59,6 @@
             </ScrollViewer>
         </Grid>
 
-        <!-- Модальний оверлей -->
         <Panel IsVisible="{Binding IsAddOpen}">
             <Border Background="#88000000"/>
             <Border Width="420" Padding="28"

@@ -1,0 +1,57 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:MyGameApp.ViewModels"
+             x:Class="MyGameApp.Views.ProviderDetailsView"
+             x:DataType="vm:ProviderDetailsViewModel">
+
+    <Grid RowDefinitions="Auto,20,*" Margin="30,25">
+        <Grid Grid.Row="0" ColumnDefinitions="Auto,*">
+            <Button Grid.Column="0"
+                    Width="40" Height="40"
+                    CornerRadius="10"
+                    BorderThickness="0"
+                    Background="#3A3A3A"
+                    Command="{Binding GoBackCommand}">
+                <TextBlock Text="←" Foreground="White" FontSize="18" HorizontalAlignment="Center"/>
+            </Button>
+            <TextBlock Grid.Column="1"
+                       Margin="16,0,0,0"
+                       VerticalAlignment="Center"
+                       Text="Профіль провайдера"
+                       Foreground="White"
+                       FontSize="26"
+                       FontWeight="Bold"/>
+        </Grid>
+
+        <Border Grid.Row="2" Background="#262626" CornerRadius="14" Padding="24">
+            <StackPanel Spacing="14">
+                <TextBlock Text="{Binding SelectedProvider.Name}" Foreground="White" FontSize="24" FontWeight="SemiBold"/>
+                <TextBlock Text="{Binding LoadError}" Foreground="#FF6B6B"
+                           IsVisible="{Binding LoadError, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+
+                <Grid ColumnDefinitions="220,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="10">
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Телефон" Classes="Header"/>
+                    <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Phone}" Foreground="#E0E0E0"/>
+
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Контактна особа" Classes="Header"/>
+                    <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding ContactPerson}" Foreground="#E0E0E0"/>
+
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Email" Classes="Header"/>
+                    <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Email}" Foreground="#E0E0E0"/>
+
+                    <TextBlock Grid.Row="3" Grid.Column="0" Text="Адреса" Classes="Header"/>
+                    <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding Address}" Foreground="#E0E0E0"/>
+
+                    <TextBlock Grid.Row="4" Grid.Column="0" Text="Кількість замовлень" Classes="Header"/>
+                    <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding OrdersCount}" Foreground="#E0E0E0"/>
+
+                    <TextBlock Grid.Row="5" Grid.Column="0" Text="Медикаментів постачено" Classes="Header"/>
+                    <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding MedicinesCount}" Foreground="#E0E0E0"/>
+
+                    <TextBlock Grid.Row="6" Grid.Column="0" Text="Останнє замовлення" Classes="Header"/>
+                    <TextBlock Grid.Row="6" Grid.Column="1" Text="{Binding LastOrder}" Foreground="#E0E0E0"/>
+                </Grid>
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>

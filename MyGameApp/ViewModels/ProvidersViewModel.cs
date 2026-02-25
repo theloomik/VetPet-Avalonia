@@ -11,6 +11,7 @@ namespace MyGameApp.ViewModels
 {
     public partial class ProvidersViewModel : ViewModelBase
     {
+        private readonly MainWindowViewModel? _mainVm;
         private List<Provider> _allProviders = new();
         public ObservableCollection<Provider> Providers { get; } = new();
 
@@ -23,11 +24,14 @@ namespace MyGameApp.ViewModels
 
         public IRelayCommand ToggleSortCommand { get; }
         public IRelayCommand AddProviderCommand { get; }
+        public IRelayCommand<Provider?> GoToDetailsCommand { get; }
 
-        public ProvidersViewModel()
+        public ProvidersViewModel(MainWindowViewModel? mainVm = null)
         {
+            _mainVm = mainVm;
             ToggleSortCommand = new RelayCommand(ToggleSort);
             AddProviderCommand = new RelayCommand(OpenAdd);
+            GoToDetailsCommand = new RelayCommand<Provider?>(GoToDetails);
             _ = ReloadAsync();
         }
 
@@ -46,6 +50,14 @@ namespace MyGameApp.ViewModels
             IsAddOpen = true;
         }
 
+        public void GoToDetails(Provider? provider)
+        {
+            if (_mainVm == null || provider == null)
+                return;
+
+            _mainVm.OpenProviderDetails(provider);
+        }
+
         private void UpdateList()
         {
             var q = _allProviders.Where(p =>
@@ -53,7 +65,8 @@ namespace MyGameApp.ViewModels
                 (p.Name != null && p.Name.Contains(SearchText, System.StringComparison.OrdinalIgnoreCase)));
             q = _sortAsc ? q.OrderBy(c => c.Name) : q.OrderByDescending(c => c.Name);
             Providers.Clear();
-            foreach (var item in q) Providers.Add(item);
+            foreach (var item in q)
+                Providers.Add(item);
         }
 
         public async Task ReloadAsync()

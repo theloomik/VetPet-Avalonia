@@ -3,7 +3,8 @@
              xmlns:vm="using:MyGameApp.ViewModels"
              xmlns:models="using:MyGameApp.Models"
              x:Class="MyGameApp.Views.StaffView"
-             x:DataType="vm:StaffViewModel">
+             x:DataType="vm:StaffViewModel"
+             x:Name="Root">
     <Panel>
         <Grid RowDefinitions="Auto,Auto,Auto,*" Margin="30,25"
               IsEnabled="{Binding !IsAddOpen}">
@@ -47,7 +48,11 @@
                                                    FontSize="15" FontWeight="Medium"/>
                                         <TextBlock Text="{Binding FirstName}" Foreground="#999999" FontSize="13"/>
                                     </StackPanel>
-                                    <Button Grid.Column="5" Classes="ArrowBtn" Margin="0,0,5,0">
+                                    <Button Grid.Column="5"
+                                            Classes="ArrowBtn"
+                                            Margin="0,0,5,0"
+                                            Command="{Binding DataContext.GoToDetailsCommand, ElementName=Root}"
+                                            CommandParameter="{Binding}">
                                         <TextBlock Text="→" Foreground="#FFFFFF" FontSize="18"/>
                                     </Button>
                                 </Grid>
@@ -142,25 +147,25 @@
                         <TextBlock Text="РОБОЧІ ДНІ" Classes="Header"/>
                         <WrapPanel>
                             <Grid ColumnDefinitions="58,58,58,58,58,58,58" Margin="5,0,5,0">
-                                <ToggleButton Grid.Column="0" Width="48" Height="36" CornerRadius="8"
+                                <ToggleButton Grid.Column="0" Width="48" Height="36" CornerRadius="8" Classes="WorkDayBtn"
                                             Content="Пн" IsChecked="{Binding DayMon}"
                                             FontSize="13" FontWeight="SemiBold" HorizontalAlignment="Center"/>
-                                <ToggleButton Grid.Column="1" Width="48" Height="36" CornerRadius="8"
+                                <ToggleButton Grid.Column="1" Width="48" Height="36" CornerRadius="8" Classes="WorkDayBtn"
                                             Content="Вт" IsChecked="{Binding DayTue}"
                                             FontSize="13" FontWeight="SemiBold" HorizontalAlignment="Center"/>
-                                <ToggleButton Grid.Column="2" Width="48" Height="36" CornerRadius="8"
+                                <ToggleButton Grid.Column="2" Width="48" Height="36" CornerRadius="8" Classes="WorkDayBtn"
                                             Content="Ср" IsChecked="{Binding DayWed}"
                                             FontSize="13" FontWeight="SemiBold" HorizontalAlignment="Center"/>
-                                <ToggleButton Grid.Column="3" Width="48" Height="36" CornerRadius="8"
+                                <ToggleButton Grid.Column="3" Width="48" Height="36" CornerRadius="8" Classes="WorkDayBtn"
                                             Content="Чт" IsChecked="{Binding DayThu}"
                                             FontSize="13" FontWeight="SemiBold" HorizontalAlignment="Center"/>
-                                <ToggleButton Grid.Column="4" Width="48" Height="36" CornerRadius="8"
+                                <ToggleButton Grid.Column="4" Width="48" Height="36" CornerRadius="8" Classes="WorkDayBtn"
                                             Content="Пт" IsChecked="{Binding DayFri}"
                                             FontSize="13" FontWeight="SemiBold" HorizontalAlignment="Center"/>
-                                <ToggleButton Grid.Column="5" Width="48" Height="36" CornerRadius="8"
+                                <ToggleButton Grid.Column="5" Width="48" Height="36" CornerRadius="8" Classes="WorkDayBtn"
                                             Content="Сб" IsChecked="{Binding DaySat}"
                                             FontSize="13" FontWeight="SemiBold" HorizontalAlignment="Center"/>
-                                <ToggleButton Grid.Column="6" Width="48" Height="36" CornerRadius="8"
+                                <ToggleButton Grid.Column="6" Width="48" Height="36" CornerRadius="8" Classes="WorkDayBtn"
                                             Content="Нд" IsChecked="{Binding DaySun}"
                                             FontSize="13" FontWeight="SemiBold" HorizontalAlignment="Center"/>
                             </Grid>

@@ -11,8 +11,9 @@ namespace MyGameApp.ViewModels
 {
     public partial class AppointmentsViewModel : ViewModelBase
     {
-        private List<Appointment> _allAppointments = new();
-        public ObservableCollection<Appointment> Appointments { get; } = new();
+        private readonly MainWindowViewModel? _mainVm;
+        private List<AppointmentListRow> _allAppointments = new();
+        public ObservableCollection<AppointmentListRow> Appointments { get; } = new();
 
         [ObservableProperty] private string _searchText = "";
 
@@ -20,10 +21,13 @@ namespace MyGameApp.ViewModels
         public string SortLabel => _sortAsc ? "Дата ↓" : "Дата ↑";
 
         public IRelayCommand ToggleSortCommand { get; }
+        public IRelayCommand<AppointmentListRow?> GoToClientDetailsCommand { get; }
 
-        public AppointmentsViewModel()
+        public AppointmentsViewModel(MainWindowViewModel? mainVm = null)
         {
+            _mainVm = mainVm;
             ToggleSortCommand = new RelayCommand(ToggleSort);
+            GoToClientDetailsCommand = new RelayCommand<AppointmentListRow?>(GoToClientDetails);
             _ = ReloadAsync();
         }
 
@@ -40,11 +44,11 @@ namespace MyGameApp.ViewModels
         {
             var q = _allAppointments.Where(a =>
                 string.IsNullOrWhiteSpace(SearchText) ||
-                (a.Client?.Phone != null && a.Client.Phone.Contains(SearchText)));
+                (!string.IsNullOrWhiteSpace(a.ClientPhone) && a.ClientPhone.Contains(SearchText)));
 
             q = _sortAsc 
-                ? q.OrderBy(a => a.Date) 
-                : q.OrderByDescending(a => a.Date);
+                ? q.OrderBy(a => a.Source.Date) 
+                : q.OrderByDescending(a => a.Source.Date);
 
             Appointments.Clear();
             foreach (var item in q) Appointments.Add(item);
@@ -58,9 +62,38 @@ namespace MyGameApp.ViewModels
                 .Include(a => a.Staff)
                 .Include(a => a.Pet)
                 .AsNoTracking()
+                .Select(a => new AppointmentListRow(a))
                 .ToListAsync();
             
             UpdateList();
+        }
+
+        private void GoToClientDetails(AppointmentListRow? row)
+        {
+            var client = row?.Source.Client;
+            if (_mainVm == null || client == null || client.Id <= 0)
+                return;
+
+            _mainVm.OpenClientDetails(client);
+        }
+    }
+
+    public class AppointmentListRow
+    {
+        public Appointment Source { get; }
+        public string ClientPhone => Source.Client?.Phone ?? "—";
+        public string PetName => Source.Pet?.Name ?? "—";
+        public string Status => Source.Status ?? "—";
+        public string StatusColor => Source.Status switch
+        {
+            "виконано" => "#4A7C59",
+            "скасовано" => "#7C4A4A",
+            _ => "#7C6E4A"
+        };
+
+        public AppointmentListRow(Appointment appointment)
+        {
+            Source = appointment;
         }
     }
 }

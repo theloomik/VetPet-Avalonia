@@ -13,14 +13,12 @@ namespace MyGameApp.ViewModels
     {
         private readonly StaffViewModel _parent;
 
-        // Основні дані
         [ObservableProperty] private string _firstName = "";
         [ObservableProperty] private string _lastName = "";
         [ObservableProperty] private string _phone = "";
         [ObservableProperty] private StaffPosition? _selectedPosition;
         [ObservableProperty] private string? _errorMessage;
 
-        // Робочі дні
         [ObservableProperty] private bool _dayMon = true;
         [ObservableProperty] private bool _dayTue = true;
         [ObservableProperty] private bool _dayWed = true;
@@ -29,11 +27,9 @@ namespace MyGameApp.ViewModels
         [ObservableProperty] private bool _daySat = false;
         [ObservableProperty] private bool _daySun = false;
 
-        // Робочі години (UI → string)
         [ObservableProperty] private string _startTime = "09:00";
         [ObservableProperty] private string _endTime = "18:00";
 
-        // Додавання нової посади
         [ObservableProperty] private bool _isAddingPosition;
         [ObservableProperty] private string _newPositionName = "";
         [ObservableProperty] private string _newPositionSalary = "";
@@ -47,7 +43,6 @@ namespace MyGameApp.ViewModels
             _ = LoadPositionsAsync();
         }
 
-        // ---------- Завантаження посад ----------
         private async Task LoadPositionsAsync()
         {
             using var db = new VetpetContext();
@@ -58,18 +53,17 @@ namespace MyGameApp.ViewModels
                 Positions.Add(p);
         }
 
-        // ---------- Робочі дні ----------
-        private string BuildWorkDays()
+        private string? BuildWorkDays()
         {
             var days = new[]
             {
-                (DayMon, "Пн"),
-                (DayTue, "Вт"),
-                (DayWed, "Ср"),
-                (DayThu, "Чт"),
-                (DayFri, "Пт"),
-                (DaySat, "Сб"),
-                (DaySun, "Нд")
+                (DayMon, "Mon"),
+                (DayTue, "Tue"),
+                (DayWed, "Wed"),
+                (DayThu, "Thu"),
+                (DayFri, "Fri"),
+                (DaySat, "Sat"),
+                (DaySun, "Sun")
             };
 
             var selected = days
@@ -77,12 +71,9 @@ namespace MyGameApp.ViewModels
                 .Select(d => d.Item2)
                 .ToList();
 
-            return selected.Any()
-                ? string.Join(", ", selected)
-                : "—";
+            return selected.Any() ? string.Join(", ", selected) : null;
         }
 
-        // ---------- Посади ----------
         [RelayCommand]
         private void ShowAddPosition()
         {
@@ -132,7 +123,6 @@ namespace MyGameApp.ViewModels
             IsAddingPosition = false;
         }
 
-        // ---------- Збереження працівника ----------
         [RelayCommand]
         private async Task Save()
         {

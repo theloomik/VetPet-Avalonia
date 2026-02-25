@@ -1,3 +1,4 @@
+using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -30,7 +31,10 @@ namespace MyGameApp.ViewModels
             using var db = new VetpetContext();
             var list = await db.Providers.AsNoTracking().ToListAsync();
             Providers.Clear();
-            foreach (var p in list) Providers.Add(p);
+            foreach (var p in list)
+                Providers.Add(p);
+
+            SelectedProvider = Providers.Count > 0 ? Providers[0] : null;
         }
 
         [RelayCommand]
@@ -52,6 +56,11 @@ namespace MyGameApp.ViewModels
                 ErrorMessage = "Кількість має бути цілим числом > 0";
                 return;
             }
+            if (SelectedProvider == null)
+            {
+                ErrorMessage = "Оберіть провайдера";
+                return;
+            }
 
             using var db = new VetpetContext();
             var medicine = new Medicine
@@ -68,6 +77,25 @@ namespace MyGameApp.ViewModels
                 Quantity = qty
             };
             db.Stocks.Add(stock);
+            await db.SaveChangesAsync();
+
+            var order = new ProviderOrder
+            {
+                ProviderId = SelectedProvider.Id,
+                Date = DateTime.Now,
+                TotalCost = price * qty,
+                Status = "completed"
+            };
+            db.ProviderOrders.Add(order);
+            await db.SaveChangesAsync();
+
+            db.ProviderOrderItems.Add(new ProviderOrderItem
+            {
+                OrderId = order.Id,
+                MedicineId = medicine.Id,
+                Quantity = qty,
+                Price = price
+            });
             await db.SaveChangesAsync();
 
             await _parent.ReloadAsync();

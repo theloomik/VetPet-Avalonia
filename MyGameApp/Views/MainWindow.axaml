@@ -63,6 +63,28 @@
             <Setter Property="Background" Value="#555555"/>
         </Style>
 
+        <Style Selector="ToggleButton.WorkDayBtn">
+            <Setter Property="Background" Value="#3A3A3A"/>
+            <Setter Property="Foreground" Value="#FFFFFF"/>
+            <Setter Property="BorderBrush" Value="#3A3A3A"/>
+            <Setter Property="BorderThickness" Value="1"/>
+        </Style>
+        <Style Selector="ToggleButton.WorkDayBtn /template/ ContentPresenter">
+            <Setter Property="Background" Value="#3A3A3A"/>
+            <Setter Property="BorderBrush" Value="#3A3A3A"/>
+            <Setter Property="BorderThickness" Value="1"/>
+        </Style>
+        <Style Selector="ToggleButton.WorkDayBtn:checked">
+            <Setter Property="Background" Value="#3A3A3A"/>
+            <Setter Property="BorderBrush" Value="#4A7C59"/>
+            <Setter Property="BorderThickness" Value="2"/>
+        </Style>
+        <Style Selector="ToggleButton.WorkDayBtn:checked /template/ ContentPresenter">
+            <Setter Property="Background" Value="#3A3A3A"/>
+            <Setter Property="BorderBrush" Value="#4A7C59"/>
+            <Setter Property="BorderThickness" Value="2"/>
+        </Style>
+
         <Style Selector="TextBlock.Header">
             <Setter Property="Foreground" Value="#666666"/>
             <Setter Property="FontSize" Value="12"/>
@@ -89,6 +111,12 @@
         </DataTemplate>
         <DataTemplate DataType="vm:ClientDetailsViewModel">
             <views:ClientDetailsView/>
+        </DataTemplate>
+        <DataTemplate DataType="vm:StaffDetailsViewModel">
+            <views:StaffDetailsView/>
+        </DataTemplate>
+        <DataTemplate DataType="vm:ProviderDetailsViewModel">
+            <views:ProviderDetailsView/>
         </DataTemplate>
     </Window.DataTemplates>
 

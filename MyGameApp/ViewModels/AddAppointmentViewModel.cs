@@ -45,6 +45,7 @@ namespace MyGameApp.ViewModels
                 .ToListAsync();
 
             var staff = await db.Staff
+                .Where(s => s.WorkDays != StaffArchive.ArchivedMarker)
                 .OrderBy(s => s.LastName)
                 .ThenBy(s => s.FirstName)
                 .AsNoTracking()

@@ -22,10 +22,10 @@ namespace MyGameApp.ViewModels
             CurrentViewModel = index switch
             {
                 0 => new ClientsViewModel(this),
-                1 => new AppointmentsViewModel(),
-                2 => new StaffViewModel(),
-                3 => new ProvidersViewModel(),
-                4 => new StockViewModel(),
+                1 => new AppointmentsViewModel(this),
+                2 => new StaffViewModel(this),
+                3 => new ProvidersViewModel(this),
+                4 => new StockViewModel(this),
                 _ => new ClientsViewModel(this)
             };
         }
@@ -37,6 +37,24 @@ namespace MyGameApp.ViewModels
                 return;
 
             CurrentViewModel = new ClientDetailsViewModel(client, this);
+        }
+
+        [RelayCommand]
+        public void OpenStaffDetails(MyGameApp.Models.Staff? staff)
+        {
+            if (staff == null || staff.Id <= 0)
+                return;
+
+            CurrentViewModel = new StaffDetailsViewModel(staff, this);
+        }
+
+        [RelayCommand]
+        public void OpenProviderDetails(MyGameApp.Models.Provider? provider)
+        {
+            if (provider == null || provider.Id <= 0)
+                return;
+
+            CurrentViewModel = new ProviderDetailsViewModel(provider, this);
         }
     }
 }
