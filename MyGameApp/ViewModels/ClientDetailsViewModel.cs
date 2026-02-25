@@ -11,12 +11,13 @@ namespace MyGameApp.ViewModels
 {
     public partial class ClientDetailsViewModel : ViewModelBase
     {
-        private readonly MainWindowViewModel _mainVm;
+        private readonly MainWindowViewModel? _mainVm;
 
         [ObservableProperty] private Client _selectedClient = null!;
         [ObservableProperty] private int _activeTab = 0;
         [ObservableProperty] private string _searchText = string.Empty;
         [ObservableProperty] private string? _hintMessage;
+        [ObservableProperty] private string? _loadError;
 
         public ObservableCollection<Pet> Pets { get; } = new();
         public ObservableCollection<AppointmentRow> Appointments { get; } = new();
@@ -27,6 +28,10 @@ namespace MyGameApp.ViewModels
 
         [ObservableProperty] private bool _isAddPetOpen = false;
         [ObservableProperty] private AddPetViewModel? _addPetForm;
+        [ObservableProperty] private bool _isAddAppointmentOpen = false;
+        [ObservableProperty] private AddAppointmentViewModel? _addAppointmentForm;
+        [ObservableProperty] private bool _isAddBillOpen = false;
+        [ObservableProperty] private AddBillViewModel? _addBillForm;
         [ObservableProperty] private bool _isEditMode = false;
         [ObservableProperty] private string _editFirstName = "";
         [ObservableProperty] private string _editLastName = "";
@@ -34,19 +39,40 @@ namespace MyGameApp.ViewModels
         [ObservableProperty] private string _editEmail = "";
         [ObservableProperty] private string? _editError;
 
+        public bool IsAnyModalOpen => IsAddPetOpen || IsAddAppointmentOpen || IsAddBillOpen || IsEditMode;
+
         public ClientDetailsViewModel(Client? client = null, MainWindowViewModel? mainVm = null)
         {
-            _mainVm = mainVm ?? throw new ArgumentNullException(nameof(mainVm));
+            _mainVm = mainVm;
             SelectedClient = client ?? new Client();
 
             if (SelectedClient.Id > 0)
             {
-                _ = LoadAllAsync();
+                _ = InitializeAsync();
+            }
+        }
+
+        private async Task InitializeAsync()
+        {
+            try
+            {
+                LoadError = null;
+                await LoadAllAsync();
+            }
+            catch (Exception ex)
+            {
+                LoadError = $"Failed to load client data: {ex.Message}";
             }
         }
 
         [RelayCommand]
-        private void GoBack() => _mainVm.CurrentViewModel = new ClientsViewModel(_mainVm);
+        private void GoBack()
+        {
+            if (_mainVm == null)
+                return;
+
+            _mainVm.CurrentViewModel = new ClientsViewModel(_mainVm);
+        }
 
         [RelayCommand]
         private void SetTab(int tab) => ActiveTab = tab;
@@ -55,7 +81,10 @@ namespace MyGameApp.ViewModels
         public bool IsAppointmentsTab => ActiveTab == 1;
         public bool IsBillsTab => ActiveTab == 2;
 
-        public string SearchWatermark => ActiveTab == 0 ? "Пошук за кличкою" : "Пошук за датою (дд.мм.рррр)";
+        public string SearchWatermark => ActiveTab == 0
+            ? "Search by pet name"
+            : "Search by date (DD.MM.YYYY)";
+
         partial void OnActiveTabChanged(int value)
         {
             OnPropertyChanged(nameof(IsPetsTab));
@@ -67,10 +96,11 @@ namespace MyGameApp.ViewModels
             ApplyFilter();
         }
 
-        partial void OnSearchTextChanged(string value)
-        {
-            ApplyFilter();
-        }
+        partial void OnSearchTextChanged(string value) => ApplyFilter();
+        partial void OnIsAddPetOpenChanged(bool value) => OnPropertyChanged(nameof(IsAnyModalOpen));
+        partial void OnIsAddAppointmentOpenChanged(bool value) => OnPropertyChanged(nameof(IsAnyModalOpen));
+        partial void OnIsAddBillOpenChanged(bool value) => OnPropertyChanged(nameof(IsAnyModalOpen));
+        partial void OnIsEditModeChanged(bool value) => OnPropertyChanged(nameof(IsAnyModalOpen));
 
         public async Task LoadAllAsync()
         {
@@ -130,6 +160,20 @@ namespace MyGameApp.ViewModels
         }
 
         [RelayCommand]
+        private void OpenAddAppointment()
+        {
+            AddAppointmentForm = new AddAppointmentViewModel(this);
+            IsAddAppointmentOpen = true;
+        }
+
+        [RelayCommand]
+        private void OpenAddBill()
+        {
+            AddBillForm = new AddBillViewModel(this);
+            IsAddBillOpen = true;
+        }
+
+        [RelayCommand]
         private void AddByTab()
         {
             HintMessage = null;
@@ -142,11 +186,11 @@ namespace MyGameApp.ViewModels
 
             if (ActiveTab == 1)
             {
-                _mainVm.ChangeTab(1);
+                OpenAddAppointment();
                 return;
             }
 
-            HintMessage = "Рахунок створюється в межах конкретного запису клієнта.";
+            OpenAddBill();
         }
 
         [RelayCommand]
@@ -168,17 +212,20 @@ namespace MyGameApp.ViewModels
         {
             if (string.IsNullOrWhiteSpace(EditLastName) || string.IsNullOrWhiteSpace(EditFirstName) || string.IsNullOrWhiteSpace(EditPhone))
             {
-                EditError = "Прізвище, ім'я та телефон є обов'язковими";
+                EditError = "Last name, first name and phone are required";
                 return;
             }
+
             using var db = new VetpetContext();
             var client = await db.Clients.FindAsync(SelectedClient.Id);
             if (client == null) return;
+
             client.FirstName = EditFirstName.Trim();
             client.LastName = EditLastName.Trim();
             client.Phone = EditPhone.Trim();
             client.Email = string.IsNullOrWhiteSpace(EditEmail) ? null : EditEmail.Trim();
             await db.SaveChangesAsync();
+
             SelectedClient.FirstName = client.FirstName;
             SelectedClient.LastName = client.LastName;
             SelectedClient.Phone = client.Phone;
@@ -226,6 +273,7 @@ namespace MyGameApp.ViewModels
             "скасовано" => "#7C4A4A",
             _ => "#7C6E4A"
         };
+
         public AppointmentRow(Appointment a) => Source = a;
     }
 
@@ -236,6 +284,7 @@ namespace MyGameApp.ViewModels
         public string Amount => $"{Source.TotalAmount:0.00} ₴";
         public string Paid => Source.Paid ?? "без оплати";
         public string PaidColor => Source.Paid == "оплачено" ? "#4A7C59" : "#7C4A4A";
+
         public BillRow(Bill b) => Source = b;
     }
 }
