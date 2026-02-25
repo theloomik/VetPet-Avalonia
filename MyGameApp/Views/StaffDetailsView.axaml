@@ -41,9 +41,10 @@
                     <Button Grid.Column="2"
                             Content="Видалити"
                             Height="40"
-                            Background="#7C4A4A"
+                            Background="#3A3A3A"
+                            BorderBrush="#7C4A4A"
                             CornerRadius="10"
-                            BorderThickness="0"
+                            BorderThickness="1.5"
                             Foreground="White"
                             IsVisible="{Binding !IsArchived}"
                             Command="{Binding ArchiveStaffCommand}"/>
@@ -122,9 +123,10 @@
                         <Button Grid.Column="2"
                                 Content="Зберегти"
                                 Height="40"
-                                Background="#4A7C59"
+                                Background="#3A3A3A"
+                                BorderBrush="#4A7C59"
                                 CornerRadius="10"
-                                BorderThickness="0"
+                                BorderThickness="1.5"
                                 Foreground="White"
                                 Command="{Binding SaveEditCommand}"/>
                     </Grid>

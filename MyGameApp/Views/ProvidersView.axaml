@@ -84,7 +84,7 @@
                                 HorizontalContentAlignment="Center"
                                 Command="{Binding CancelCommand}"/>
                         <Button Grid.Column="2" Content="Зберегти" Height="42"
-                                Background="#4A7C59" CornerRadius="10" BorderThickness="0"
+                                Background="#3A3A3A" BorderBrush="#4A7C59" CornerRadius="10" BorderThickness="1.5"
                                 Foreground="White" FontWeight="SemiBold"
                                 HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
                                 Command="{Binding SaveCommand}"/>

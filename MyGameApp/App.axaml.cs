@@ -1,4 +1,4 @@
-using Avalonia;
+﻿using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core;
 using Avalonia.Data.Core.Plugins;
@@ -8,45 +8,41 @@ using MyGameApp.ViewModels;
 using MyGameApp.Views;
 using System;
 
-namespace MyGameApp;
-
-public partial class App : Application
+namespace MyGameApp
 {
-    public override void Initialize()
+    public partial class App : Application
     {
-        AvaloniaXamlLoader.Load(this);
-    }
-
-    public override void OnFrameworkInitializationCompleted()
-    {
-        if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+        public override void Initialize()
         {
-            // Avoid duplicate validations from both Avalonia and the CommunityToolkit. 
-            // More info: https://docs.avaloniaui.net/docs/guides/development-guides/data-validation#manage-validationplugins
-            DisableAvaloniaDataAnnotationValidation();
-            // Create MySQL service using environment variable or fallback connection string.
-            var connectionString = Environment.GetEnvironmentVariable("MYSQL_CONNECTION")
-                                   ?? "Server=127.0.0.1;Port=3306;User=root;Password=pass;Database=test;";
-
-            desktop.MainWindow = new MainWindow
-            {
-                DataContext = new MainWindowViewModel(),
-            };
+            AvaloniaXamlLoader.Load(this);
         }
 
-        base.OnFrameworkInitializationCompleted();
-    }
-
-    private void DisableAvaloniaDataAnnotationValidation()
-    {
-        // Get an array of plugins to remove
-        var dataValidationPluginsToRemove =
-            BindingPlugins.DataValidators.OfType<DataAnnotationsValidationPlugin>().ToArray();
-
-        // remove each entry found
-        foreach (var plugin in dataValidationPluginsToRemove)
+        public override void OnFrameworkInitializationCompleted()
         {
-            BindingPlugins.DataValidators.Remove(plugin);
+            if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+            {
+                DisableAvaloniaDataAnnotationValidation();
+                var connectionString = Environment.GetEnvironmentVariable("MYSQL_CONNECTION")
+                                       ?? "Server=127.0.0.1;Port=3306;User=root;Password=pass;Database=test;";
+
+                desktop.MainWindow = new MainWindow
+                {
+                    DataContext = new MainWindowViewModel(),
+                };
+            }
+
+            base.OnFrameworkInitializationCompleted();
+        }
+
+        private void DisableAvaloniaDataAnnotationValidation()
+        {
+            var dataValidationPluginsToRemove =
+                BindingPlugins.DataValidators.OfType<DataAnnotationsValidationPlugin>().ToArray();
+
+            foreach (var plugin in dataValidationPluginsToRemove)
+            {
+                BindingPlugins.DataValidators.Remove(plugin);
+            }
         }
     }
 }
