@@ -48,6 +48,10 @@
         <Setter Property="BoxShadow" Value="0 4 10 0 #40000000"/>
     </Style>
 
+    <Style Selector="Border.ModalBackdrop">
+        <Setter Property="Background" Value="Transparent"/>
+    </Style>
+
     <Style Selector="ScrollBar">
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="Width" Value="8"/>

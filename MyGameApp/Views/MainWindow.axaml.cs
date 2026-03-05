@@ -1,4 +1,5 @@
 using Avalonia.Controls;
+using Avalonia.Input;
 using MyGameApp.ViewModels;
 using System.ComponentModel;
 using System.Linq;
@@ -80,6 +81,19 @@ public partial class MainWindow : Window
                 .FirstOrDefault(btn => btn.Tag?.ToString() == idx.ToString());
 
             active?.Classes.Add("Active");
+        }
+    }
+
+    private void OnWindowKeyDown(object? sender, KeyEventArgs e)
+    {
+        if (e.Handled || e.Key != Key.Escape || DataContext is not MainWindowViewModel vm)
+        {
+            return;
+        }
+
+        if (vm.TryCloseTopmostModal())
+        {
+            e.Handled = true;
         }
     }
 }

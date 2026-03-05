@@ -1,4 +1,4 @@
-<UserControl xmlns="https://github.com/avaloniaui"
+﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:MyGameApp.ViewModels"
              xmlns:models="using:MyGameApp.Models"
@@ -41,7 +41,7 @@
     </UserControl.Styles>
 
     <Panel>
-        <Grid RowDefinitions="Auto,Auto,*" Margin="30,25" IsEnabled="{Binding !IsAnyModalOpen}">
+        <Grid RowDefinitions="Auto,Auto,*" Margin="30,25">
             <TextBlock Grid.Row="0"
                        Text="Швидкий запис"
                        Foreground="White"
@@ -234,8 +234,8 @@
             </ScrollViewer>
         </Grid>
 
-        <Panel IsVisible="{Binding IsAddClientOpen}">
-            <Border Background="#88000000"/>
+        <Panel IsVisible="{Binding IsAddClientOpen}" ZIndex="30">
+            <Border Classes="ModalBackdrop"/>
             <Border Width="420" Padding="28"
                     Background="#2B2B2B" CornerRadius="14"
                     HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -262,8 +262,8 @@
             </Border>
         </Panel>
 
-        <Panel IsVisible="{Binding IsAddPetOpen}">
-            <Border Background="#88000000"/>
+        <Panel IsVisible="{Binding IsAddPetOpen}" ZIndex="30">
+            <Border Classes="ModalBackdrop"/>
             <Border Width="460" Padding="28" Background="#2B2B2B" CornerRadius="14" HorizontalAlignment="Center" VerticalAlignment="Center">
                 <StackPanel Spacing="14">
                     <TextBlock Text="Нова тварина" FontSize="20" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center" Margin="0,0,0,4"/>
@@ -311,3 +311,5 @@
         </Panel>
     </Panel>
 </UserControl>
+
+

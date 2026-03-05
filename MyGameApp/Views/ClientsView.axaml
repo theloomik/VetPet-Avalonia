@@ -6,8 +6,7 @@
              x:DataType="vm:ClientsViewModel"
              x:Name="Root">
     <Panel>
-        <Grid RowDefinitions="Auto,Auto,Auto,*" Margin="30,25"
-              IsEnabled="{Binding !IsAddOpen}">
+        <Grid RowDefinitions="Auto,Auto,Auto,*" Margin="30,25">
             <TextBlock Grid.Row="0" Text="Клієнти"
                        Foreground="White" FontSize="26" FontWeight="Bold"
                        Margin="0,0,0,20"/>
@@ -69,8 +68,8 @@
             </ScrollViewer>
         </Grid>
 
-        <Panel IsVisible="{Binding IsAddOpen}">
-            <Border Background="#88000000"/>
+        <Panel IsVisible="{Binding IsAddOpen}" ZIndex="30">
+            <Border Classes="ModalBackdrop"/>
             <Border Width="420" Padding="28"
                     Background="#2B2B2B" CornerRadius="14"
                     HorizontalAlignment="Center" VerticalAlignment="Center"
@@ -103,3 +102,5 @@
         </Panel>
     </Panel>
 </UserControl>
+
+

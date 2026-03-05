@@ -5,9 +5,12 @@
         x:Class="MyGameApp.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Title="VetPet"
+        Icon="/Assets/logo.ico"
         Background="#1E1E1E"
         Width="1100" Height="680"
-        MinWidth="900" MinHeight="500">
+        MinWidth="900" MinHeight="500"
+        WindowState="Maximized"
+        KeyDown="OnWindowKeyDown">
 
     <Window.Styles>
         <Style Selector="Button.MenuBtn">
@@ -163,7 +166,7 @@
             </StackPanel>
         </Border>
 
-        <Border Grid.Column="1" Classes="Card">
+        <Border Grid.Column="1" Classes="Card" ClipToBounds="True">
             <Grid RowDefinitions="Auto,*">
                 <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="24,20,24,12">
                     <TextBlock Text="Робоча панель"
@@ -178,13 +181,13 @@
                     </Button>
                 </Grid>
 
-                <Border Grid.Row="0"
-                        Background="#66000000"
+                <Border Grid.RowSpan="2"
+                        Background="#8E000000"
                         IsVisible="{Binding IsChildModalOpen}"
                         ZIndex="5"/>
 
                 <Border Grid.Row="0" Height="1" Margin="24,62,24,0" Background="White" Opacity="0.06"/>
-                <ContentControl Grid.Row="1" Content="{Binding CurrentViewModel}"/>
+                <ContentControl Grid.Row="1" Content="{Binding CurrentViewModel}" ZIndex="10"/>
             </Grid>
         </Border>
     </Grid>

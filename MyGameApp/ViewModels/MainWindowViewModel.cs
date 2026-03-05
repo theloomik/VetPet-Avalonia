@@ -97,6 +97,75 @@ namespace MyGameApp.ViewModels
             }
         }
 
+        public bool TryCloseTopmostModal()
+        {
+            switch (CurrentViewModel)
+            {
+                case ClientDetailsViewModel vm:
+                    if (vm.IsEditPetOpen)
+                    {
+                        vm.IsEditPetOpen = false;
+                        return true;
+                    }
+                    if (vm.IsEditMode)
+                    {
+                        vm.IsEditMode = false;
+                        return true;
+                    }
+                    if (vm.IsAddBillOpen)
+                    {
+                        vm.IsAddBillOpen = false;
+                        return true;
+                    }
+                    if (vm.IsAddAppointmentOpen)
+                    {
+                        vm.IsAddAppointmentOpen = false;
+                        return true;
+                    }
+                    if (vm.IsAddPetOpen)
+                    {
+                        vm.IsAddPetOpen = false;
+                        return true;
+                    }
+                    return false;
+                case QuickAppointmentViewModel vm:
+                    if (vm.IsAddPetOpen)
+                    {
+                        vm.IsAddPetOpen = false;
+                        return true;
+                    }
+                    if (vm.IsAddClientOpen)
+                    {
+                        vm.IsAddClientOpen = false;
+                        return true;
+                    }
+                    return false;
+                case StockViewModel vm:
+                    if (vm.IsEditOpen)
+                    {
+                        vm.IsEditOpen = false;
+                        return true;
+                    }
+                    if (vm.IsAddOpen)
+                    {
+                        vm.IsAddOpen = false;
+                        return true;
+                    }
+                    return false;
+                case StaffViewModel vm when vm.IsAddOpen:
+                    vm.IsAddOpen = false;
+                    return true;
+                case ProvidersViewModel vm when vm.IsAddOpen:
+                    vm.IsAddOpen = false;
+                    return true;
+                case ClientsViewModel vm when vm.IsAddOpen:
+                    vm.IsAddOpen = false;
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
         [RelayCommand]
         public void OpenClientDetails(MyGameApp.Models.Client? client)
         {
