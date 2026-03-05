@@ -1,0 +1,313 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:MyGameApp.ViewModels"
+             xmlns:models="using:MyGameApp.Models"
+             x:Class="MyGameApp.Views.QuickAppointmentView"
+             x:DataType="vm:QuickAppointmentViewModel">
+
+    <UserControl.Styles>
+        <Style Selector="Border.FormCard">
+            <Setter Property="Background" Value="#353535"/>
+            <Setter Property="CornerRadius" Value="14"/>
+            <Setter Property="BorderBrush" Value="#454545"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="18"/>
+        </Style>
+
+        <Style Selector="TextBlock.FormTitle">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="17"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Margin" Value="0,0,0,8"/>
+        </Style>
+
+        <Style Selector="Button.PrimaryBtn">
+            <Setter Property="Background" Value="#3E3E3E"/>
+            <Setter Property="BorderBrush" Value="#606060"/>
+            <Setter Property="BorderThickness" Value="1.5"/>
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Height" Value="42"/>
+        </Style>
+
+        <Style Selector="Button.SecondaryBtn">
+            <Setter Property="Background" Value="#3A3A3A"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="Foreground" Value="#C0C0C0"/>
+            <Setter Property="Height" Value="42"/>
+        </Style>
+    </UserControl.Styles>
+
+    <Panel>
+        <Grid RowDefinitions="Auto,Auto,*" Margin="30,25" IsEnabled="{Binding !IsAnyModalOpen}">
+            <TextBlock Grid.Row="0"
+                       Text="Швидкий запис"
+                       Foreground="White"
+                       FontSize="28"
+                       FontWeight="Bold"/>
+
+            <TextBlock Grid.Row="1"
+                       Text="Оформлення запису на прийом"
+                       Foreground="#A7A7A7"
+                       Margin="0,6,0,18"/>
+
+            <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                <Grid RowDefinitions="Auto,Auto" ColumnDefinitions="*,16,*">
+                    <Border Grid.Row="0" Grid.Column="0" Classes="FormCard">
+                        <StackPanel Spacing="10">
+                            <TextBlock Text="Клієнт та тварина" Classes="FormTitle"/>
+
+                            <TextBlock Text="Телефон клієнта *" Classes="Header"/>
+                            <TextBox Classes="DarkInput"
+                                     Watermark="Введіть телефон для пошуку"
+                                     Text="{Binding ClientPhone}"
+                                     Height="42"/>
+
+                            <ComboBox ItemsSource="{Binding ClientMatches}"
+                                      SelectedItem="{Binding SelectedClient}"
+                                      Height="42"
+                                      Background="#3A3A3A"
+                                      BorderThickness="0"
+                                      CornerRadius="10">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate DataType="models:Client">
+                                        <TextBlock Foreground="White">
+                                            <TextBlock.Text>
+                                                <MultiBinding StringFormat="{}{0} {1} | {2}">
+                                                    <Binding Path="LastName"/>
+                                                    <Binding Path="FirstName"/>
+                                                    <Binding Path="Phone"/>
+                                                </MultiBinding>
+                                            </TextBlock.Text>
+                                        </TextBlock>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+
+                            <Button Classes="SecondaryBtn"
+                                    Content="+ Створити нового клієнта"
+                                    Command="{Binding OpenAddClientCommand}"/>
+
+                            <Border Height="1" Background="White" Opacity="0.08" Margin="0,2"/>
+
+                            <TextBlock Text="Тварина *" Classes="Header"/>
+                            <ComboBox ItemsSource="{Binding PetOptions}"
+                                      SelectedItem="{Binding SelectedPet}"
+                                      Height="42"
+                                      Background="#3A3A3A"
+                                      BorderThickness="0"
+                                      CornerRadius="10">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate DataType="models:Pet">
+                                        <TextBlock Foreground="White">
+                                            <TextBlock.Text>
+                                                <MultiBinding StringFormat="{}{0} ({1})">
+                                                    <Binding Path="Name"/>
+                                                    <Binding Path="PetType.Species"/>
+                                                </MultiBinding>
+                                            </TextBlock.Text>
+                                        </TextBlock>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+
+                            <Button Classes="SecondaryBtn"
+                                    Content="+ Створити нову тварину"
+                                    IsEnabled="{Binding CanCreatePet}"
+                                    Command="{Binding OpenAddPetCommand}"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Grid.Row="0" Grid.Column="2" Classes="FormCard">
+                        <StackPanel Spacing="10">
+                            <TextBlock Text="Параметри запису" Classes="FormTitle"/>
+
+                            <TextBlock Text="Лікар *" Classes="Header"/>
+                            <ComboBox ItemsSource="{Binding StaffOptions}"
+                                      SelectedItem="{Binding SelectedStaff}"
+                                      Height="42"
+                                      Background="#3A3A3A"
+                                      BorderThickness="0"
+                                      CornerRadius="10">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate DataType="models:Staff">
+                                        <TextBlock Foreground="White">
+                                            <TextBlock.Text>
+                                                <MultiBinding StringFormat="{}{0} {1} ({2})">
+                                                    <Binding Path="LastName"/>
+                                                    <Binding Path="FirstName"/>
+                                                    <Binding Path="StaffPosition.Position"/>
+                                                </MultiBinding>
+                                            </TextBlock.Text>
+                                        </TextBlock>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+
+                            <TextBlock Text="Дата та час *" Classes="Header"/>
+                            <Grid ColumnDefinitions="*,8,*,8,*" Margin="0,0,0,2">
+                                <TextBlock Grid.Column="0" Text="День" Foreground="#8E8E8E" HorizontalAlignment="Center" FontSize="11"/>
+                                <TextBlock Grid.Column="2" Text="Місяць" Foreground="#8E8E8E" HorizontalAlignment="Center" FontSize="11"/>
+                                <TextBlock Grid.Column="4" Text="Рік" Foreground="#8E8E8E" HorizontalAlignment="Center" FontSize="11"/>
+                            </Grid>
+                            <Grid ColumnDefinitions="*,8,*,8,*">
+                                <ComboBox Grid.Column="0" ItemsSource="{Binding DayOptions}" SelectedItem="{Binding SelectedDay}" Height="42" Background="#3A3A3A" BorderThickness="0" CornerRadius="10"/>
+                                <ComboBox Grid.Column="2" ItemsSource="{Binding MonthOptions}" SelectedItem="{Binding SelectedMonth}" Height="42" Background="#3A3A3A" BorderThickness="0" CornerRadius="10">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate DataType="vm:MonthOption">
+                                            <TextBlock Text="{Binding Name}" Foreground="White"/>
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+                                <ComboBox Grid.Column="4" ItemsSource="{Binding YearOptions}" SelectedItem="{Binding SelectedYear}" Height="42" Background="#3A3A3A" BorderThickness="0" CornerRadius="10"/>
+                            </Grid>
+
+                            <Grid ColumnDefinitions="*,8,*" Margin="0,2,0,0">
+                                <StackPanel Grid.Column="0" Spacing="6">
+                                    <TextBlock Text="Година" Classes="Header"/>
+                                    <ComboBox ItemsSource="{Binding HourOptions}" SelectedItem="{Binding SelectedHour}" Height="42" Background="#3A3A3A" BorderThickness="0" CornerRadius="10"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="2" Spacing="6">
+                                    <TextBlock Text="Хвилина" Classes="Header"/>
+                                    <ComboBox ItemsSource="{Binding MinuteOptions}" SelectedItem="{Binding SelectedMinute}" Height="42" Background="#3A3A3A" BorderThickness="0" CornerRadius="10"/>
+                                </StackPanel>
+                            </Grid>
+
+                            <TextBlock Text="Послуга" Classes="Header"/>
+                            <ComboBox ItemsSource="{Binding ServiceOptions}"
+                                      SelectedItem="{Binding SelectedService}"
+                                      Height="42"
+                                      Background="#3A3A3A"
+                                      BorderThickness="0"
+                                      CornerRadius="10">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate DataType="models:Service">
+                                        <TextBlock Text="{Binding Name}" Foreground="White"/>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+
+                            <TextBlock Text="Статус" Classes="Header"/>
+                            <ComboBox ItemsSource="{Binding StatusOptions}"
+                                      SelectedItem="{Binding SelectedStatus}"
+                                      Height="42"
+                                      Background="#3A3A3A"
+                                      BorderThickness="0"
+                                      CornerRadius="10"/>
+
+                            <TextBlock Text="Примітка" Classes="Header"/>
+                            <TextBox Classes="DarkInput"
+                                     Text="{Binding Description}"
+                                     Watermark="Короткий опис (необов'язково)"
+                                     TextWrapping="Wrap"
+                                     AcceptsReturn="True"
+                                     MinHeight="90"
+                                     MaxHeight="160"/>
+
+                            <TextBlock Text="{Binding ErrorMessage}"
+                                       Foreground="#FF6B6B"
+                                       IsVisible="{Binding ErrorMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Grid.Row="1" Grid.ColumnSpan="3" Margin="0,16,0,0" Classes="FormCard">
+                        <Grid ColumnDefinitions="*,12,220,220">
+                            <TextBlock Grid.Column="0"
+                                       Text="Після збереження ви повернетесь на попередню сторінку."
+                                       Foreground="#B5B5B5"
+                                       VerticalAlignment="Center"/>
+
+                            <Button Grid.Column="2"
+                                    Classes="SecondaryBtn"
+                                    Content="Скасувати"
+                                    Command="{Binding CancelCommand}"/>
+
+                            <Button Grid.Column="3"
+                                    Classes="PrimaryBtn"
+                                    Content="Зберегти запис"
+                                    Command="{Binding SaveCommand}"/>
+                        </Grid>
+                    </Border>
+                </Grid>
+            </ScrollViewer>
+        </Grid>
+
+        <Panel IsVisible="{Binding IsAddClientOpen}">
+            <Border Background="#88000000"/>
+            <Border Width="420" Padding="28"
+                    Background="#2B2B2B" CornerRadius="14"
+                    HorizontalAlignment="Center" VerticalAlignment="Center">
+                <StackPanel Spacing="14">
+                    <TextBlock Text="Новий клієнт" FontSize="20" FontWeight="Bold"
+                               Foreground="White" HorizontalAlignment="Center" Margin="0,0,0,6"/>
+                    <TextBox Watermark="Прізвище *" Classes="DarkInput" Text="{Binding NewClientLastName}" Height="42"/>
+                    <TextBox Watermark="Ім'я *" Classes="DarkInput" Text="{Binding NewClientFirstName}" Height="42"/>
+                    <TextBox Watermark="Номер телефону *" Classes="DarkInput" Text="{Binding NewClientPhone}" Height="42"/>
+                    <TextBox Watermark="Email (необов'язково)" Classes="DarkInput" Text="{Binding NewClientEmail}" Height="42"/>
+                    <TextBlock Text="{Binding NewClientErrorMessage}" Foreground="#FF6B6B"
+                               IsVisible="{Binding NewClientErrorMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                               FontSize="13" HorizontalAlignment="Center"/>
+                    <Grid ColumnDefinitions="*,10,*" Margin="0,8,0,0">
+                        <Button Grid.Column="0" Content="Скасувати" Height="42"
+                                Background="#3A3A3A" CornerRadius="10" BorderThickness="0"
+                                Foreground="#AAAAAA" Command="{Binding CancelAddClientCommand}"/>
+                        <Button Grid.Column="2" Content="Зберегти" Height="42"
+                                Background="#3A3A3A" BorderBrush="#5E5E5E" CornerRadius="10" BorderThickness="1.5"
+                                Foreground="White" FontWeight="SemiBold"
+                                Command="{Binding SaveAddClientCommand}"/>
+                    </Grid>
+                </StackPanel>
+            </Border>
+        </Panel>
+
+        <Panel IsVisible="{Binding IsAddPetOpen}">
+            <Border Background="#88000000"/>
+            <Border Width="460" Padding="28" Background="#2B2B2B" CornerRadius="14" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <StackPanel Spacing="14">
+                    <TextBlock Text="Нова тварина" FontSize="20" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center" Margin="0,0,0,4"/>
+                    <TextBox Watermark="Кличка *" Classes="DarkInput" Text="{Binding NewPetName}" Height="42"/>
+
+                    <TextBlock Text="Вид *" Classes="Header"/>
+                    <ComboBox ItemsSource="{Binding PetTypeOptions}" SelectedItem="{Binding NewPetType}" Height="42" Background="#3A3A3A" BorderThickness="0" CornerRadius="10">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate DataType="models:PetType">
+                                <TextBlock Foreground="White">
+                                    <TextBlock.Text>
+                                        <MultiBinding StringFormat="{}{0} {1}">
+                                            <Binding Path="Species"/>
+                                            <Binding Path="Breed"/>
+                                        </MultiBinding>
+                                    </TextBlock.Text>
+                                </TextBlock>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+
+                    <TextBlock Text="Стать" Classes="Header"/>
+                    <ComboBox ItemsSource="{Binding PetGenderOptions}" SelectedItem="{Binding NewPetGender}" Height="42" Background="#3A3A3A" BorderThickness="0" CornerRadius="10"/>
+
+                    <TextBlock Text="Дата народження" Classes="Header"/>
+                    <Grid ColumnDefinitions="*,8,*,8,*">
+                        <ComboBox Grid.Column="0" ItemsSource="{Binding DayOptions}" SelectedItem="{Binding NewPetBirthDay}" Height="42" Background="#3A3A3A" BorderThickness="0" CornerRadius="10"/>
+                        <ComboBox Grid.Column="2" ItemsSource="{Binding MonthOptions}" SelectedItem="{Binding NewPetBirthMonth}" Height="42" Background="#3A3A3A" BorderThickness="0" CornerRadius="10">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate DataType="vm:MonthOption">
+                                    <TextBlock Text="{Binding Name}" Foreground="White"/>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                        <ComboBox Grid.Column="4" ItemsSource="{Binding YearOptions}" SelectedItem="{Binding NewPetBirthYear}" Height="42" Background="#3A3A3A" BorderThickness="0" CornerRadius="10"/>
+                    </Grid>
+
+                    <TextBlock Text="{Binding NewPetErrorMessage}" Foreground="#FF6B6B" IsVisible="{Binding NewPetErrorMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" FontSize="13" HorizontalAlignment="Center"/>
+                    <Grid ColumnDefinitions="*,10,*" Margin="0,4,0,0">
+                        <Button Grid.Column="0" Content="Скасувати" Height="42" Background="#3A3A3A" CornerRadius="10" BorderThickness="0" Foreground="#AAAAAA" Command="{Binding CancelAddPetCommand}"/>
+                        <Button Grid.Column="2" Content="Зберегти" Height="42" Background="#3A3A3A" BorderBrush="#5E5E5E" CornerRadius="10" BorderThickness="1.5" Foreground="White" FontWeight="SemiBold" Command="{Binding SaveAddPetCommand}"/>
+                    </Grid>
+                </StackPanel>
+            </Border>
+        </Panel>
+    </Panel>
+</UserControl>

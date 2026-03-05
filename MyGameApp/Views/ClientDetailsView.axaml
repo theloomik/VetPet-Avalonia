@@ -1,26 +1,51 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui"
+<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:MyGameApp.ViewModels"
              xmlns:models="using:MyGameApp.Models"
              x:Class="MyGameApp.Views.ClientDetailsView"
-             x:DataType="vm:ClientDetailsViewModel">
+             x:DataType="vm:ClientDetailsViewModel"
+             x:Name="Root">
 
     <UserControl.Resources>
         <vm:CountToBoolConverter x:Key="HasItems"/>
     </UserControl.Resources>
 
+    <UserControl.Styles>
+        <Style Selector="Border.SectionCard">
+            <Setter Property="Background" Value="#2F2F2F"/>
+            <Setter Property="CornerRadius" Value="14"/>
+            <Setter Property="BorderBrush" Value="#3B3B3B"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="16"/>
+        </Style>
+        <Style Selector="Border.PetCard">
+            <Setter Property="Background" Value="#353535"/>
+            <Setter Property="CornerRadius" Value="12"/>
+            <Setter Property="BorderBrush" Value="#454545"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="14"/>
+            <Setter Property="Margin" Value="0,0,12,12"/>
+            <Setter Property="Width" Value="260"/>
+        </Style>
+        <Style Selector="Border.PetCard:pointerover">
+            <Setter Property="Background" Value="#3A3A3A"/>
+            <Setter Property="BorderBrush" Value="#5A5A5A"/>
+        </Style>
+    </UserControl.Styles>
+
     <Panel>
-        <Grid RowDefinitions="Auto,*" Margin="30,25" IsEnabled="{Binding !IsAnyModalOpen}">
-            <Grid Grid.Row="0" RowDefinitions="Auto,Auto" Margin="0,0,0,14">
-                <Grid Grid.Row="0" ColumnDefinitions="42,*,Auto" Margin="0,0,0,18">
-                    <Button Grid.Column="0" Width="42" Height="42"
+        <Grid RowDefinitions="Auto,*" Margin="30,20" IsEnabled="{Binding !IsAnyModalOpen}">
+            <Border Grid.Row="0" Classes="SectionCard" Padding="16" Margin="0,0,0,14" ZIndex="10">
+                <Grid ColumnDefinitions="42,*,Auto" RowDefinitions="Auto,Auto">
+                    <Button Grid.RowSpan="2" Grid.Column="0" Width="42" Height="42"
                             Background="#3A3A3A" CornerRadius="10" BorderThickness="0"
+                            VerticalAlignment="Top"
                             Command="{Binding GoBackCommand}">
                         <TextBlock Text="←" Foreground="White" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Button>
 
-                    <StackPanel Grid.Column="1" Margin="16,0,0,0" VerticalAlignment="Center">
-                        <TextBlock FontSize="22" FontWeight="Bold" Foreground="White">
+                    <StackPanel Grid.Column="1" Margin="16,0,0,0" Spacing="4">
+                        <TextBlock FontSize="24" FontWeight="Bold" Foreground="White">
                             <TextBlock.Text>
                                 <MultiBinding StringFormat="{}{0} {1}">
                                     <Binding Path="SelectedClient.LastName"/>
@@ -29,140 +54,158 @@
                             </TextBlock.Text>
                         </TextBlock>
                         <StackPanel Orientation="Horizontal" Spacing="14">
-                            <TextBlock Text="{Binding SelectedClient.Phone}" Foreground="#888888" FontSize="13"/>
-                            <TextBlock Text="{Binding SelectedClient.Email}" Foreground="#888888" FontSize="13"
+                            <TextBlock Text="{Binding SelectedClient.Phone}" Foreground="#A0A0A0" FontSize="13"/>
+                            <TextBlock Text="{Binding SelectedClient.Email}" Foreground="#A0A0A0" FontSize="13"
                                        IsVisible="{Binding SelectedClient.Email, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Spacing="18" Margin="0,8,0,0">
+                            <TextBlock Foreground="#CFCFCF"><Run Text="Тварин: "/><Run Text="{Binding PetsCount}"/></TextBlock>
+                            <TextBlock Foreground="#CFCFCF"><Run Text="Записів: "/><Run Text="{Binding AppointmentsCount}"/></TextBlock>
+                            <TextBlock Foreground="#E3A8A8"><Run Text="Борг: "/><Run Text="{Binding DebtTotalText}"/></TextBlock>
                         </StackPanel>
                     </StackPanel>
 
-                    <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8">
-                        <Button Height="42" Padding="18,0" Background="#3A3A3A" BorderBrush="#4A7C59" CornerRadius="10" BorderThickness="1.5" Command="{Binding OpenAddPetCommand}">
-                            <TextBlock Text="+ Тварина" Foreground="White" FontWeight="SemiBold"/>
-                        </Button>
-                        <Button Height="42" Padding="18,0" Background="#3A3A3A" BorderBrush="#4A6A7C" CornerRadius="10" BorderThickness="1.5" Command="{Binding OpenAddAppointmentCommand}">
-                            <TextBlock Text="+ Запис" Foreground="White" FontWeight="SemiBold"/>
-                        </Button>
-                        <Button Height="42" Padding="18,0" Background="#3A3A3A" BorderBrush="#7C6E4A" CornerRadius="10" BorderThickness="1.5" Command="{Binding OpenAddBillCommand}">
-                            <TextBlock Text="+ Рахунок" Foreground="White" FontWeight="SemiBold"/>
-                        </Button>
-                        <Button Height="42" Padding="18,0" Background="#3A3A3A" CornerRadius="10" BorderThickness="0" Command="{Binding StartEditCommand}">
-                            <TextBlock Text="Редагувати" Foreground="White" FontWeight="SemiBold"/>
+                    <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8" VerticalAlignment="Top">
+                        <Button Height="42" Padding="18,0" Background="#3A3A3A" BorderBrush="#4A7C59" CornerRadius="10" BorderThickness="1.5" Command="{Binding OpenAddPetCommand}"><TextBlock Text="+ Тварина" Foreground="White" FontWeight="SemiBold"/></Button>
+                        <Button Height="42" Padding="18,0" Background="#3A3A3A" BorderBrush="#4A6A7C" CornerRadius="10" BorderThickness="1.5" Command="{Binding OpenAddAppointmentCommand}"><TextBlock Text="+ Запис" Foreground="White" FontWeight="SemiBold"/></Button>
+                        <Button Height="42" Padding="18,0" Background="#3A3A3A" BorderBrush="#7C6E4A" CornerRadius="10" BorderThickness="1.5" Command="{Binding OpenAddBillCommand}"><TextBlock Text="+ Рахунок" Foreground="White" FontWeight="SemiBold"/></Button>
+                        <Button Height="42" Padding="18,0" Background="#3A3A3A" CornerRadius="10" BorderThickness="0" Command="{Binding StartEditCommand}"><TextBlock Text="Редагувати" Foreground="White" FontWeight="SemiBold"/></Button>
+                        <Button Height="42" Padding="18,0" Background="#3A3A3A" BorderBrush="#4A6A7C" CornerRadius="10" BorderThickness="1.5"
+                                IsEnabled="{Binding HasPendingChanges}"
+                                Command="{Binding SaveDashboardChangesCommand}">
+                            <TextBlock Text="Зберегти зміни" Foreground="White" FontWeight="SemiBold"/>
                         </Button>
                     </StackPanel>
                 </Grid>
+            </Border>
 
-                <Border Grid.Row="1" Height="1" Background="White" Opacity="0.07"/>
-            </Grid>
-
-            <TabControl Grid.Row="1" SelectedIndex="{Binding ActiveTab}">
-                <TabItem Header="Тварини">
-                    <Grid Margin="0,10,0,0">
-                        <TextBlock Text="Тварин поки немає" Foreground="#888888" FontSize="14"
-                                   HorizontalAlignment="Center" VerticalAlignment="Center"
-                                   IsVisible="{Binding Pets.Count, Converter={StaticResource HasItems}, ConverterParameter=invert}"/>
-                        <ScrollViewer IsVisible="{Binding Pets.Count, Converter={StaticResource HasItems}}">
-                            <ItemsControl ItemsSource="{Binding Pets}">
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                <StackPanel Spacing="16" Margin="0,0,4,20">
+                    <Border Classes="SectionCard">
+                        <StackPanel Spacing="12">
+                            <TextBlock Text="Тварини" Foreground="White" FontSize="20" FontWeight="Bold"/>
+                            <TextBlock Text="Тварин поки немає" Foreground="#9A9A9A" FontSize="14" IsVisible="{Binding PetCards.Count, Converter={StaticResource HasItems}, ConverterParameter=invert}"/>
+                            <ItemsControl ItemsSource="{Binding PetCards}" IsVisible="{Binding PetCards.Count, Converter={StaticResource HasItems}}">
+                                <ItemsControl.ItemsPanel><ItemsPanelTemplate><WrapPanel/></ItemsPanelTemplate></ItemsControl.ItemsPanel>
                                 <ItemsControl.ItemTemplate>
-                                    <DataTemplate DataType="models:Pet">
-                                        <Border Padding="10" BorderBrush="White" BorderThickness="0,0,0,1" Opacity="0.8">
-                                            <Grid ColumnDefinitions="200,250,130">
-                                                <StackPanel Grid.Column="0">
-                                                    <TextBlock Text="{Binding Name}" Foreground="White" FontSize="15" FontWeight="Medium" VerticalAlignment="Center"/>
-                                                    <TextBlock Text="{Binding Gender}" Foreground="#888888" FontSize="12" VerticalAlignment="Center"/>
-                                                </StackPanel>
-                                                <StackPanel Grid.Column="1">
-                                                    <TextBlock Text="{Binding PetType.Species}" Foreground="#AAAAAA" VerticalAlignment="Center"/>
-                                                    <TextBlock Text="{Binding PetType.Breed}" Foreground="#888888" VerticalAlignment="Center"/>
-                                                </StackPanel>
-                                                <TextBlock Grid.Column="3" Text="{Binding BirthDate, StringFormat='{}{0:dd.MM.yyyy}'}" Foreground="#AAAAAA" VerticalAlignment="Center"/>
-                                            </Grid>
+                                    <DataTemplate DataType="vm:PetCardRow">
+                                        <Border Classes="PetCard">
+                                            <StackPanel Spacing="6">
+                                                <TextBlock FontSize="18" FontWeight="SemiBold" Foreground="White"><Run Text="{Binding Icon}"/><Run Text=" "/><Run Text="{Binding Name}"/></TextBlock>
+                                                <TextBlock Text="{Binding SpeciesAndBreed}" Foreground="#D3D3D3"/>
+                                                <TextBlock Text="{Binding Gender}" Foreground="#B0B0B0"/>
+                                                <TextBlock Text="{Binding BirthDate}" Foreground="#B0B0B0"/>
+                                                <TextBlock Foreground="#C6C6C6" Margin="0,4,0,0"><Run Text="Останній візит: "/><Run Text="{Binding LastVisit}"/></TextBlock>
+                                                <Grid ColumnDefinitions="*,8,*" Margin="0,8,0,0">
+                                                    <Button Grid.Column="0" Height="34" Background="#3A3A3A" BorderBrush="#5A5A5A" BorderThickness="1" CornerRadius="8" Command="{Binding DataContext.OpenEditPetCommand, ElementName=Root}" CommandParameter="{Binding}"><TextBlock Text="Редагувати" Foreground="White" FontSize="12"/></Button>
+                                                    <Button Grid.Column="2" Height="34" Background="#3A3A3A" BorderBrush="#7C4A4A" BorderThickness="1" CornerRadius="8" Command="{Binding DataContext.DeletePetCommand, ElementName=Root}" CommandParameter="{Binding}"><TextBlock Text="Приховати" Foreground="#FFB0B0" FontSize="12"/></Button>
+                                                </Grid>
+                                            </StackPanel>
                                         </Border>
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
-                        </ScrollViewer>
-                    </Grid>
-                </TabItem>
-
-                <TabItem Header="Записи">
-                    <Grid Margin="0,10,0,0">
-                        <TextBlock Text="У клієнта немає записів" Foreground="#888888" FontSize="14"
-                                   HorizontalAlignment="Center" VerticalAlignment="Center"
-                                   IsVisible="{Binding Appointments.Count, Converter={StaticResource HasItems}, ConverterParameter=invert}"/>
-                        <ScrollViewer IsVisible="{Binding Appointments.Count, Converter={StaticResource HasItems}}">
-                            <ItemsControl ItemsSource="{Binding Appointments}">
+                        </StackPanel>
+                    </Border>
+                    <Border Classes="SectionCard">
+                        <StackPanel Spacing="10">
+                            <TextBlock Text="Записи" Foreground="White" FontSize="20" FontWeight="Bold"/>
+                            <TextBlock Text="У клієнта немає записів" Foreground="#9A9A9A" FontSize="14" IsVisible="{Binding !HasAppointments}"/>
+                            <ItemsControl ItemsSource="{Binding AppointmentGroups}" IsVisible="{Binding HasAppointments}">
                                 <ItemsControl.ItemTemplate>
-                                    <DataTemplate DataType="vm:AppointmentRow">
-                                        <Border Padding="12" BorderBrush="White" BorderThickness="0,0,0,1" Opacity="0.8">
-                                            <Grid>
-                                                    <Grid ColumnDefinitions="170,*,220,130">
-                                                        <TextBlock Grid.Column="0" Text="{Binding Date}" Foreground="#B0B0B0" VerticalAlignment="Center"/>
-                                                        <StackPanel Grid.Column="1">
-                                                            <TextBlock Text="{Binding ServiceName}" Foreground="White" FontWeight="SemiBold"/>
-                                                            <TextBlock Text="{Binding PetName}" Foreground="#909090" FontSize="12"/>
+                                    <DataTemplate DataType="vm:ClientAppointmentGroupRow">
+                                        <StackPanel Margin="0,0,0,12">
+                                            <Border Background="#323232" CornerRadius="10" Padding="12,8" Margin="0,0,0,8">
+                                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                                    <Border Width="10" Height="10" CornerRadius="5" Background="{Binding MarkerColor}" VerticalAlignment="Center"/>
+                                                    <TextBlock Text="{Binding Title}" Foreground="White" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                                </StackPanel>
+                                            </Border>
+
+                                            <ItemsControl ItemsSource="{Binding Items}">
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate DataType="vm:AppointmentRow">
+                                                        <StackPanel>
+                                                            <Border Padding="10">
+                                                                <Grid ColumnDefinitions="180,10,*,170,150,92" ColumnSpacing="8">
+                                                                    <Border Grid.Column="0" BorderThickness="3,0,0,0" BorderBrush="{Binding DateMarkerColor}" Background="#2F2F2F" CornerRadius="8" Padding="10,4">
+                                                                        <TextBlock Text="{Binding DateShort}" Foreground="#E0E0E0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                                                    </Border>
+                                                                    <Border Grid.Column="1" Width="1" Background="White" Opacity="0.08" Margin="0,8" HorizontalAlignment="Center"/>
+
+                                                                    <StackPanel Grid.Column="2" Spacing="2">
+                                                                        <TextBlock Text="{Binding ProcedureName}" Foreground="White" FontWeight="SemiBold" FontSize="15"/>
+                                                                        <TextBlock Text="{Binding PetName}" Foreground="#D8D8D8"/>
+                                                                        <TextBlock Text="{Binding Description}" Foreground="#A0A0A0" FontSize="12" TextWrapping="Wrap" MaxWidth="300"/>
+                                                                    </StackPanel>
+
+                                                                    <TextBlock Grid.Column="3" Text="{Binding StaffName}" Foreground="#BEBEBE" VerticalAlignment="Center"/>
+                                                                    <ComboBox Grid.Column="4" ItemsSource="{Binding StatusOptions}" SelectedItem="{Binding SelectedStatus}" Height="36" Background="#3A3A3A" BorderThickness="0" CornerRadius="8"/>
+                                                                    <Border Grid.Column="5" Background="{Binding StatusColor}" CornerRadius="8" Height="28" VerticalAlignment="Center" HorizontalAlignment="Right" Padding="10,0">
+                                                                        <TextBlock Text="{Binding SelectedStatus}" Foreground="White" VerticalAlignment="Center" FontSize="12"/>
+                                                                    </Border>
+                                                                </Grid>
+                                                            </Border>
+                                                            <Border Height="1" Background="White" Opacity="0.05"/>
                                                         </StackPanel>
-                                                        <TextBlock Grid.Column="2" Text="{Binding StaffName}" Foreground="#B0B0B0" VerticalAlignment="Center"/>
-                                                        <Border Grid.Column="3" Background="{Binding StatusColor}" CornerRadius="8" Height="28" VerticalAlignment="Center" HorizontalAlignment="Right" Padding="10,0">
-                                                            <TextBlock Text="{Binding Status}" Foreground="White" VerticalAlignment="Center"/>
-                                                        </Border>
-                                                    </Grid>
-                                                    <!-- <Border Padding="12" BorderBrush="#4d4d4d" BorderThickness="0,0,0,1" Opacity="0.8"/> -->
-                                                    <TextBlock Text="{Binding Description}" Foreground="White" FontWeight="SemiBold"/>
-                                            </Grid>
-                                        </Border>
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                            </ItemsControl>
+                                        </StackPanel>
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
-                        </ScrollViewer>
-                    </Grid>
-                </TabItem>
+                        </StackPanel>
+                    </Border>
 
-                <TabItem Header="Рахунки">
-                    <Grid Margin="0,10,0,0">
-                        <TextBlock Text="У клієнта немає рахунків" Foreground="#888888" FontSize="14"
-                                   HorizontalAlignment="Center" VerticalAlignment="Center"
-                                   IsVisible="{Binding Bills.Count, Converter={StaticResource HasItems}, ConverterParameter=invert}"/>
-                        <ScrollViewer IsVisible="{Binding Bills.Count, Converter={StaticResource HasItems}}">
-                            <ItemsControl ItemsSource="{Binding Bills}">
+                    <Border Classes="SectionCard">
+                        <StackPanel Spacing="10">
+                            <TextBlock Text="Рахунки" Foreground="White" FontSize="20" FontWeight="Bold"/>
+                            <Grid ColumnDefinitions="*,12,*" Margin="0,0,0,6">
+                                <Border Grid.Column="0" Background="#323232" CornerRadius="10" Padding="12">
+                                    <StackPanel><TextBlock Text="Сплачено" Foreground="#9FC2A5" FontSize="12"/><TextBlock Text="{Binding PaidTotalText}" Foreground="White" FontWeight="Bold" FontSize="18"/></StackPanel>
+                                </Border>
+                                <Border Grid.Column="2" Background="#323232" CornerRadius="10" Padding="12">
+                                    <StackPanel><TextBlock Text="Борг" Foreground="#E1A2A2" FontSize="12"/><TextBlock Text="{Binding DebtTotalText}" Foreground="White" FontWeight="Bold" FontSize="18"/></StackPanel>
+                                </Border>
+                            </Grid>
+                            <TextBlock Text="У клієнта немає рахунків" Foreground="#9A9A9A" FontSize="14" IsVisible="{Binding Bills.Count, Converter={StaticResource HasItems}, ConverterParameter=invert}"/>
+                            <ItemsControl ItemsSource="{Binding Bills}" IsVisible="{Binding Bills.Count, Converter={StaticResource HasItems}}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate DataType="vm:BillRow">
-                                        <Border Padding="12" BorderBrush="White" BorderThickness="0,0,0,1" Opacity="0.8">
-                                            <Grid ColumnDefinitions="170,*,160,130">
+                                        <StackPanel>
+                                            <Grid ColumnDefinitions="160,120,150,120,110" ColumnSpacing="10" Margin="0,6,0,6">
                                                 <TextBlock Grid.Column="0" Text="{Binding Date}" Foreground="#B0B0B0" VerticalAlignment="Center"/>
                                                 <TextBlock Grid.Column="1" Text="{Binding Amount}" Foreground="White" FontWeight="SemiBold" VerticalAlignment="Center"/>
-                                                <TextBlock Grid.Column="2" Text="{Binding Paid}" Foreground="#B0B0B0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                                                <Border Grid.Column="3" Background="{Binding PaidColor}" CornerRadius="8" Height="28" VerticalAlignment="Center" HorizontalAlignment="Right" Padding="10,0">
-                                                    <TextBlock Text="{Binding Source.PaymentMethod}" Foreground="White" VerticalAlignment="Center"/>
-                                                </Border>
+                                                <ComboBox Grid.Column="2" ItemsSource="{Binding PaidOptions}" SelectedItem="{Binding SelectedPaid}" Height="36" Background="#3A3A3A" BorderThickness="0" CornerRadius="8"/>
+                                                <ComboBox Grid.Column="3" ItemsSource="{Binding PaymentMethodOptions}" SelectedItem="{Binding SelectedPaymentMethod}" Height="36" Background="#3A3A3A" BorderThickness="0" CornerRadius="8"/>
+                                                <Border Grid.Column="4" Background="{Binding PaymentBadgeColor}" CornerRadius="8" Height="28" VerticalAlignment="Center" HorizontalAlignment="Stretch" Padding="8,0"><TextBlock Text="{Binding SelectedPaymentMethod}" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="12"/></Border>
                                             </Grid>
-                                        </Border>
+                                            <Border Height="1" Background="White" Opacity="0.05"/>
+                                        </StackPanel>
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
-                        </ScrollViewer>
-                    </Grid>
-                </TabItem>
-            </TabControl>
-        </Grid>
+                        </StackPanel>
+                    </Border>
 
+                    <TextBlock Text="{Binding HintMessage}" Foreground="#D8A6A6" IsVisible="{Binding HintMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+                    <TextBlock Text="{Binding LoadError}" Foreground="#FF8C8C" IsVisible="{Binding LoadError, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
         <Panel IsVisible="{Binding IsAddPetOpen}">
             <Border Background="#88000000"/>
             <Border Width="460" Padding="28" Background="#2B2B2B" CornerRadius="14" HorizontalAlignment="Center" VerticalAlignment="Center" DataContext="{Binding AddPetForm}" x:DataType="vm:AddPetViewModel">
                 <StackPanel Spacing="14">
                     <TextBlock Text="Нова Тварина" FontSize="20" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center" Margin="0,0,0,4"/>
                     <TextBox Watermark="Кличка *" Classes="DarkInput" Text="{Binding Name}" Height="42"/>
-
                     <StackPanel Spacing="6">
                         <TextBlock Text="ВИД *" Classes="Header"/>
                         <Grid ColumnDefinitions="*,8,Auto" IsVisible="{Binding !IsAddingSpecies}">
-                            <ComboBox Grid.Column="0" ItemsSource="{Binding SpeciesOptions}" SelectedItem="{Binding SelectedSpecies}" Height="42"
-                                      Background="#3A3A3A" BorderThickness="0" CornerRadius="10"/>
-                            <Button Grid.Column="2" Content="+ Вид" Height="42" Padding="14,0"
-                                    Background="#3A3A3A" CornerRadius="10" BorderThickness="0"
-                                    Foreground="White" FontWeight="SemiBold"
-                                    Command="{Binding ShowAddSpeciesCommand}"/>
+                            <ComboBox Grid.Column="0" ItemsSource="{Binding SpeciesOptions}" SelectedItem="{Binding SelectedSpecies}" Height="42" Background="#3A3A3A" BorderThickness="0" CornerRadius="10"/>
+                            <Button Grid.Column="2" Content="+ Вид" Height="42" Padding="14,0" Background="#3A3A3A" CornerRadius="10" BorderThickness="0" Foreground="White" FontWeight="SemiBold" Command="{Binding ShowAddSpeciesCommand}"/>
                         </Grid>
-
                         <Border IsVisible="{Binding IsAddingSpecies}" Background="#252525" CornerRadius="10" Padding="12">
                             <StackPanel Spacing="10">
                                 <TextBlock Text="Новий вид" Foreground="#CFCFCF" FontSize="12" FontWeight="SemiBold"/>
@@ -174,20 +217,12 @@
                             </StackPanel>
                         </Border>
                     </StackPanel>
-
                     <StackPanel Spacing="6">
                         <TextBlock Text="Порода" Classes="Header"/>
                         <Grid ColumnDefinitions="*,8,Auto" IsVisible="{Binding !IsAddingBreed}">
-                            <ComboBox Grid.Column="0" ItemsSource="{Binding BreedOptions}" SelectedItem="{Binding SelectedBreed}" Height="42"
-                                      IsEnabled="{Binding SelectedSpecies, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
-                                      Background="#3A3A3A" BorderThickness="0" CornerRadius="10"/>
-                            <Button Grid.Column="2" Content="+ Порода" Height="42" Padding="14,0"
-                                    Background="#3A3A3A" CornerRadius="10" BorderThickness="0"
-                                    Foreground="White" FontWeight="SemiBold"
-                                    IsEnabled="{Binding SelectedSpecies, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
-                                    Command="{Binding ShowAddBreedCommand}"/>
+                            <ComboBox Grid.Column="0" ItemsSource="{Binding BreedOptions}" SelectedItem="{Binding SelectedBreed}" Height="42" IsEnabled="{Binding SelectedSpecies, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" Background="#3A3A3A" BorderThickness="0" CornerRadius="10"/>
+                            <Button Grid.Column="2" Content="+ Порода" Height="42" Padding="14,0" Background="#3A3A3A" CornerRadius="10" BorderThickness="0" Foreground="White" FontWeight="SemiBold" IsEnabled="{Binding SelectedSpecies, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" Command="{Binding ShowAddBreedCommand}"/>
                         </Grid>
-
                         <Border IsVisible="{Binding IsAddingBreed}" Background="#252525" CornerRadius="10" Padding="12">
                             <StackPanel Spacing="10">
                                 <TextBlock Text="Нова порода" Foreground="#CFCFCF" FontSize="12" FontWeight="SemiBold"/>
@@ -199,31 +234,22 @@
                             </StackPanel>
                         </Border>
                     </StackPanel>
-
                     <StackPanel Spacing="6">
                         <TextBlock Text="ДАТА НАРОДЖЕННЯ" Classes="Header"/>
-                        <Grid ColumnDefinitions="*,8,*,8,*" Margin="0,0,0,2">
-                            <TextBlock Grid.Column="0" Text="День" Foreground="#757575" FontSize="11" HorizontalAlignment="Center"/>
-                            <TextBlock Grid.Column="2" Text="Місяць" Foreground="#757575" FontSize="11" HorizontalAlignment="Center"/>
-                            <TextBlock Grid.Column="4" Text="Рік" Foreground="#757575" FontSize="11" HorizontalAlignment="Center"/>
-                        </Grid>
                         <Grid ColumnDefinitions="*,8,*,8,*">
                             <ComboBox Grid.Column="0" ItemsSource="{Binding BirthDays}" SelectedItem="{Binding SelectedBirthDay}" Height="42" Background="#3A3A3A" BorderThickness="0" CornerRadius="10"/>
                             <ComboBox Grid.Column="2" ItemsSource="{Binding BirthMonths}" SelectedItem="{Binding SelectedBirthMonth}" Height="42" Background="#3A3A3A" BorderThickness="0" CornerRadius="10"/>
                             <ComboBox Grid.Column="4" ItemsSource="{Binding BirthYears}" SelectedItem="{Binding SelectedBirthYear}" Height="42" Background="#3A3A3A" BorderThickness="0" CornerRadius="10"/>
                         </Grid>
                     </StackPanel>
-
                     <StackPanel Spacing="6">
                         <TextBlock Text="ГЕНДЕР" Classes="Header"/>
-                        <ComboBox ItemsSource="{Binding Genders}" SelectedItem="{Binding SelectedGender}" Height="42"
-                                  Background="#3A3A3A" BorderThickness="0" CornerRadius="10"/>
+                        <ComboBox ItemsSource="{Binding Genders}" SelectedItem="{Binding SelectedGender}" Height="42" Background="#3A3A3A" BorderThickness="0" CornerRadius="10"/>
                     </StackPanel>
-
                     <TextBlock Text="{Binding ErrorMessage}" Foreground="#FF6B6B" IsVisible="{Binding ErrorMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" FontSize="13" HorizontalAlignment="Center"/>
                     <Grid ColumnDefinitions="*,10,*" Margin="0,4,0,0">
-                        <Button Grid.Column="0" Content="Скасувати" Height="42" Background="#3A3A3A" CornerRadius="10" BorderThickness="0" Foreground="#AAAAAA" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Command="{Binding CancelCommand}"/>
-                        <Button Grid.Column="2" Content="Зберегти" Height="42" Background="#3A3A3A" BorderBrush="#4A7C59" CornerRadius="10" BorderThickness="1.5" Foreground="White" FontWeight="SemiBold" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Command="{Binding SaveCommand}"/>
+                        <Button Grid.Column="0" Content="Скасувати" Height="42" Background="#3A3A3A" CornerRadius="10" BorderThickness="0" Foreground="#AAAAAA" Command="{Binding CancelCommand}"/>
+                        <Button Grid.Column="2" Content="Зберегти" Height="42" Background="#3A3A3A" BorderBrush="#4A7C59" CornerRadius="10" BorderThickness="1.5" Foreground="White" FontWeight="SemiBold" Command="{Binding SaveCommand}"/>
                     </Grid>
                 </StackPanel>
             </Border>
@@ -234,50 +260,41 @@
             <Border Width="500" Padding="28" Background="#2B2B2B" CornerRadius="14" HorizontalAlignment="Center" VerticalAlignment="Center" DataContext="{Binding AddAppointmentForm}" x:DataType="vm:AddAppointmentViewModel">
                 <StackPanel Spacing="14">
                     <TextBlock Text="Новий Запис на прийом" FontSize="20" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
-
                     <TextBlock Text="Тварина *" Classes="Header"/>
-                    <ComboBox ItemsSource="{Binding PetOptions}" SelectedItem="{Binding SelectedPet}" Height="42" Background="#3A3A3A" BorderThickness="0" CornerRadius="10">
-                        <ComboBox.ItemTemplate>
-                            <DataTemplate DataType="models:Pet">
-                                <TextBlock Text="{Binding Name}" Foreground="White"/>
-                            </DataTemplate>
-                        </ComboBox.ItemTemplate>
-                    </ComboBox>
-
+                    <ComboBox ItemsSource="{Binding PetOptions}" SelectedItem="{Binding SelectedPet}" Height="42" Background="#3A3A3A" BorderThickness="0" CornerRadius="10"/>
                     <TextBlock Text="Працівник *" Classes="Header"/>
-                    <ComboBox ItemsSource="{Binding StaffOptions}" SelectedItem="{Binding SelectedStaff}" Height="42" Background="#3A3A3A" BorderThickness="0" CornerRadius="10">
-                        <ComboBox.ItemTemplate>
-                            <DataTemplate DataType="models:Staff">
-                                <TextBlock Foreground="White">
-                                    <TextBlock.Text>
-                                        <MultiBinding StringFormat="{}{0} {1}">
-                                            <Binding Path="LastName"/>
-                                            <Binding Path="FirstName"/>
-                                        </MultiBinding>
-                                    </TextBlock.Text>
-                                </TextBlock>
-                            </DataTemplate>
-                        </ComboBox.ItemTemplate>
-                    </ComboBox>
-
+                    <ComboBox ItemsSource="{Binding StaffOptions}" SelectedItem="{Binding SelectedStaff}" Height="42" Background="#3A3A3A" BorderThickness="0" CornerRadius="10"/>
                     <TextBlock Text="Послуга" Classes="Header"/>
-                    <ComboBox ItemsSource="{Binding ServiceOptions}" SelectedItem="{Binding SelectedService}" Height="42" Background="#3A3A3A" BorderThickness="0" CornerRadius="10">
-                        <ComboBox.ItemTemplate>
-                            <DataTemplate DataType="models:Service">
-                                <TextBlock Text="{Binding Name}" Foreground="White"/>
-                            </DataTemplate>
-                        </ComboBox.ItemTemplate>
-                    </ComboBox>
-
+                    <ComboBox ItemsSource="{Binding ServiceOptions}" SelectedItem="{Binding SelectedService}" Height="42" Background="#3A3A3A" BorderThickness="0" CornerRadius="10"/>
                     <TextBlock Text="Дата та Час (DD.MM.YYYY HH:MM) *" Classes="Header"/>
                     <TextBox Classes="DarkInput" Text="{Binding DateText}" Height="42"/>
-
                     <TextBlock Text="Статус" Classes="Header"/>
                     <ComboBox ItemsSource="{Binding StatusOptions}" SelectedItem="{Binding SelectedStatus}" Height="42" Background="#3A3A3A" BorderThickness="0" CornerRadius="10"/>
-
                     <TextBlock Text="Опис" Classes="Header"/>
                     <TextBox Classes="DarkInput" Text="{Binding Description}" Height="42"/>
-
+                    <TextBlock Text="{Binding ErrorMessage}" Foreground="#FF6B6B" IsVisible="{Binding ErrorMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" FontSize="13" HorizontalAlignment="Center"/>
+                    <Grid ColumnDefinitions="*,10,*" Margin="0,6,0,0">
+                        <Button Grid.Column="0" Content="Скасувати" Height="42" Background="#3A3A3A" CornerRadius="10" BorderThickness="0" Foreground="#AAAAAA" Command="{Binding CancelCommand}"/>
+                        <Button Grid.Column="2" Content="Зберегти" Height="42" Background="#3A3A3A" BorderBrush="#4A7C59" CornerRadius="10" BorderThickness="1.5" Foreground="White" FontWeight="SemiBold" Command="{Binding SaveCommand}"/>
+                    </Grid>
+                </StackPanel>
+            </Border>
+        </Panel>
+        <Panel IsVisible="{Binding IsAddBillOpen}">
+            <Border Background="#88000000"/>
+            <Border Width="500" Padding="28" Background="#2B2B2B" CornerRadius="14" HorizontalAlignment="Center" VerticalAlignment="Center" DataContext="{Binding AddBillForm}" x:DataType="vm:AddBillViewModel">
+                <StackPanel Spacing="14">
+                    <TextBlock Text="Новий Рахунок" FontSize="20" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Запис *" Classes="Header"/>
+                    <ComboBox ItemsSource="{Binding AppointmentOptions}" SelectedItem="{Binding SelectedAppointment}" Height="42" Background="#3A3A3A" BorderThickness="0" CornerRadius="10"/>
+                    <TextBlock Text="Загальна ціна *" Classes="Header"/>
+                    <TextBox Classes="DarkInput" Text="{Binding TotalAmount}" Height="42"/>
+                    <TextBlock Text="Дата та Час (DD.MM.YYYY HH:MM) *" Classes="Header"/>
+                    <TextBox Classes="DarkInput" Text="{Binding DateText}" Height="42"/>
+                    <TextBlock Text="Статус Оплати" Classes="Header"/>
+                    <ComboBox ItemsSource="{Binding PaidOptions}" SelectedItem="{Binding SelectedPaid}" Height="42" Background="#3A3A3A" BorderThickness="0" CornerRadius="10"/>
+                    <TextBlock Text="Вид Оплати" Classes="Header"/>
+                    <TextBox Classes="DarkInput" Text="{Binding PaymentMethod}" Height="42"/>
                     <TextBlock Text="{Binding ErrorMessage}" Foreground="#FF6B6B" IsVisible="{Binding ErrorMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" FontSize="13" HorizontalAlignment="Center"/>
                     <Grid ColumnDefinitions="*,10,*" Margin="0,6,0,0">
                         <Button Grid.Column="0" Content="Скасувати" Height="42" Background="#3A3A3A" CornerRadius="10" BorderThickness="0" Foreground="#AAAAAA" Command="{Binding CancelCommand}"/>
@@ -287,44 +304,39 @@
             </Border>
         </Panel>
 
-        <Panel IsVisible="{Binding IsAddBillOpen}">
+        <Panel IsVisible="{Binding IsEditPetOpen}">
             <Border Background="#88000000"/>
-            <Border Width="500" Padding="28" Background="#2B2B2B" CornerRadius="14" HorizontalAlignment="Center" VerticalAlignment="Center" DataContext="{Binding AddBillForm}" x:DataType="vm:AddBillViewModel">
+            <Border Width="460" Padding="28" Background="#2B2B2B" CornerRadius="14" HorizontalAlignment="Center" VerticalAlignment="Center">
                 <StackPanel Spacing="14">
-                    <TextBlock Text="Новий Рахунок" FontSize="20" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
-
-                    <TextBlock Text="Запис *" Classes="Header"/>
-                    <ComboBox ItemsSource="{Binding AppointmentOptions}" SelectedItem="{Binding SelectedAppointment}" Height="42" Background="#3A3A3A" BorderThickness="0" CornerRadius="10">
+                    <TextBlock Text="Редагування тварини" FontSize="20" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
+                    <TextBox Watermark="Кличка *" Classes="DarkInput" Text="{Binding EditPetName}" Height="42"/>
+                    <TextBlock Text="Вид/порода *" Classes="Header"/>
+                    <ComboBox ItemsSource="{Binding PetTypeOptions}" SelectedItem="{Binding EditPetType}" Height="42" Background="#3A3A3A" BorderThickness="0" CornerRadius="10">
                         <ComboBox.ItemTemplate>
-                            <DataTemplate DataType="models:Appointment">
+                            <DataTemplate DataType="models:PetType">
                                 <TextBlock Foreground="White">
                                     <TextBlock.Text>
-                                        <MultiBinding StringFormat="{}{0:dd.MM.yyyy HH:mm} | {1}">
-                                            <Binding Path="Date"/>
-                                            <Binding Path="Pet.Name"/>
+                                        <MultiBinding StringFormat="{}{0} {1}">
+                                            <Binding Path="Species"/>
+                                            <Binding Path="Breed"/>
                                         </MultiBinding>
                                     </TextBlock.Text>
                                 </TextBlock>
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
                     </ComboBox>
-
-                    <TextBlock Text="Загальна ціна *" Classes="Header"/>
-                    <TextBox Classes="DarkInput" Text="{Binding TotalAmount}" Height="42"/>
-
-                    <TextBlock Text="Дата та Час (DD.MM.YYYY HH:MM) *" Classes="Header"/>
-                    <TextBox Classes="DarkInput" Text="{Binding DateText}" Height="42"/>
-
-                    <TextBlock Text="Статус Оплати" Classes="Header"/>
-                    <ComboBox ItemsSource="{Binding PaidOptions}" SelectedItem="{Binding SelectedPaid}" Height="42" Background="#3A3A3A" BorderThickness="0" CornerRadius="10"/>
-
-                    <TextBlock Text="Вид Оплати" Classes="Header"/>
-                    <TextBox Classes="DarkInput" Text="{Binding PaymentMethod}" Height="42"/>
-
-                    <TextBlock Text="{Binding ErrorMessage}" Foreground="#FF6B6B" IsVisible="{Binding ErrorMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" FontSize="13" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Гендер" Classes="Header"/>
+                    <ComboBox ItemsSource="{Binding Genders}" SelectedItem="{Binding EditPetGender}" Height="42" Background="#3A3A3A" BorderThickness="0" CornerRadius="10"/>
+                    <TextBlock Text="Дата народження" Classes="Header"/>
+                    <Grid ColumnDefinitions="*,8,*,8,*">
+                        <ComboBox Grid.Column="0" ItemsSource="{Binding BirthDays}" SelectedItem="{Binding EditPetBirthDay}" Height="42" Background="#3A3A3A" BorderThickness="0" CornerRadius="10"/>
+                        <ComboBox Grid.Column="2" ItemsSource="{Binding BirthMonths}" SelectedItem="{Binding EditPetBirthMonth}" Height="42" Background="#3A3A3A" BorderThickness="0" CornerRadius="10"/>
+                        <ComboBox Grid.Column="4" ItemsSource="{Binding BirthYears}" SelectedItem="{Binding EditPetBirthYear}" Height="42" Background="#3A3A3A" BorderThickness="0" CornerRadius="10"/>
+                    </Grid>
+                    <TextBlock Text="{Binding EditPetError}" Foreground="#FF6B6B" IsVisible="{Binding EditPetError, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" FontSize="13" HorizontalAlignment="Center"/>
                     <Grid ColumnDefinitions="*,10,*" Margin="0,6,0,0">
-                        <Button Grid.Column="0" Content="Скасувати" Height="42" Background="#3A3A3A" CornerRadius="10" BorderThickness="0" Foreground="#AAAAAA" Command="{Binding CancelCommand}"/>
-                        <Button Grid.Column="2" Content="Зберегти" Height="42" Background="#3A3A3A" BorderBrush="#4A7C59" CornerRadius="10" BorderThickness="1.5" Foreground="White" FontWeight="SemiBold" Command="{Binding SaveCommand}"/>
+                        <Button Grid.Column="0" Content="Скасувати" Height="42" Background="#3A3A3A" CornerRadius="10" BorderThickness="0" Foreground="#AAAAAA" Command="{Binding CancelEditPetCommand}"/>
+                        <Button Grid.Column="2" Content="Зберегти" Height="42" Background="#3A3A3A" BorderBrush="#4A7C59" CornerRadius="10" BorderThickness="1.5" Foreground="White" FontWeight="SemiBold" Command="{Binding SaveEditPetCommand}"/>
                     </Grid>
                 </StackPanel>
             </Border>
@@ -335,18 +347,17 @@
             <Border Width="460" Padding="28" Background="#2B2B2B" CornerRadius="14" HorizontalAlignment="Center" VerticalAlignment="Center">
                 <StackPanel Spacing="14">
                     <TextBlock Text="Редагування Клієнта" FontSize="20" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center" Margin="0,0,0,6"/>
-                    <TextBox Watermark="Прізивище *" Classes="DarkInput" Text="{Binding EditLastName}" Height="42"/>
+                    <TextBox Watermark="Прізвище *" Classes="DarkInput" Text="{Binding EditLastName}" Height="42"/>
                     <TextBox Watermark="Ім'я *" Classes="DarkInput" Text="{Binding EditFirstName}" Height="42"/>
                     <TextBox Watermark="Телефон *" Classes="DarkInput" Text="{Binding EditPhone}" Height="42"/>
                     <TextBox Watermark="Email" Classes="DarkInput" Text="{Binding EditEmail}" Height="42"/>
                     <TextBlock Text="{Binding EditError}" Foreground="#FF6B6B" IsVisible="{Binding EditError, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" FontSize="13" HorizontalAlignment="Center"/>
                     <Grid ColumnDefinitions="*,10,*" Margin="0,8,0,0">
-                        <Button Grid.Column="0" Content="Скасувати" Height="42" Background="#3A3A3A" CornerRadius="10" BorderThickness="0" Foreground="#AAAAAA" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Command="{Binding CancelEditCommand}"/>
-                        <Button Grid.Column="2" Content="Зберегти" Height="42" Background="#3A3A3A" BorderBrush="#4A7C59" CornerRadius="10" BorderThickness="1.5" Foreground="White" FontWeight="SemiBold" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Command="{Binding SaveEditCommand}"/>
+                        <Button Grid.Column="0" Content="Скасувати" Height="42" Background="#3A3A3A" CornerRadius="10" BorderThickness="0" Foreground="#AAAAAA" Command="{Binding CancelEditCommand}"/>
+                        <Button Grid.Column="2" Content="Зберегти" Height="42" Background="#3A3A3A" BorderBrush="#4A7C59" CornerRadius="10" BorderThickness="1.5" Foreground="White" FontWeight="SemiBold" Command="{Binding SaveEditCommand}"/>
                     </Grid>
                 </StackPanel>
             </Border>
         </Panel>
     </Panel>
 </UserControl>
-

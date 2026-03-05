@@ -55,6 +55,7 @@ public partial class MainWindow : Window
             ClientsViewModel => 0,
             ClientDetailsViewModel => 0,
             AppointmentsViewModel => 1,
+            QuickAppointmentViewModel => 1,
             StaffViewModel => 2,
             StaffDetailsViewModel => 2,
             ProvidersViewModel => 3,

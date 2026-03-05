@@ -1,4 +1,4 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui"
+<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:MyGameApp.ViewModels"
              xmlns:models="using:MyGameApp.Models"
@@ -10,103 +10,116 @@
               IsEnabled="{Binding !IsAnyModalOpen}">
             <TextBlock Grid.Row="0" Text="Склад"
                        Foreground="White" FontSize="26" FontWeight="Bold"
-                       Margin="0,0,0,20"/>
-            <Grid Grid.Row="1" ColumnDefinitions="*,10,Auto,10,Auto" Height="42" Margin="0,0,0,20">
+                       Margin="0,0,0,16"/>
 
+            <Grid Grid.Row="1" ColumnDefinitions="*,14,*,14,*" Margin="0,0,0,18">
+                <Border Grid.Column="0" Background="#2E2E2E" CornerRadius="12" Padding="14,10">
+                    <StackPanel Spacing="2">
+                        <TextBlock Text="КІЛЬКІСТЬ ПОЗИЦІЙ" Classes="Header"/>
+                        <TextBlock Text="{Binding TotalPositions}" Foreground="White" FontSize="22" FontWeight="Bold"/>
+                    </StackPanel>
+                </Border>
+                <Border Grid.Column="2" Background="#2E2E2E" CornerRadius="12" Padding="14,10">
+                    <StackPanel Spacing="2">
+                        <TextBlock Text="НИЗЬКИЙ ЗАПАС" Classes="Header"/>
+                        <TextBlock Text="{Binding LowStockPositions}" Foreground="#FF8C8C" FontSize="22" FontWeight="Bold"/>
+                    </StackPanel>
+                </Border>
+                <Border Grid.Column="4" Background="#2E2E2E" CornerRadius="12" Padding="14,10">
+                    <StackPanel Spacing="2">
+                        <TextBlock Text="ПОСТАЧАЛЬНИКИ" Classes="Header"/>
+                        <TextBlock Text="{Binding SuppliersCount}" Foreground="White" FontSize="22" FontWeight="Bold"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <Grid Grid.Row="2" ColumnDefinitions="*,10,Auto" Height="42" Margin="0,0,0,20">
                 <TextBox Grid.Column="0" Watermark="Пошук (назва препарату, постачальник)"
                          Classes="DarkInput" Text="{Binding SearchText}"/>
-                <Button Grid.Column="2" Width="60" Height="42"
-                        Background="#3A3A3A" CornerRadius="10" BorderThickness="0"
-                        Command="{Binding ToggleSortCommand}">
-                    <TextBlock Text="{Binding SortLabel}" Foreground="White" FontWeight="Bold"/>
-                </Button>
-                <Button Grid.Column="4" Width="100" Height="42"
+                <Button Grid.Column="2" Width="118" Height="42"
                         Background="#3A3A3A" CornerRadius="10" BorderThickness="0"
                         Command="{Binding AddStockCommand}">
                     <TextBlock Text="+ Новий" Foreground="White" FontWeight="SemiBold"/>
                 </Button>
             </Grid>
 
-            <Grid Grid.Row="2" ColumnDefinitions="170,10,90,10,80,10,90,10,160,10,120,*,110" Margin="10,0,10,8">
-                <TextBlock Grid.Column="0" Text="ПРЕПАРАТ" Classes="Header" HorizontalAlignment="Center"/>
-                <TextBlock Grid.Column="2" Text="ЦІНА" Classes="Header" HorizontalAlignment="Center"/>
-                <TextBlock Grid.Column="4" Text="КІЛЬКІСТЬ" Classes="Header" HorizontalAlignment="Center"/>
-                <TextBlock Grid.Column="6" Text="МІН. ЗАЛИШОК" Classes="Header" HorizontalAlignment="Center"/>
-                <TextBlock Grid.Column="8" Text="ПОСТАЧАЛЬНИК" Classes="Header" HorizontalAlignment="Center"/>
-                <TextBlock Grid.Column="10" Text="ПОПОВНЕНО" Classes="Header" HorizontalAlignment="Center"/>
+            <Grid Grid.Row="3" RowDefinitions="Auto,*">
+                <Grid Grid.Row="0" ColumnDefinitions="190,10,110,10,100,10,115,10,170,10,120,*,110" Margin="10,0,10,8">
+                    <Button Grid.Column="0" Command="{Binding SortByMedicineCommand}" Background="Transparent" BorderThickness="0" HorizontalContentAlignment="Center">
+                        <TextBlock Text="{Binding MedicineSortLabel}" Classes="Header" HorizontalAlignment="Center"/>
+                    </Button>
+                    <Button Grid.Column="2" Command="{Binding SortByPriceCommand}" Background="Transparent" BorderThickness="0" HorizontalContentAlignment="Center">
+                        <TextBlock Text="{Binding PriceSortLabel}" Classes="Header" HorizontalAlignment="Center"/>
+                    </Button>
+                    <Button Grid.Column="4" Command="{Binding SortByQuantityCommand}" Background="Transparent" BorderThickness="0" HorizontalContentAlignment="Center">
+                        <TextBlock Text="{Binding QuantitySortLabel}" Classes="Header" HorizontalAlignment="Center"/>
+                    </Button>
+                    <TextBlock Grid.Column="6" Text="МІН. ЗАЛИШОК" Classes="Header" HorizontalAlignment="Center"/>
+                    <TextBlock Grid.Column="8" Text="ПОСТАЧАЛЬНИК" Classes="Header" HorizontalAlignment="Center"/>
+                    <TextBlock Grid.Column="10" Text="ПОПОВНЕНО" Classes="Header" HorizontalAlignment="Center"/>
+                    <TextBlock Grid.Column="12" Text="ДІЇ" Classes="Header" HorizontalAlignment="Center"/>
+                </Grid>
+
+                <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Disabled">
+                    <ItemsControl ItemsSource="{Binding Stocks}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate DataType="vm:StockRow">
+                                <StackPanel>
+                                    <Border Margin="10,4" Background="{Binding RowBackground}" BorderBrush="{Binding RowBorderBrush}" BorderThickness="{Binding RowBorderThickness}" CornerRadius="10">
+                                        <Grid ColumnDefinitions="190,10,110,10,100,10,115,10,170,10,120,*,110" Height="66" Margin="10,0">
+                                            <TextBlock Grid.Column="0" Text="{Binding MedicineName}" Foreground="#E0E0E0" FontWeight="SemiBold" VerticalAlignment="Center"/>
+
+                                            <Border Grid.Column="1" Width="1" Background="White" Opacity="0.08" Margin="0,14" HorizontalAlignment="Center"/>
+
+                                            <TextBlock Grid.Column="2" Text="{Binding Price}" Foreground="#E0E0E0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+
+                                            <Border Grid.Column="3" Width="1" Background="White" Opacity="0.08" Margin="0,14" HorizontalAlignment="Center"/>
+
+                                            <StackPanel Grid.Column="4" VerticalAlignment="Center" Spacing="2" HorizontalAlignment="Center">
+                                                <TextBlock Text="{Binding Quantity}" Foreground="{Binding QuantityColor}" HorizontalAlignment="Center"/>
+                                                <Border Background="{Binding StockStateColor}" CornerRadius="7" Padding="8,1">
+                                                    <TextBlock Text="{Binding StockState}" Foreground="White" FontSize="11" HorizontalAlignment="Center"/>
+                                                </Border>
+                                            </StackPanel>
+
+                                            <Border Grid.Column="5" Width="1" Background="White" Opacity="0.08" Margin="0,14" HorizontalAlignment="Center"/>
+
+                                            <TextBlock Grid.Column="6" Text="{Binding MinimumStockText}" Foreground="#AAAAAA" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+
+                                            <Border Grid.Column="7" Width="1" Background="White" Opacity="0.08" Margin="0,14" HorizontalAlignment="Center"/>
+
+                                            <Button Grid.Column="8"
+                                                    Background="Transparent"
+                                                    BorderThickness="0"
+                                                    HorizontalContentAlignment="Center"
+                                                    VerticalContentAlignment="Center"
+                                                    Command="{Binding DataContext.GoToProviderCommand, ElementName=Root}"
+                                                    CommandParameter="{Binding}"
+                                                    IsEnabled="{Binding HasProvider}">
+                                                <TextBlock Text="{Binding ProviderName}" Foreground="#CFCFCF" TextWrapping="Wrap" TextAlignment="Center"/>
+                                            </Button>
+
+                                            <Border Grid.Column="9" Width="1" Background="White" Opacity="0.08" Margin="0,14" HorizontalAlignment="Center"/>
+
+                                            <TextBlock Grid.Column="10" Text="{Binding LastRestock}" Foreground="#C0C0C0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+
+                                            <Button Grid.Column="12" Height="36" MinWidth="102"
+                                                    Background="#3A3A3A"
+                                                    CornerRadius="8"
+                                                    BorderThickness="0"
+                                                    HorizontalAlignment="Right"
+                                                    Command="{Binding DataContext.OpenEditCommand, ElementName=Root}"
+                                                    CommandParameter="{Binding}">
+                                                <TextBlock Text="Редагувати" Foreground="White" FontSize="13"/>
+                                            </Button>
+                                        </Grid>
+                                    </Border>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
             </Grid>
-
-            <ScrollViewer Grid.Row="3" HorizontalScrollBarVisibility="Disabled">
-                <ItemsControl ItemsSource="{Binding Stocks}">
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate DataType="vm:StockRow">
-                            <StackPanel>
-                                <Grid ColumnDefinitions="170,10,90,10,80,10,90,10,160,10,120,*,110" Height="60"
-                                      Margin="10,0,10,0" VerticalAlignment="Center">
-
-                                    <TextBlock Grid.Column="0" Text="{Binding MedicineName}"
-                                               Foreground="#E0E0E0" FontWeight="SemiBold" VerticalAlignment="Center"/>
-
-                                    <Border Grid.Column="1" Width="1" Background="White"
-                                            Opacity="0.08" Margin="0,12" HorizontalAlignment="Center"/>
-
-                                    <TextBlock Grid.Column="2" Text="{Binding Price}"
-                                               Foreground="#E0E0E0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-
-                                    <Border Grid.Column="3" Width="1" Background="White"
-                                            Opacity="0.08" Margin="0,12" HorizontalAlignment="Center"/>
-
-                                    <StackPanel Grid.Column="4" VerticalAlignment="Center" Spacing="2" HorizontalAlignment="Center">
-                                        <TextBlock Text="{Binding Quantity}"
-                                                   Foreground="{Binding QuantityColor}"
-                                                   HorizontalAlignment="Center"/>
-                                        <Border Background="{Binding StockStateColor}" CornerRadius="7" Padding="6,1">
-                                            <TextBlock Text="{Binding StockState}" Foreground="White" FontSize="11" HorizontalAlignment="Center"/>
-                                        </Border>
-                                    </StackPanel>
-
-                                    <Border Grid.Column="5" Width="1" Background="White"
-                                            Opacity="0.08" Margin="0,12" HorizontalAlignment="Center"/>
-
-                                    <TextBlock Grid.Column="6" Text="{Binding MinimumStockText}"
-                                               Foreground="#AAAAAA" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-
-                                    <Border Grid.Column="7" Width="1" Background="White"
-                                            Opacity="0.08" Margin="0,12" HorizontalAlignment="Center"/>
-
-                                    <Button Grid.Column="8"
-                                            Background="Transparent"
-                                            BorderThickness="0"
-                                            HorizontalContentAlignment="Center"
-                                            VerticalContentAlignment="Center"
-                                            Command="{Binding DataContext.GoToProviderCommand, ElementName=Root}"
-                                            CommandParameter="{Binding}"
-                                            IsEnabled="{Binding HasProvider}">
-                                        <TextBlock Text="{Binding ProviderName}" Foreground="#CFCFCF" TextWrapping="Wrap" TextAlignment="Center"/>
-                                    </Button>
-
-                                    <Border Grid.Column="9" Width="1" Background="White"
-                                            Opacity="0.08" Margin="0,12" HorizontalAlignment="Center"/>
-
-                                    <TextBlock Grid.Column="10" Text="{Binding LastRestock}"
-                                               Foreground="#C0C0C0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-
-                                    <Button Grid.Column="12" Height="36"
-                                            Background="#3A3A3A"
-                                            CornerRadius="8"
-                                            BorderThickness="0"
-                                            Command="{Binding DataContext.OpenEditCommand, ElementName=Root}"
-                                            CommandParameter="{Binding}">
-                                        <TextBlock Text="Редагувати" Foreground="White" FontSize="13"/>
-                                    </Button>
-
-                                </Grid>
-                                <Border Height="1" Background="White" Opacity="0.05"/>
-                            </StackPanel>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </ScrollViewer>
         </Grid>
 
         <Panel IsVisible="{Binding IsAddOpen}">
@@ -161,33 +174,72 @@
 
         <Panel IsVisible="{Binding IsEditOpen}">
             <Border Background="#88000000"/>
-            <Border Width="420" Padding="28"
+            <Border Width="660" Padding="30"
                     Background="#2B2B2B" CornerRadius="14"
                     HorizontalAlignment="Center" VerticalAlignment="Center"
                     DataContext="{Binding EditForm}"
                     x:DataType="vm:EditStockItemViewModel">
-                <StackPanel Spacing="14">
-                    <TextBlock Text="Редагувати предмет" FontSize="20" FontWeight="Bold"
-                               Foreground="White" HorizontalAlignment="Center" Margin="0,0,0,6"/>
-                    <TextBox Watermark="Назва препарату *" Classes="DarkInput"
-                             Text="{Binding MedicineName}" Height="42"/>
-                    <TextBox Watermark="Ціна продажу *" Classes="DarkInput"
-                             Text="{Binding Price}" Height="42"/>
-                    <TextBox Watermark="Кількість *" Classes="DarkInput"
-                             Text="{Binding Quantity}" Height="42"/>
+                <StackPanel Spacing="18">
+                    <TextBlock Text="Редагування складу" FontSize="22" FontWeight="Bold"
+                               Foreground="White" HorizontalAlignment="Center" Margin="0,0,0,4"/>
+
+                    <Grid ColumnDefinitions="*,20,*">
+                        <StackPanel Grid.Column="0" Spacing="8">
+                            <TextBlock Text="ОСНОВНА ІНФОРМАЦІЯ" Classes="Header" Margin="0,0,0,4"/>
+
+                            <TextBlock Text="Назва препарату" Foreground="#D8D8D8"/>
+                            <TextBox Classes="DarkInput" Text="{Binding MedicineName}" Height="42"/>
+
+                            <TextBlock Text="Ціна" Foreground="#D8D8D8" Margin="0,6,0,0"/>
+                            <TextBox Classes="DarkInput" Text="{Binding Price}" Height="42"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="2" Spacing="8">
+                            <TextBlock Text="ПАРАМЕТРИ СКЛАДУ" Classes="Header" Margin="0,0,0,4"/>
+
+                            <TextBlock Text="Кількість" Foreground="#D8D8D8"/>
+                            <Grid ColumnDefinitions="46,*,46" Height="42">
+                                <Button Grid.Column="0" Content="-"
+                                        FontSize="18"
+                                        Background="#3A3A3A" BorderThickness="0" CornerRadius="10,0,0,10"
+                                        Command="{Binding DecreaseQuantityCommand}"/>
+                                <TextBox Grid.Column="1" Text="{Binding Quantity}" Height="42" HorizontalContentAlignment="Center"/>
+                                <Button Grid.Column="2" Content="+"
+                                        FontSize="18"
+                                        Background="#3A3A3A" BorderThickness="0" CornerRadius="0,10,10,0"
+                                        Command="{Binding IncreaseQuantityCommand}"/>
+                            </Grid>
+
+                            <TextBlock Text="Мінімальний залишок" Foreground="#D8D8D8" Margin="0,6,0,0"/>
+                            <TextBox Classes="DarkInput" Text="{Binding MinimumStock}" Height="42"/>
+
+                            <TextBlock Text="Постачальник" Foreground="#D8D8D8" Margin="0,6,0,0"/>
+                            <ComboBox ItemsSource="{Binding Providers}"
+                                      SelectedItem="{Binding SelectedProvider}"
+                                      Height="42"
+                                      Background="#3A3A3A" BorderThickness="0" CornerRadius="10">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate DataType="models:Provider">
+                                        <TextBlock Text="{Binding Name}" Foreground="White"/>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+                        </StackPanel>
+                    </Grid>
 
                     <TextBlock Text="{Binding ErrorMessage}" Foreground="#FF6B6B"
                                IsVisible="{Binding ErrorMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
                                FontSize="13" HorizontalAlignment="Center"/>
-                    <Grid ColumnDefinitions="*,10,*" Margin="0,8,0,0">
-                        <Button Grid.Column="0" Content="Скасувати" Height="42"
+
+                    <Grid ColumnDefinitions="*,14,*" Margin="0,4,0,0">
+                        <Button Grid.Column="0" Content="Скасувати" Height="46"
                                 Background="#3A3A3A" CornerRadius="10" BorderThickness="0"
-                                Foreground="#AAAAAA" HorizontalAlignment="Stretch"
-                                HorizontalContentAlignment="Center"
+                                Foreground="#D0D0D0" FontWeight="SemiBold"
+                                HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
                                 Command="{Binding CancelCommand}"/>
-                        <Button Grid.Column="2" Content="Зберегти" Height="42"
-                                Background="#3A3A3A" BorderBrush="#4A7C59" CornerRadius="10" BorderThickness="1.5"
-                                Foreground="White" FontWeight="SemiBold"
+                        <Button Grid.Column="2" Content="Зберегти" Height="46"
+                                Background="#365E45" BorderBrush="#4A7C59" CornerRadius="10" BorderThickness="1.5"
+                                Foreground="White" FontWeight="Bold"
                                 HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
                                 Command="{Binding SaveCommand}"/>
                     </Grid>

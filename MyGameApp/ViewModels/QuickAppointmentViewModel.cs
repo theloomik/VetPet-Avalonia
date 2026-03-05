@@ -16,36 +16,56 @@ namespace MyGameApp.ViewModels
 
         [ObservableProperty] private string _clientPhone = "";
         [ObservableProperty] private Client? _selectedClient;
-        [ObservableProperty] private bool _createNewClient;
-        [ObservableProperty] private string _clientFirstName = "";
-        [ObservableProperty] private string _clientLastName = "";
-
         [ObservableProperty] private Pet? _selectedPet;
-        [ObservableProperty] private bool _createNewPet;
-        [ObservableProperty] private string _newPetName = "";
-        [ObservableProperty] private PetType? _selectedPetType;
-        [ObservableProperty] private string _selectedPetGender = "невідомо";
-
         [ObservableProperty] private Staff? _selectedStaff;
         [ObservableProperty] private Service? _selectedService;
-        [ObservableProperty] private string _dateText = DateTime.Now.AddHours(1).ToString("dd.MM.yyyy HH:mm", CultureInfo.InvariantCulture);
         [ObservableProperty] private string _description = "";
         [ObservableProperty] private string _selectedStatus = "заплановано";
         [ObservableProperty] private string? _errorMessage;
 
+        [ObservableProperty] private bool _isAddClientOpen;
+        [ObservableProperty] private string _newClientFirstName = "";
+        [ObservableProperty] private string _newClientLastName = "";
+        [ObservableProperty] private string _newClientPhone = "";
+        [ObservableProperty] private string _newClientEmail = "";
+        [ObservableProperty] private string? _newClientErrorMessage;
+
+        [ObservableProperty] private bool _isAddPetOpen;
+        [ObservableProperty] private string _newPetName = "";
+        [ObservableProperty] private PetType? _newPetType;
+        [ObservableProperty] private string? _newPetGender = "male";
+        [ObservableProperty] private int? _newPetBirthDay;
+        [ObservableProperty] private MonthOption? _newPetBirthMonth;
+        [ObservableProperty] private int? _newPetBirthYear;
+        [ObservableProperty] private string? _newPetErrorMessage;
+
+        [ObservableProperty] private int? _selectedDay;
+        [ObservableProperty] private MonthOption? _selectedMonth;
+        [ObservableProperty] private int? _selectedYear;
+        [ObservableProperty] private int? _selectedHour;
+        [ObservableProperty] private int? _selectedMinute;
+
         public ObservableCollection<Client> ClientMatches { get; } = new();
         public ObservableCollection<Pet> PetOptions { get; } = new();
-        public ObservableCollection<PetType> PetTypeOptions { get; } = new();
         public ObservableCollection<Staff> StaffOptions { get; } = new();
         public ObservableCollection<Service> ServiceOptions { get; } = new();
-        public ObservableCollection<string> PetGenderOptions { get; } = new() { "невідомо", "самець", "самка" };
-        public ObservableCollection<string> StatusOptions { get; } = new() { "заплановано", "виконано", "скасовано" };
+        public ObservableCollection<PetType> PetTypeOptions { get; } = new();
 
-        public bool CanSelectExistingPet => !CreateNewPet && PetOptions.Count > 0;
+        public ObservableCollection<string> StatusOptions { get; } = new() { "заплановано", "виконано", "скасовано" };
+        public ObservableCollection<string> PetGenderOptions { get; } = new() { "male", "female" };
+        public ObservableCollection<int> DayOptions { get; } = new();
+        public ObservableCollection<MonthOption> MonthOptions { get; } = new();
+        public ObservableCollection<int> YearOptions { get; } = new();
+        public ObservableCollection<int> HourOptions { get; } = new();
+        public ObservableCollection<int> MinuteOptions { get; } = new();
+
+        public bool CanCreatePet => SelectedClient != null;
+        public bool IsAnyModalOpen => IsAddClientOpen || IsAddPetOpen;
 
         public QuickAppointmentViewModel(MainWindowViewModel parent)
         {
             _parent = parent;
+            SeedDateOptions();
             _ = LoadInitialOptionsAsync();
         }
 
@@ -56,27 +76,60 @@ namespace MyGameApp.ViewModels
 
         partial void OnSelectedClientChanged(Client? value)
         {
+            OnPropertyChanged(nameof(CanCreatePet));
             _ = LoadPetsForClientAsync(value?.Id);
         }
 
-        partial void OnCreateNewClientChanged(bool value)
+        partial void OnIsAddClientOpenChanged(bool value) => OnPropertyChanged(nameof(IsAnyModalOpen));
+        partial void OnIsAddPetOpenChanged(bool value) => OnPropertyChanged(nameof(IsAnyModalOpen));
+
+        private void SeedDateOptions()
         {
-            if (value)
+            DayOptions.Clear();
+            for (var i = 1; i <= 31; i++)
             {
-                SelectedClient = null;
-                PetOptions.Clear();
-                SelectedPet = null;
-                CreateNewPet = true;
-                OnPropertyChanged(nameof(CanSelectExistingPet));
-                return;
+                DayOptions.Add(i);
             }
 
-            _ = LoadClientMatchesAsync();
-        }
+            MonthOptions.Clear();
+            MonthOptions.Add(new MonthOption(1, "Січень"));
+            MonthOptions.Add(new MonthOption(2, "Лютий"));
+            MonthOptions.Add(new MonthOption(3, "Березень"));
+            MonthOptions.Add(new MonthOption(4, "Квітень"));
+            MonthOptions.Add(new MonthOption(5, "Травень"));
+            MonthOptions.Add(new MonthOption(6, "Червень"));
+            MonthOptions.Add(new MonthOption(7, "Липень"));
+            MonthOptions.Add(new MonthOption(8, "Серпень"));
+            MonthOptions.Add(new MonthOption(9, "Вересень"));
+            MonthOptions.Add(new MonthOption(10, "Жовтень"));
+            MonthOptions.Add(new MonthOption(11, "Листопад"));
+            MonthOptions.Add(new MonthOption(12, "Грудень"));
 
-        partial void OnCreateNewPetChanged(bool value)
-        {
-            OnPropertyChanged(nameof(CanSelectExistingPet));
+            YearOptions.Clear();
+            var currentYear = DateTime.Now.Year;
+            for (var year = currentYear + 1; year >= 2024; year--)
+            {
+                YearOptions.Add(year);
+            }
+
+            HourOptions.Clear();
+            for (var hour = 0; hour < 24; hour++)
+            {
+                HourOptions.Add(hour);
+            }
+
+            MinuteOptions.Clear();
+            for (var minute = 0; minute < 60; minute += 5)
+            {
+                MinuteOptions.Add(minute);
+            }
+
+            var initial = DateTime.Now.AddHours(1);
+            SelectedDay = initial.Day;
+            SelectedMonth = MonthOptions.FirstOrDefault(m => m.Number == initial.Month);
+            SelectedYear = initial.Year;
+            SelectedHour = initial.Hour;
+            SelectedMinute = (initial.Minute / 5) * 5;
         }
 
         private async Task LoadInitialOptionsAsync()
@@ -84,6 +137,7 @@ namespace MyGameApp.ViewModels
             using var db = new VetpetContext();
 
             var staff = await db.Staff
+                .Include(s => s.StaffPosition)
                 .Where(s => s.WorkDays != StaffArchive.ArchivedMarker)
                 .OrderBy(s => s.LastName)
                 .ThenBy(s => s.FirstName)
@@ -123,16 +177,11 @@ namespace MyGameApp.ViewModels
                 PetTypeOptions.Add(row);
             }
 
-            SelectedPetType = PetTypeOptions.FirstOrDefault();
+            NewPetType = PetTypeOptions.FirstOrDefault();
         }
 
         private async Task LoadClientMatchesAsync()
         {
-            if (CreateNewClient)
-            {
-                return;
-            }
-
             var phoneQuery = ClientPhone.Trim();
             if (string.IsNullOrWhiteSpace(phoneQuery))
             {
@@ -140,7 +189,6 @@ namespace MyGameApp.ViewModels
                 SelectedClient = null;
                 PetOptions.Clear();
                 SelectedPet = null;
-                OnPropertyChanged(nameof(CanSelectExistingPet));
                 return;
             }
 
@@ -168,11 +216,10 @@ namespace MyGameApp.ViewModels
 
         private async Task LoadPetsForClientAsync(int? clientId)
         {
-            if (clientId is null or <= 0 || CreateNewClient)
+            if (clientId is null or <= 0)
             {
                 PetOptions.Clear();
                 SelectedPet = null;
-                OnPropertyChanged(nameof(CanSelectExistingPet));
                 return;
             }
 
@@ -191,9 +238,139 @@ namespace MyGameApp.ViewModels
             }
 
             SelectedPet = PetOptions.FirstOrDefault();
-            CreateNewPet = PetOptions.Count == 0;
+        }
 
-            OnPropertyChanged(nameof(CanSelectExistingPet));
+        [RelayCommand]
+        private void OpenAddClient()
+        {
+            NewClientErrorMessage = null;
+            NewClientPhone = ClientPhone.Trim();
+            NewClientFirstName = "";
+            NewClientLastName = "";
+            NewClientEmail = "";
+            IsAddClientOpen = true;
+        }
+
+        [RelayCommand]
+        private void CancelAddClient()
+        {
+            IsAddClientOpen = false;
+            NewClientErrorMessage = null;
+        }
+
+        [RelayCommand]
+        private async Task SaveAddClient()
+        {
+            NewClientErrorMessage = null;
+
+            if (string.IsNullOrWhiteSpace(NewClientFirstName) || string.IsNullOrWhiteSpace(NewClientLastName) || string.IsNullOrWhiteSpace(NewClientPhone))
+            {
+                NewClientErrorMessage = "Прізвище, ім'я та телефон є обов'язковими";
+                return;
+            }
+
+            using var db = new VetpetContext();
+            var client = new Client
+            {
+                FirstName = NewClientFirstName.Trim(),
+                LastName = NewClientLastName.Trim(),
+                Phone = NewClientPhone.Trim(),
+                Email = string.IsNullOrWhiteSpace(NewClientEmail) ? null : NewClientEmail.Trim()
+            };
+
+            db.Clients.Add(client);
+            await db.SaveChangesAsync();
+
+            IsAddClientOpen = false;
+            ClientPhone = client.Phone;
+            await LoadClientMatchesAsync();
+            SelectedClient = ClientMatches.FirstOrDefault(c => c.Id == client.Id) ?? SelectedClient;
+        }
+
+        [RelayCommand]
+        private void OpenAddPet()
+        {
+            if (SelectedClient == null)
+            {
+                ErrorMessage = "Спочатку оберіть клієнта";
+                return;
+            }
+
+            ErrorMessage = null;
+            NewPetErrorMessage = null;
+            NewPetName = "";
+            NewPetType = PetTypeOptions.FirstOrDefault();
+            NewPetGender = "male";
+            NewPetBirthDay = null;
+            NewPetBirthMonth = null;
+            NewPetBirthYear = null;
+            IsAddPetOpen = true;
+        }
+
+        [RelayCommand]
+        private void CancelAddPet()
+        {
+            IsAddPetOpen = false;
+            NewPetErrorMessage = null;
+        }
+
+        [RelayCommand]
+        private async Task SaveAddPet()
+        {
+            NewPetErrorMessage = null;
+
+            if (SelectedClient == null)
+            {
+                NewPetErrorMessage = "Клієнта не знайдено";
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(NewPetName))
+            {
+                NewPetErrorMessage = "Кличка є обов'язковою";
+                return;
+            }
+
+            if (NewPetType == null)
+            {
+                NewPetErrorMessage = "Оберіть вид тварини";
+                return;
+            }
+
+            DateOnly? birthDate = null;
+            if (NewPetBirthDay.HasValue || NewPetBirthMonth != null || NewPetBirthYear.HasValue)
+            {
+                if (!NewPetBirthDay.HasValue || NewPetBirthMonth == null || !NewPetBirthYear.HasValue)
+                {
+                    NewPetErrorMessage = "Оберіть повну дату народження або залиште порожньою";
+                    return;
+                }
+
+                if (!DateOnly.TryParse($"{NewPetBirthYear:0000}-{NewPetBirthMonth.Number:00}-{NewPetBirthDay:00}", out var parsedBirthDate))
+                {
+                    NewPetErrorMessage = "Невірна дата народження";
+                    return;
+                }
+
+                birthDate = parsedBirthDate;
+            }
+
+            using var db = new VetpetContext();
+            var pet = new Pet
+            {
+                ClientId = SelectedClient.Id,
+                Name = NewPetName.Trim(),
+                PetTypeId = NewPetType.Id,
+                Gender = string.IsNullOrWhiteSpace(NewPetGender) ? null : NewPetGender,
+                BirthDate = birthDate
+            };
+
+            db.Pets.Add(pet);
+            await db.SaveChangesAsync();
+
+            IsAddPetOpen = false;
+            await LoadPetsForClientAsync(SelectedClient.Id);
+            SelectedPet = PetOptions.FirstOrDefault(p => p.Id == pet.Id) ?? SelectedPet;
         }
 
         [RelayCommand]
@@ -201,10 +378,15 @@ namespace MyGameApp.ViewModels
         {
             ErrorMessage = null;
 
-            var normalizedPhone = ClientPhone.Trim();
-            if (string.IsNullOrWhiteSpace(normalizedPhone))
+            if (SelectedClient == null)
             {
-                ErrorMessage = "Вкажіть номер телефону клієнта";
+                ErrorMessage = "Оберіть клієнта";
+                return;
+            }
+
+            if (SelectedPet == null)
+            {
+                ErrorMessage = "Оберіть тварину";
                 return;
             }
 
@@ -214,117 +396,61 @@ namespace MyGameApp.ViewModels
                 return;
             }
 
-            if (!DateTime.TryParseExact(DateText.Trim(), "dd.MM.yyyy HH:mm", CultureInfo.InvariantCulture, DateTimeStyles.None, out var date))
+            if (!SelectedDay.HasValue || SelectedMonth == null || !SelectedYear.HasValue || !SelectedHour.HasValue || !SelectedMinute.HasValue)
             {
-                ErrorMessage = "Вкажіть дату у форматі ДД.ММ.РРРР ГГ:ХХ";
+                ErrorMessage = "Оберіть дату та час";
+                return;
+            }
+
+            DateTime appointmentDate;
+            try
+            {
+                appointmentDate = new DateTime(
+                    SelectedYear.Value,
+                    SelectedMonth.Number,
+                    SelectedDay.Value,
+                    SelectedHour.Value,
+                    SelectedMinute.Value,
+                    0);
+            }
+            catch
+            {
+                ErrorMessage = "Невірні дата або час";
                 return;
             }
 
             using var db = new VetpetContext();
-
-            Client clientEntity;
-            if (CreateNewClient)
-            {
-                if (string.IsNullOrWhiteSpace(ClientFirstName) || string.IsNullOrWhiteSpace(ClientLastName))
-                {
-                    ErrorMessage = "Для нового клієнта потрібні ім'я та прізвище";
-                    return;
-                }
-
-                clientEntity = await db.Clients.FirstOrDefaultAsync(c => c.Phone == normalizedPhone) ?? new Client
-                {
-                    Phone = normalizedPhone,
-                    FirstName = ClientFirstName.Trim(),
-                    LastName = ClientLastName.Trim()
-                };
-
-                if (clientEntity.Id <= 0)
-                {
-                    db.Clients.Add(clientEntity);
-                    await db.SaveChangesAsync();
-                }
-            }
-            else
-            {
-                if (SelectedClient == null)
-                {
-                    ErrorMessage = "Клієнта не знайдено. Увімкніть створення нового клієнта";
-                    return;
-                }
-
-                var existingClient = await db.Clients.FirstOrDefaultAsync(c => c.Id == SelectedClient.Id);
-                if (existingClient == null)
-                {
-                    ErrorMessage = "Клієнта не знайдено в базі";
-                    return;
-                }
-
-                clientEntity = existingClient;
-            }
-
-            Pet petEntity;
-            if (CreateNewPet)
-            {
-                if (string.IsNullOrWhiteSpace(NewPetName))
-                {
-                    ErrorMessage = "Вкажіть кличку тварини";
-                    return;
-                }
-
-                if (SelectedPetType == null)
-                {
-                    ErrorMessage = "Оберіть вид тварини";
-                    return;
-                }
-
-                petEntity = new Pet
-                {
-                    ClientId = clientEntity.Id,
-                    Name = NewPetName.Trim(),
-                    PetTypeId = SelectedPetType.Id,
-                    Gender = SelectedPetGender == "невідомо" ? null : SelectedPetGender
-                };
-
-                db.Pets.Add(petEntity);
-                await db.SaveChangesAsync();
-            }
-            else
-            {
-                if (SelectedPet == null)
-                {
-                    ErrorMessage = "Оберіть тварину";
-                    return;
-                }
-
-                var existingPet = await db.Pets.FirstOrDefaultAsync(p => p.Id == SelectedPet.Id && p.ClientId == clientEntity.Id);
-                if (existingPet == null)
-                {
-                    ErrorMessage = "Обрана тварина не належить цьому клієнту";
-                    return;
-                }
-
-                petEntity = existingPet;
-            }
-
             db.Appointments.Add(new Appointment
             {
-                ClientId = clientEntity.Id,
-                PetId = petEntity.Id,
+                ClientId = SelectedClient.Id,
+                PetId = SelectedPet.Id,
                 StaffId = SelectedStaff.Id,
                 ServiceId = SelectedService?.Id,
-                Date = date,
+                Date = appointmentDate,
                 Description = string.IsNullOrWhiteSpace(Description) ? null : Description.Trim(),
                 Status = string.IsNullOrWhiteSpace(SelectedStatus) ? "заплановано" : SelectedStatus
             });
 
             await db.SaveChangesAsync();
-            await _parent.HandleQuickAppointmentSavedAsync(clientEntity.Id);
+            await _parent.HandleQuickAppointmentSavedAsync(SelectedClient.Id);
         }
 
         [RelayCommand]
         private void Cancel()
         {
             _parent.CloseQuickAppointment();
+        }
+    }
+
+    public sealed class MonthOption
+    {
+        public int Number { get; }
+        public string Name { get; }
+
+        public MonthOption(int number, string name)
+        {
+            Number = number;
+            Name = name;
         }
     }
 }

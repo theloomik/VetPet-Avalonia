@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.EntityFrameworkCore;
@@ -14,6 +15,7 @@ namespace MyGameApp.ViewModels
     {
         private readonly MainWindowViewModel? _mainVm;
         private List<AppointmentListRow> _allAppointments = new();
+        private readonly DispatcherTimer _liveRefreshTimer;
 
         [ObservableProperty] private string _searchText = "";
 
@@ -31,6 +33,14 @@ namespace MyGameApp.ViewModels
             _mainVm = mainVm;
             ToggleSortCommand = new RelayCommand(ToggleSort);
             GoToClientDetailsCommand = new RelayCommand<AppointmentListRow?>(GoToClientDetails);
+
+            _liveRefreshTimer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromMinutes(1)
+            };
+            _liveRefreshTimer.Tick += (_, _) => UpdateList();
+            _liveRefreshTimer.Start();
+
             _ = ReloadAsync();
         }
 
@@ -99,20 +109,23 @@ namespace MyGameApp.ViewModels
                 return AppointmentGroupKey.Cancelled;
             }
 
-            var today = DateOnly.FromDateTime(DateTime.Today);
-            var rowDate = DateOnly.FromDateTime(row.Source.Date);
+            var now = DateTime.Now;
+            var todayStart = now.Date;
+            var tomorrowStart = todayStart.AddDays(1);
+            var dayAfterTomorrowStart = todayStart.AddDays(2);
+            var appointmentDate = row.Source.Date;
 
-            if (rowDate < today)
+            if (appointmentDate < now)
             {
                 return AppointmentGroupKey.Past;
             }
 
-            if (rowDate == today)
+            if (appointmentDate >= todayStart && appointmentDate < tomorrowStart)
             {
                 return AppointmentGroupKey.Today;
             }
 
-            if (rowDate == today.AddDays(1))
+            if (appointmentDate >= tomorrowStart && appointmentDate < dayAfterTomorrowStart)
             {
                 return AppointmentGroupKey.Tomorrow;
             }
@@ -199,20 +212,23 @@ namespace MyGameApp.ViewModels
                     return "#7C4A4A";
                 }
 
-                var today = DateOnly.FromDateTime(DateTime.Today);
-                var date = DateOnly.FromDateTime(Source.Date);
+                var now = DateTime.Now;
+                var todayStart = now.Date;
+                var tomorrowStart = todayStart.AddDays(1);
+                var dayAfterTomorrowStart = todayStart.AddDays(2);
+                var date = Source.Date;
 
-                if (date < today)
+                if (date < now)
                 {
                     return "#6A6A6A";
                 }
 
-                if (date == today)
+                if (date >= todayStart && date < tomorrowStart)
                 {
                     return "#4A7C59";
                 }
 
-                if (date == today.AddDays(1))
+                if (date >= tomorrowStart && date < dayAfterTomorrowStart)
                 {
                     return "#7C6E4A";
                 }
