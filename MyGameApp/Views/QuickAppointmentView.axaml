@@ -147,12 +147,12 @@
                             </ComboBox>
 
                             <TextBlock Text="Дата та час *" Classes="Header"/>
-                            <Grid ColumnDefinitions="*,8,*,8,*" Margin="0,0,0,2">
+                            <Grid ColumnDefinitions="90,8,150,8,110" HorizontalAlignment="Left" Margin="0,0,0,2">
                                 <TextBlock Grid.Column="0" Text="День" Foreground="#8E8E8E" HorizontalAlignment="Center" FontSize="11"/>
                                 <TextBlock Grid.Column="2" Text="Місяць" Foreground="#8E8E8E" HorizontalAlignment="Center" FontSize="11"/>
                                 <TextBlock Grid.Column="4" Text="Рік" Foreground="#8E8E8E" HorizontalAlignment="Center" FontSize="11"/>
                             </Grid>
-                            <Grid ColumnDefinitions="*,8,*,8,*">
+                            <Grid ColumnDefinitions="90,8,150,8,110" HorizontalAlignment="Left">
                                 <ComboBox Grid.Column="0" ItemsSource="{Binding DayOptions}" SelectedItem="{Binding SelectedDay}" Height="42" Background="#3A3A3A" BorderThickness="0" CornerRadius="10"/>
                                 <ComboBox Grid.Column="2" ItemsSource="{Binding MonthOptions}" SelectedItem="{Binding SelectedMonth}" Height="42" Background="#3A3A3A" BorderThickness="0" CornerRadius="10">
                                     <ComboBox.ItemTemplate>
@@ -236,7 +236,7 @@
 
         <Panel IsVisible="{Binding IsAddClientOpen}" ZIndex="30">
             <Border Classes="ModalBackdrop"/>
-            <Border Width="420" Padding="28"
+            <Border Classes="ModalCard" Width="420" Padding="28"
                     Background="#2B2B2B" CornerRadius="14"
                     HorizontalAlignment="Center" VerticalAlignment="Center">
                 <StackPanel Spacing="14">
@@ -264,7 +264,7 @@
 
         <Panel IsVisible="{Binding IsAddPetOpen}" ZIndex="30">
             <Border Classes="ModalBackdrop"/>
-            <Border Width="460" Padding="28" Background="#2B2B2B" CornerRadius="14" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Border Classes="ModalCard" Width="460" Padding="28" Background="#2B2B2B" CornerRadius="14" HorizontalAlignment="Center" VerticalAlignment="Center">
                 <StackPanel Spacing="14">
                     <TextBlock Text="Нова тварина" FontSize="20" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center" Margin="0,0,0,4"/>
                     <TextBox Watermark="Кличка *" Classes="DarkInput" Text="{Binding NewPetName}" Height="42"/>
@@ -289,7 +289,7 @@
                     <ComboBox ItemsSource="{Binding PetGenderOptions}" SelectedItem="{Binding NewPetGender}" Height="42" Background="#3A3A3A" BorderThickness="0" CornerRadius="10"/>
 
                     <TextBlock Text="Дата народження" Classes="Header"/>
-                    <Grid ColumnDefinitions="*,8,*,8,*">
+                    <Grid ColumnDefinitions="90,8,150,8,110" HorizontalAlignment="Left">
                         <ComboBox Grid.Column="0" ItemsSource="{Binding DayOptions}" SelectedItem="{Binding NewPetBirthDay}" Height="42" Background="#3A3A3A" BorderThickness="0" CornerRadius="10"/>
                         <ComboBox Grid.Column="2" ItemsSource="{Binding MonthOptions}" SelectedItem="{Binding NewPetBirthMonth}" Height="42" Background="#3A3A3A" BorderThickness="0" CornerRadius="10">
                             <ComboBox.ItemTemplate>
@@ -311,5 +311,6 @@
         </Panel>
     </Panel>
 </UserControl>
+
 
 

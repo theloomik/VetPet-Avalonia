@@ -70,7 +70,7 @@
 
         <Panel IsVisible="{Binding IsAddOpen}" ZIndex="30">
             <Border Classes="ModalBackdrop"/>
-            <Border Width="420" Padding="28"
+            <Border Classes="ModalCard" Width="420" Padding="28"
                     Background="#2B2B2B" CornerRadius="14"
                     HorizontalAlignment="Center" VerticalAlignment="Center"
                     DataContext="{Binding AddForm}"
@@ -102,5 +102,6 @@
         </Panel>
     </Panel>
 </UserControl>
+
 
 

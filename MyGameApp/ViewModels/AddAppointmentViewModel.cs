@@ -1,6 +1,5 @@
-using System;
+﻿using System;
 using System.Collections.ObjectModel;
-using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -17,7 +16,11 @@ namespace MyGameApp.ViewModels
         [ObservableProperty] private Pet? _selectedPet;
         [ObservableProperty] private Staff? _selectedStaff;
         [ObservableProperty] private Service? _selectedService;
-        [ObservableProperty] private string _dateText = DateTime.Now.ToString("dd.MM.yyyy HH:mm");
+        [ObservableProperty] private int? _selectedDay;
+        [ObservableProperty] private int? _selectedMonth;
+        [ObservableProperty] private int? _selectedYear;
+        [ObservableProperty] private int? _selectedHour;
+        [ObservableProperty] private int? _selectedMinute;
         [ObservableProperty] private string _description = "";
         [ObservableProperty] private string _selectedStatus = "заплановано";
         [ObservableProperty] private string? _errorMessage;
@@ -25,12 +28,64 @@ namespace MyGameApp.ViewModels
         public ObservableCollection<Pet> PetOptions { get; } = new();
         public ObservableCollection<Staff> StaffOptions { get; } = new();
         public ObservableCollection<Service> ServiceOptions { get; } = new();
+        public ObservableCollection<int> DayOptions { get; } = new();
+        public ObservableCollection<int> MonthOptions { get; } = new();
+        public ObservableCollection<int> YearOptions { get; } = new();
+        public ObservableCollection<int> HourOptions { get; } = new();
+        public ObservableCollection<int> MinuteOptions { get; } = new();
         public ObservableCollection<string> StatusOptions { get; } = new() { "заплановано", "виконано", "скасовано" };
 
         public AddAppointmentViewModel(ClientDetailsViewModel parent)
         {
             _parent = parent;
+            SeedDateOptions();
+            SetInitialDateTime();
             _ = LoadOptionsAsync();
+        }
+
+        private void SeedDateOptions()
+        {
+            DayOptions.Clear();
+            for (var day = 1; day <= 31; day++)
+            {
+                DayOptions.Add(day);
+            }
+
+            MonthOptions.Clear();
+            for (var month = 1; month <= 12; month++)
+            {
+                MonthOptions.Add(month);
+            }
+
+            YearOptions.Clear();
+            for (var year = DateTime.Now.Year + 2; year >= DateTime.Now.Year - 2; year--)
+            {
+                YearOptions.Add(year);
+            }
+
+            HourOptions.Clear();
+            for (var hour = 0; hour <= 23; hour++)
+            {
+                HourOptions.Add(hour);
+            }
+
+            MinuteOptions.Clear();
+            for (var minute = 0; minute <= 59; minute += 5)
+            {
+                MinuteOptions.Add(minute);
+            }
+        }
+
+        private void SetInitialDateTime()
+        {
+            var now = DateTime.Now.AddHours(1);
+            var roundedMinute = (now.Minute / 5) * 5;
+
+            SelectedDay = now.Day;
+            SelectedMonth = now.Month;
+            SelectedYear = now.Year;
+            SelectedHour = now.Hour;
+            SelectedMinute = roundedMinute;
         }
 
         private async Task LoadOptionsAsync()
@@ -57,13 +112,22 @@ namespace MyGameApp.ViewModels
                 .ToListAsync();
 
             PetOptions.Clear();
-            foreach (var p in pets) PetOptions.Add(p);
+            foreach (var pet in pets)
+            {
+                PetOptions.Add(pet);
+            }
 
             StaffOptions.Clear();
-            foreach (var s in staff) StaffOptions.Add(s);
+            foreach (var staffMember in staff)
+            {
+                StaffOptions.Add(staffMember);
+            }
 
             ServiceOptions.Clear();
-            foreach (var s in services) ServiceOptions.Add(s);
+            foreach (var service in services)
+            {
+                ServiceOptions.Add(service);
+            }
 
             SelectedPet = PetOptions.FirstOrDefault();
             SelectedStaff = StaffOptions.FirstOrDefault();
@@ -87,9 +151,26 @@ namespace MyGameApp.ViewModels
                 return;
             }
 
-            if (!DateTime.TryParseExact(DateText.Trim(), "dd.MM.yyyy HH:mm", CultureInfo.InvariantCulture, DateTimeStyles.None, out var date))
+            if (!SelectedDay.HasValue || !SelectedMonth.HasValue || !SelectedYear.HasValue || !SelectedHour.HasValue || !SelectedMinute.HasValue)
             {
-                ErrorMessage = "Вкажіть дату у форматі DD.MM.YYYY HH:MM";
+                ErrorMessage = "Вкажіть дату та час";
+                return;
+            }
+
+            DateTime date;
+            try
+            {
+                date = new DateTime(
+                    SelectedYear.Value,
+                    SelectedMonth.Value,
+                    SelectedDay.Value,
+                    SelectedHour.Value,
+                    SelectedMinute.Value,
+                    0);
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                ErrorMessage = "Некоректна дата або час";
                 return;
             }
 

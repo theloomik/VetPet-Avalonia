@@ -3,11 +3,10 @@
              x:Class="MyGameApp.App"
              xmlns:local="using:MyGameApp"
              RequestedThemeVariant="Default">
-             <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
   
     <Application.Styles>
     <FluentTheme />
-    <StyleInclude Source="avares://MyGameApp/Style/AppDefaultStyles.axaml" />
+    <StyleInclude Source="avares://VetPet/Style/AppDefaultStyles.axaml" />
     </Application.Styles>
 
     <Application.Resources>

@@ -52,7 +52,7 @@
                                             <TextBlock Text="{Binding FirstName}" Foreground="#A3A3A3" FontSize="13"/>
                                         </StackPanel>
                                         <TextBlock Grid.Column="5"
-                                                   Text="в†’"
+                                                   Text="→"
                                                    Foreground="#8E8E8E"
                                                    VerticalAlignment="Center"
                                                    HorizontalAlignment="Center"
@@ -69,7 +69,7 @@
         <Panel IsVisible="{Binding IsAddOpen}" ZIndex="30">
             <Border Classes="ModalBackdrop"/>
 
-            <Border Width="460" Padding="28"
+            <Border Classes="ModalCard" Width="460" Padding="28"
                     Background="#2B2B2B" CornerRadius="14"
                     HorizontalAlignment="Center" VerticalAlignment="Center"
                     DataContext="{Binding AddForm}"
@@ -202,6 +202,7 @@
         </Panel>
     </Panel>
 </UserControl>
+
 
 
 

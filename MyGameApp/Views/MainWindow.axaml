@@ -5,7 +5,7 @@
         x:Class="MyGameApp.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Title="VetPet"
-        Icon="/Assets/logo.ico"
+        Icon="/Assets/icon.ico"
         Background="#1E1E1E"
         Width="1100" Height="680"
         MinWidth="900" MinHeight="500"
@@ -181,8 +181,8 @@
                     </Button>
                 </Grid>
 
-                <Border Grid.RowSpan="2"
-                        Background="#8E000000"
+                <Border Grid.Row="0"
+                        Background="#A6000000"
                         IsVisible="{Binding IsChildModalOpen}"
                         ZIndex="5"/>
 
