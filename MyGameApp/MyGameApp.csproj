@@ -2,6 +2,9 @@
   <PropertyGroup>
     <AssemblyName>VetPet</AssemblyName>
     <ApplicationIcon>Assets/icon.ico</ApplicationIcon>
+    <PublishSingleFile>true</PublishSingleFile>
+    <SelfContained>true</SelfContained>
+    <DebugType>None</DebugType>
     <Product>VetPet</Product>
     <Title>VetPet</Title>
     <OutputType>WinExe</OutputType>
