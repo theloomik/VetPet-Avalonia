@@ -1,4 +1,4 @@
-<UserControl xmlns="https://github.com/avaloniaui"
+﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:MyGameApp.ViewModels"
              xmlns:models="using:MyGameApp.Models"
@@ -13,7 +13,7 @@
                        Margin="0,0,0,20"/>
             <Grid Grid.Row="1" ColumnDefinitions="*,10,Auto,10,Auto" Height="42" Margin="0,0,0,20">
 
-                <TextBox Grid.Column="0" Watermark="Пошук за назвою"
+                <TextBox Grid.Column="0" Watermark="Пошук (назва препарату, постачальник)"
                          Classes="DarkInput" Text="{Binding SearchText}"/>
                 <Button Grid.Column="2" Width="60" Height="42"
                         Background="#3A3A3A" CornerRadius="10" BorderThickness="0"
@@ -27,10 +27,13 @@
                 </Button>
             </Grid>
 
-            <Grid Grid.Row="2" ColumnDefinitions="150,10,150,10,75,*,110,10,60" Margin="10,0,10,8">
-                <TextBlock Grid.Column="0" Text="НАЗВА ПРЕПАРАТУ" Classes="Header" HorizontalAlignment="Center"/>
+            <Grid Grid.Row="2" ColumnDefinitions="170,10,90,10,80,10,90,10,160,10,120,*,110" Margin="10,0,10,8">
+                <TextBlock Grid.Column="0" Text="ПРЕПАРАТ" Classes="Header" HorizontalAlignment="Center"/>
                 <TextBlock Grid.Column="2" Text="ЦІНА" Classes="Header" HorizontalAlignment="Center"/>
                 <TextBlock Grid.Column="4" Text="КІЛЬКІСТЬ" Classes="Header" HorizontalAlignment="Center"/>
+                <TextBlock Grid.Column="6" Text="МІН. ЗАЛИШОК" Classes="Header" HorizontalAlignment="Center"/>
+                <TextBlock Grid.Column="8" Text="ПОСТАЧАЛЬНИК" Classes="Header" HorizontalAlignment="Center"/>
+                <TextBlock Grid.Column="10" Text="ПОПОВНЕНО" Classes="Header" HorizontalAlignment="Center"/>
             </Grid>
 
             <ScrollViewer Grid.Row="3" HorizontalScrollBarVisibility="Disabled">
@@ -38,34 +41,63 @@
                     <ItemsControl.ItemTemplate>
                         <DataTemplate DataType="vm:StockRow">
                             <StackPanel>
-                                <Grid ColumnDefinitions="150,10,150,10,75,*,110,10,60" Height="55"
+                                <Grid ColumnDefinitions="170,10,90,10,80,10,90,10,160,10,120,*,110" Height="60"
                                       Margin="10,0,10,0" VerticalAlignment="Center">
 
                                     <TextBlock Grid.Column="0" Text="{Binding MedicineName}"
                                                Foreground="#E0E0E0" FontWeight="SemiBold" VerticalAlignment="Center"/>
+
                                     <Border Grid.Column="1" Width="1" Background="White"
-                                            Opacity="0.08" Margin="0,12" HorizontalAlignment="Center" />
+                                            Opacity="0.08" Margin="0,12" HorizontalAlignment="Center"/>
+
                                     <TextBlock Grid.Column="2" Text="{Binding Price}"
                                                Foreground="#E0E0E0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                                    <Border Grid.Column="3" Width="1" Background="White"
-                                            Opacity="0.08" Margin="0,12" HorizontalAlignment="Center" />
-                                    <TextBlock Grid.Column="4" Text="{Binding Quantity}"
-                                               Foreground="#A0A0A0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
 
-                                    <Button Grid.Column="6" Height="36"
+                                    <Border Grid.Column="3" Width="1" Background="White"
+                                            Opacity="0.08" Margin="0,12" HorizontalAlignment="Center"/>
+
+                                    <StackPanel Grid.Column="4" VerticalAlignment="Center" Spacing="2" HorizontalAlignment="Center">
+                                        <TextBlock Text="{Binding Quantity}"
+                                                   Foreground="{Binding QuantityColor}"
+                                                   HorizontalAlignment="Center"/>
+                                        <Border Background="{Binding StockStateColor}" CornerRadius="7" Padding="6,1">
+                                            <TextBlock Text="{Binding StockState}" Foreground="White" FontSize="11" HorizontalAlignment="Center"/>
+                                        </Border>
+                                    </StackPanel>
+
+                                    <Border Grid.Column="5" Width="1" Background="White"
+                                            Opacity="0.08" Margin="0,12" HorizontalAlignment="Center"/>
+
+                                    <TextBlock Grid.Column="6" Text="{Binding MinimumStockText}"
+                                               Foreground="#AAAAAA" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+
+                                    <Border Grid.Column="7" Width="1" Background="White"
+                                            Opacity="0.08" Margin="0,12" HorizontalAlignment="Center"/>
+
+                                    <Button Grid.Column="8"
+                                            Background="Transparent"
+                                            BorderThickness="0"
+                                            HorizontalContentAlignment="Center"
+                                            VerticalContentAlignment="Center"
+                                            Command="{Binding DataContext.GoToProviderCommand, ElementName=Root}"
+                                            CommandParameter="{Binding}"
+                                            IsEnabled="{Binding HasProvider}">
+                                        <TextBlock Text="{Binding ProviderName}" Foreground="#CFCFCF" TextWrapping="Wrap" TextAlignment="Center"/>
+                                    </Button>
+
+                                    <Border Grid.Column="9" Width="1" Background="White"
+                                            Opacity="0.08" Margin="0,12" HorizontalAlignment="Center"/>
+
+                                    <TextBlock Grid.Column="10" Text="{Binding LastRestock}"
+                                               Foreground="#C0C0C0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+
+                                    <Button Grid.Column="12" Height="36"
                                             Background="#3A3A3A"
                                             CornerRadius="8"
                                             BorderThickness="0"
                                             Command="{Binding DataContext.OpenEditCommand, ElementName=Root}"
                                             CommandParameter="{Binding}">
                                         <TextBlock Text="Редагувати" Foreground="White" FontSize="13"/>
-                                    </Button>
-
-                                    <Button Grid.Column="8" Classes="ArrowBtn" Margin="0,0,10,0"
-                                            Command="{Binding DataContext.GoToProviderCommand, ElementName=Root}"
-                                            CommandParameter="{Binding}"
-                                            IsEnabled="{Binding HasProvider}">
-                                        <TextBlock Text="→" Foreground="#FFFFFF" FontSize="18"/>
                                     </Button>
 
                                 </Grid>

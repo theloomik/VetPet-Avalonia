@@ -63,8 +63,10 @@ namespace MyGameApp.ViewModels
         {
             var q = _allClients.Where(c =>
                 string.IsNullOrWhiteSpace(SearchText) ||
+                (c.FirstName != null && c.FirstName.Contains(SearchText, System.StringComparison.OrdinalIgnoreCase)) ||
                 (c.LastName != null && c.LastName.Contains(SearchText, System.StringComparison.OrdinalIgnoreCase)) ||
-                (c.Phone != null && c.Phone.Contains(SearchText)));
+                (c.Phone != null && c.Phone.Contains(SearchText)) ||
+                c.Pets.Any(p => p.Name != null && p.Name.Contains(SearchText, System.StringComparison.OrdinalIgnoreCase)));
             q = _sortAsc ? q.OrderBy(c => c.LastName) : q.OrderByDescending(c => c.LastName);
             Clients.Clear();
             foreach (var item in q) Clients.Add(item);
@@ -73,7 +75,10 @@ namespace MyGameApp.ViewModels
         public async Task ReloadAsync()
         {
             using var db = new VetpetContext();
-            _allClients = await db.Clients.AsNoTracking().ToListAsync();
+            _allClients = await db.Clients
+                .Include(c => c.Pets)
+                .AsNoTracking()
+                .ToListAsync();
             UpdateList();
         }
     }

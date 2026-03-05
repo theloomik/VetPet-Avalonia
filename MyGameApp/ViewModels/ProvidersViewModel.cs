@@ -62,7 +62,9 @@ namespace MyGameApp.ViewModels
         {
             var q = _allProviders.Where(p =>
                 string.IsNullOrWhiteSpace(SearchText) ||
-                (p.Name != null && p.Name.Contains(SearchText, System.StringComparison.OrdinalIgnoreCase)));
+                (p.Name != null && p.Name.Contains(SearchText, System.StringComparison.OrdinalIgnoreCase)) ||
+                (p.Phone != null && p.Phone.Contains(SearchText)) ||
+                (p.ContactPerson != null && p.ContactPerson.Contains(SearchText, System.StringComparison.OrdinalIgnoreCase)));
             q = _sortAsc ? q.OrderBy(c => c.Name) : q.OrderByDescending(c => c.Name);
             Providers.Clear();
             foreach (var item in q)

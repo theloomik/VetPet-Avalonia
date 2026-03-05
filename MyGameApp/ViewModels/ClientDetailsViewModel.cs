@@ -61,7 +61,7 @@ namespace MyGameApp.ViewModels
             }
             catch (Exception ex)
             {
-                LoadError = $"Failed to load client data: {ex.Message}";
+                LoadError = $"Не вдалося завантажити дані клієнта: {ex.Message}";
             }
         }
 
@@ -82,8 +82,8 @@ namespace MyGameApp.ViewModels
         public bool IsBillsTab => ActiveTab == 2;
 
         public string SearchWatermark => ActiveTab == 0
-            ? "Search by pet name"
-            : "Search by date (DD.MM.YYYY)";
+            ? "Пошук за кличкою тварини"
+            : "Пошук за датою (ДД.ММ.РРРР)";
 
         partial void OnActiveTabChanged(int value)
         {
@@ -212,7 +212,7 @@ namespace MyGameApp.ViewModels
         {
             if (string.IsNullOrWhiteSpace(EditLastName) || string.IsNullOrWhiteSpace(EditFirstName) || string.IsNullOrWhiteSpace(EditPhone))
             {
-                EditError = "Last name, first name and phone are required";
+                EditError = "Прізвище, ім'я та телефон є обов'язковими";
                 return;
             }
 

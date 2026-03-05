@@ -1,16 +1,35 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using System.ComponentModel;
+using System.Threading.Tasks;
 
 namespace MyGameApp.ViewModels
 {
     public partial class MainWindowViewModel : ViewModelBase
     {
         private ViewModelBase _currentViewModel = null!;
+        private INotifyPropertyChanged? _currentViewModelNotifier;
+
         public ViewModelBase CurrentViewModel
         {
             get => _currentViewModel;
-            set => SetProperty(ref _currentViewModel, value);
+            set
+            {
+                if (!SetProperty(ref _currentViewModel, value))
+                {
+                    return;
+                }
+
+                SubscribeToCurrentViewModel(value);
+                UpdateChildModalState();
+            }
         }
+
+        [ObservableProperty] private bool _isQuickAppointmentOpen;
+        [ObservableProperty] private QuickAppointmentViewModel? _quickAppointmentForm;
+        [ObservableProperty] private bool _isChildModalOpen;
+
+        public bool IsAnyRightModalOpen => IsQuickAppointmentOpen || IsChildModalOpen;
 
         public MainWindowViewModel()
         {
@@ -28,6 +47,40 @@ namespace MyGameApp.ViewModels
                 4 => new StockViewModel(this),
                 _ => new ClientsViewModel(this)
             };
+        }
+
+        partial void OnIsQuickAppointmentOpenChanged(bool value) => OnPropertyChanged(nameof(IsAnyRightModalOpen));
+        partial void OnIsChildModalOpenChanged(bool value) => OnPropertyChanged(nameof(IsAnyRightModalOpen));
+
+        [RelayCommand]
+        public void OpenQuickAppointment()
+        {
+            QuickAppointmentForm = new QuickAppointmentViewModel(this);
+            IsQuickAppointmentOpen = true;
+        }
+
+        public void CloseQuickAppointment()
+        {
+            IsQuickAppointmentOpen = false;
+            QuickAppointmentForm = null;
+        }
+
+        public async Task HandleQuickAppointmentSavedAsync(int clientId)
+        {
+            CloseQuickAppointment();
+
+            switch (CurrentViewModel)
+            {
+                case AppointmentsViewModel appointments:
+                    await appointments.ReloadAsync();
+                    break;
+                case ClientsViewModel clients:
+                    await clients.ReloadAsync();
+                    break;
+                case ClientDetailsViewModel details when details.SelectedClient.Id == clientId:
+                    await details.LoadAllAsync();
+                    break;
+            }
         }
 
         [RelayCommand]
@@ -55,6 +108,38 @@ namespace MyGameApp.ViewModels
                 return;
 
             CurrentViewModel = new ProviderDetailsViewModel(provider, this);
+        }
+
+        private void SubscribeToCurrentViewModel(ViewModelBase viewModel)
+        {
+            if (_currentViewModelNotifier != null)
+            {
+                _currentViewModelNotifier.PropertyChanged -= OnCurrentViewModelPropertyChanged;
+            }
+
+            _currentViewModelNotifier = viewModel;
+            _currentViewModelNotifier.PropertyChanged += OnCurrentViewModelPropertyChanged;
+        }
+
+        private void OnCurrentViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (string.IsNullOrEmpty(e.PropertyName) || e.PropertyName.EndsWith("Open") || e.PropertyName == "IsAnyModalOpen")
+            {
+                UpdateChildModalState();
+            }
+        }
+
+        private void UpdateChildModalState()
+        {
+            IsChildModalOpen = CurrentViewModel switch
+            {
+                ClientsViewModel vm => vm.IsAddOpen,
+                StaffViewModel vm => vm.IsAddOpen,
+                ProvidersViewModel vm => vm.IsAddOpen,
+                StockViewModel vm => vm.IsAnyModalOpen,
+                ClientDetailsViewModel vm => vm.IsAnyModalOpen,
+                _ => false
+            };
         }
     }
 }

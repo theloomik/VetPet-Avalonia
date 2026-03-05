@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
@@ -90,19 +90,19 @@ namespace MyGameApp.ViewModels
                 string.IsNullOrWhiteSpace(EditPhone) ||
                 SelectedPosition == null)
             {
-                EditError = "Last name, first name, phone and position are required";
+                EditError = "Прізвище, ім'я, телефон та посада є обов'язковими";
                 return;
             }
 
             if (!TimeOnly.TryParse(EditStartTime, CultureInfo.InvariantCulture, out var startTime))
             {
-                EditError = "Start time must be in HH:mm format";
+                EditError = "Час початку має бути у форматі HH:mm";
                 return;
             }
 
             if (!TimeOnly.TryParse(EditEndTime, CultureInfo.InvariantCulture, out var endTime))
             {
-                EditError = "End time must be in HH:mm format";
+                EditError = "Час завершення має бути у форматі HH:mm";
                 return;
             }
 
@@ -110,7 +110,7 @@ namespace MyGameApp.ViewModels
             var staff = await db.Staff.FirstOrDefaultAsync(s => s.Id == SelectedStaff.Id);
             if (staff == null)
             {
-                EditError = "Staff member not found";
+                EditError = "Працівника не знайдено";
                 return;
             }
 
@@ -135,7 +135,7 @@ namespace MyGameApp.ViewModels
             var staff = await db.Staff.FirstOrDefaultAsync(s => s.Id == SelectedStaff.Id);
             if (staff == null)
             {
-                LoadError = "Staff member not found";
+                LoadError = "Працівника не знайдено";
                 return;
             }
 
@@ -226,3 +226,4 @@ namespace MyGameApp.ViewModels
         };
     }
 }
+

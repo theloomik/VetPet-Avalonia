@@ -1,4 +1,4 @@
-<UserControl xmlns="https://github.com/avaloniaui"
+﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:MyGameApp.ViewModels"
              xmlns:models="using:MyGameApp.Models"
@@ -13,7 +13,7 @@
                        Margin="0,0,0,20"/>
 
             <Grid Grid.Row="1" ColumnDefinitions="*,10,Auto,10,Auto" Height="42" Margin="0,0,0,20">
-                <TextBox Grid.Column="0" Watermark="Пошук за номером телефону"
+                <TextBox Grid.Column="0" Watermark="Пошук (телефон, ім'я, прізвище, кличка)"
                          Classes="DarkInput" Text="{Binding SearchText}"/>
                 <Button Grid.Column="2" Width="60" Height="42"
                         Background="#3A3A3A" CornerRadius="10" BorderThickness="0"
@@ -31,32 +31,36 @@
                 <TextBlock Grid.Column="0" Text="ТЕЛЕФОН" Classes="Header" HorizontalAlignment="Center"/>
                 <TextBlock Grid.Column="2" Text="ПРІЗВИЩЕ ТА ІМ'Я" Classes="Header" HorizontalAlignment="Center"/>
             </Grid>
-            
+
             <ScrollViewer Grid.Row="3" HorizontalScrollBarVisibility="Disabled">
                 <ItemsControl ItemsSource="{Binding Clients}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate DataType="models:Client">
                             <StackPanel>
-                                <Grid ColumnDefinitions="150,20,35,200,*,60" Height="55"
-                                      Margin="10,0,10,0" VerticalAlignment="Center">
-                                    <TextBlock Grid.Column="0" Text="{Binding Phone}"
-                                               Foreground="#E0E0E0" FontSize="15" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                                    <Border Grid.Column="1" Width="1" Background="White"
-                                            Opacity="0.08" Margin="0,12" HorizontalAlignment="Center"/>
-                                    <StackPanel Grid.Column="3" VerticalAlignment="Center" Spacing="2">
-                                        <TextBlock Text="{Binding LastName}" Foreground="#FFFFFF"
-                                                   FontSize="15" FontWeight="Medium"/>
-                                        <TextBlock Text="{Binding FirstName}" Foreground="#999999" FontSize="13"/>
-                                    </StackPanel>
-                                    <Button Grid.Column="5" 
-                                            VerticalAlignment="Center" 
-                                            Classes="ArrowBtn" 
-                                            Margin="0,0,5,0"
-                                            Command="{Binding DataContext.GoToDetailsCommand, ElementName=Root}"
-                                            CommandParameter="{Binding}">
-                                        <TextBlock Text="→" Foreground="#FFFFFF" FontSize="18"/>
-                                    </Button>
-                                </Grid>
+                                <Button Classes="RowBtn"
+                                        Height="55"
+                                        Margin="10,0,10,0"
+                                        Command="{Binding DataContext.GoToDetailsCommand, ElementName=Root}"
+                                        CommandParameter="{Binding}">
+                                    <Grid ColumnDefinitions="150,20,35,200,*,60"
+                                          VerticalAlignment="Center">
+                                        <TextBlock Grid.Column="0" Text="{Binding Phone}"
+                                                   Foreground="#E0E0E0" FontSize="15" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                        <Border Grid.Column="1" Width="1" Background="White"
+                                                Opacity="0.08" Margin="0,12" HorizontalAlignment="Center"/>
+                                        <StackPanel Grid.Column="3" VerticalAlignment="Center" Spacing="2">
+                                            <TextBlock Text="{Binding LastName}" Foreground="#FFFFFF"
+                                                       FontSize="15" FontWeight="Medium"/>
+                                            <TextBlock Text="{Binding FirstName}" Foreground="#A3A3A3" FontSize="13"/>
+                                        </StackPanel>
+                                        <TextBlock Grid.Column="5"
+                                                   Text="→"
+                                                   Foreground="#8E8E8E"
+                                                   VerticalAlignment="Center"
+                                                   HorizontalAlignment="Center"
+                                                   FontSize="18"/>
+                                    </Grid>
+                                </Button>
                                 <Border Height="1" Background="White" Opacity="0.05"/>
                             </StackPanel>
                         </DataTemplate>
@@ -65,7 +69,6 @@
             </ScrollViewer>
         </Grid>
 
-        <!-- Модальний оверлей -->
         <Panel IsVisible="{Binding IsAddOpen}">
             <Border Background="#88000000"/>
             <Border Width="420" Padding="28"

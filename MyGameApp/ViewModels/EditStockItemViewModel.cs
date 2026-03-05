@@ -33,7 +33,7 @@ namespace MyGameApp.ViewModels
 
             if (string.IsNullOrWhiteSpace(MedicineName) || string.IsNullOrWhiteSpace(Price))
             {
-                ErrorMessage = "Name and price are required";
+                ErrorMessage = "Назва та ціна є обов'язковими";
                 return;
             }
 
@@ -42,13 +42,13 @@ namespace MyGameApp.ViewModels
                 System.Globalization.CultureInfo.InvariantCulture,
                 out var price))
             {
-                ErrorMessage = "Invalid price format";
+                ErrorMessage = "Невірний формат ціни";
                 return;
             }
 
             if (!int.TryParse(Quantity, out var quantity) || quantity < 1)
             {
-                ErrorMessage = "Quantity must be an integer > 0";
+                ErrorMessage = "Кількість має бути цілим числом > 0";
                 return;
             }
 
@@ -57,7 +57,7 @@ namespace MyGameApp.ViewModels
             var medicine = await db.Medicines.FirstOrDefaultAsync(m => m.Id == _medicineId);
             if (stock == null || medicine == null)
             {
-                ErrorMessage = "Stock item not found";
+                ErrorMessage = "Позицію складу не знайдено";
                 return;
             }
 

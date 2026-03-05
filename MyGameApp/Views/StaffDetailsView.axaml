@@ -24,7 +24,7 @@
                        FontWeight="Bold"/>
         </Grid>
 
-        <Border Grid.Row="2" Background="#262626" CornerRadius="14" Padding="24">
+        <Border Grid.Row="2" Background="#313131" CornerRadius="14" Padding="28" BoxShadow="0 8 20 0 #2C000000">
             <StackPanel Spacing="14">
                 <TextBlock Text="{Binding FullName}" Foreground="White" FontSize="24" FontWeight="SemiBold"/>
 

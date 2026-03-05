@@ -64,6 +64,7 @@ namespace MyGameApp.ViewModels
             var q = _allStaff.Where(s =>
                 !StaffArchive.IsArchived(s) &&
                 (string.IsNullOrWhiteSpace(SearchText) ||
+                 (s.FirstName != null && s.FirstName.Contains(SearchText, System.StringComparison.OrdinalIgnoreCase)) ||
                  (s.LastName != null && s.LastName.Contains(SearchText, System.StringComparison.OrdinalIgnoreCase)) ||
                  (s.Phone != null && s.Phone.Contains(SearchText))));
             q = _sortAsc ? q.OrderBy(c => c.LastName) : q.OrderByDescending(c => c.LastName);

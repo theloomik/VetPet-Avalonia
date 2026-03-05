@@ -1,3 +1,4 @@
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -11,6 +12,8 @@ namespace MyGameApp.ViewModels
 {
     public partial class StockViewModel : ViewModelBase
     {
+        private const int LowStockThreshold = 10;
+
         private readonly MainWindowViewModel? _mainVm;
         private List<StockRow> _allStock = new();
         public ObservableCollection<StockRow> Stocks { get; } = new();
@@ -60,7 +63,9 @@ namespace MyGameApp.ViewModels
         private void OpenEdit(StockRow? row)
         {
             if (row == null)
+            {
                 return;
+            }
 
             EditForm = new EditStockItemViewModel(this, row);
             IsEditOpen = true;
@@ -69,7 +74,9 @@ namespace MyGameApp.ViewModels
         private void GoToProvider(StockRow? row)
         {
             if (_mainVm == null || row?.Provider == null)
+            {
                 return;
+            }
 
             _mainVm.OpenProviderDetails(row.Provider);
         }
@@ -78,11 +85,16 @@ namespace MyGameApp.ViewModels
         {
             var q = _allStock.Where(s =>
                 string.IsNullOrWhiteSpace(SearchText) ||
-                (s.MedicineName != null && s.MedicineName.Contains(SearchText, System.StringComparison.OrdinalIgnoreCase)));
+                (s.MedicineName != null && s.MedicineName.Contains(SearchText, StringComparison.OrdinalIgnoreCase)) ||
+                (s.ProviderName != null && s.ProviderName.Contains(SearchText, StringComparison.OrdinalIgnoreCase)));
+
             q = _sortAsc ? q.OrderBy(c => c.MedicineName) : q.OrderByDescending(c => c.MedicineName);
+
             Stocks.Clear();
             foreach (var item in q)
+            {
                 Stocks.Add(item);
+            }
         }
 
         public async Task ReloadAsync()
@@ -102,16 +114,22 @@ namespace MyGameApp.ViewModels
                 .AsNoTracking()
                 .ToListAsync();
 
-            var providerByMedicine = orderItems
+            var latestSupplyByMedicine = orderItems
+                .Where(i => i.Order != null)
                 .GroupBy(i => i.MedicineId)
                 .ToDictionary(
                     g => g.Key,
-                    g => g.OrderByDescending(x => x.Order.Date).Select(x => x.Order.Provider).FirstOrDefault());
+                    g => g.OrderByDescending(x => x.Order.Date).First());
 
             _allStock = stocks
-                .Select(s => new StockRow(
-                    s,
-                    providerByMedicine.TryGetValue(s.MedicineId, out var provider) ? provider : null))
+                .Select(s =>
+                {
+                    var hasSupply = latestSupplyByMedicine.TryGetValue(s.MedicineId, out var latestSupply);
+                    var provider = hasSupply ? latestSupply?.Order?.Provider : null;
+                    var restockDate = hasSupply ? latestSupply?.Order?.Date : null;
+
+                    return new StockRow(s, provider, restockDate, LowStockThreshold);
+                })
                 .ToList();
 
             UpdateList();
@@ -122,16 +140,27 @@ namespace MyGameApp.ViewModels
     {
         public Stock Source { get; }
         public Provider? Provider { get; }
+        public DateTime? LastRestockDate { get; }
+        public int MinimumStock { get; }
+
         public string MedicineName => Source.Medicine?.Name ?? "—";
         public string Price => $"{Source.Medicine?.Price ?? 0:0.00} ₴";
         public string Quantity => $"x{Source.Quantity}";
-        public string ProviderName => Provider?.Name ?? "Провайдер не вказаний";
+        public string MinimumStockText => $"x{MinimumStock}";
+        public string ProviderName => Provider?.Name ?? "—";
+        public string LastRestock => LastRestockDate?.ToString("dd.MM.yyyy") ?? "—";
         public bool HasProvider => Provider != null;
+        public bool IsLowStock => Source.Quantity < MinimumStock;
+        public string QuantityColor => IsLowStock ? "#E06C6C" : "#D0D0D0";
+        public string StockState => IsLowStock ? "Низько" : "Норма";
+        public string StockStateColor => IsLowStock ? "#7C4A4A" : "#4A7C59";
 
-        public StockRow(Stock source, Provider? provider)
+        public StockRow(Stock source, Provider? provider, DateTime? lastRestockDate, int minimumStock)
         {
             Source = source;
             Provider = provider;
+            LastRestockDate = lastRestockDate;
+            MinimumStock = minimumStock;
         }
     }
 }

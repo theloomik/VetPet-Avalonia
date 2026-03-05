@@ -1,5 +1,6 @@
 using System;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -32,7 +33,9 @@ namespace MyGameApp.ViewModels
             var list = await db.Providers.AsNoTracking().ToListAsync();
             Providers.Clear();
             foreach (var p in list)
+            {
                 Providers.Add(p);
+            }
 
             SelectedProvider = Providers.Count > 0 ? Providers[0] : null;
         }
@@ -40,63 +43,99 @@ namespace MyGameApp.ViewModels
         [RelayCommand]
         private async Task Save()
         {
+            ErrorMessage = null;
+
             if (string.IsNullOrWhiteSpace(MedicineName) || string.IsNullOrWhiteSpace(Price))
             {
                 ErrorMessage = "Назва та ціна є обов'язковими";
                 return;
             }
-            if (!decimal.TryParse(Price.Replace(',', '.'), System.Globalization.NumberStyles.Any,
-                System.Globalization.CultureInfo.InvariantCulture, out var price))
+
+            if (!decimal.TryParse(Price.Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture, out var price))
             {
                 ErrorMessage = "Невірний формат ціни";
                 return;
             }
+
             if (!int.TryParse(Quantity, out var qty) || qty < 1)
             {
                 ErrorMessage = "Кількість має бути цілим числом > 0";
                 return;
             }
+
             if (SelectedProvider == null)
             {
                 ErrorMessage = "Оберіть провайдера";
                 return;
             }
 
-            using var db = new VetpetContext();
-            var medicine = new Medicine
+            try
             {
-                Name = MedicineName.Trim(),
-                Price = price
-            };
-            db.Medicines.Add(medicine);
-            await db.SaveChangesAsync();
+                using var db = new VetpetContext();
+                await using var tx = await db.Database.BeginTransactionAsync();
 
-            var stock = new Stock
-            {
-                MedicineId = medicine.Id,
-                Quantity = qty
-            };
-            db.Stocks.Add(stock);
-            await db.SaveChangesAsync();
+                var medicineName = MedicineName.Trim();
+                var medicine = await db.Medicines
+                    .FirstOrDefaultAsync(m => m.Name.ToLower() == medicineName.ToLower());
 
-            var order = new ProviderOrder
-            {
-                ProviderId = SelectedProvider.Id,
-                Date = DateTime.Now,
-                TotalCost = price * qty,
-                Status = "completed"
-            };
-            db.ProviderOrders.Add(order);
-            await db.SaveChangesAsync();
+                if (medicine == null)
+                {
+                    medicine = new Medicine
+                    {
+                        Name = medicineName,
+                        Price = price
+                    };
+                    db.Medicines.Add(medicine);
+                    await db.SaveChangesAsync();
+                }
+                else
+                {
+                    medicine.Price = price;
+                    await db.SaveChangesAsync();
+                }
 
-            db.ProviderOrderItems.Add(new ProviderOrderItem
+                var stock = await db.Stocks.FirstOrDefaultAsync(s => s.MedicineId == medicine.Id);
+                if (stock == null)
+                {
+                    stock = new Stock
+                    {
+                        MedicineId = medicine.Id,
+                        Quantity = qty
+                    };
+                    db.Stocks.Add(stock);
+                }
+                else
+                {
+                    stock.Quantity += qty;
+                }
+                await db.SaveChangesAsync();
+
+                var order = new ProviderOrder
+                {
+                    ProviderId = SelectedProvider.Id,
+                    Date = DateTime.Now,
+                    TotalCost = price * qty,
+                    Status = "доставлено"
+                };
+                db.ProviderOrders.Add(order);
+                await db.SaveChangesAsync();
+
+                db.ProviderOrderItems.Add(new ProviderOrderItem
+                {
+                    OrderId = order.Id,
+                    MedicineId = medicine.Id,
+                    Quantity = qty,
+                    Price = price
+                });
+                await db.SaveChangesAsync();
+
+                await tx.CommitAsync();
+            }
+            catch
             {
-                OrderId = order.Id,
-                MedicineId = medicine.Id,
-                Quantity = qty,
-                Price = price
-            });
-            await db.SaveChangesAsync();
+                ErrorMessage = "Не вдалося зберегти препарат. Перевірте дані та підключення до БД.";
+                return;
+            }
 
             await _parent.ReloadAsync();
             _parent.IsAddOpen = false;

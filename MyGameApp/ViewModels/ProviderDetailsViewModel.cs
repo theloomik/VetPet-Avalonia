@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -54,7 +54,7 @@ namespace MyGameApp.ViewModels
 
                 if (provider == null)
                 {
-                    LoadError = "Provider not found";
+                    LoadError = "Провайдера не знайдено";
                     return;
                 }
 
@@ -90,8 +90,9 @@ namespace MyGameApp.ViewModels
             }
             catch (Exception ex)
             {
-                LoadError = $"Failed to load provider: {ex.Message}";
+                LoadError = $"Не вдалося завантажити провайдера: {ex.Message}";
             }
         }
     }
 }
+
