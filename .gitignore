@@ -41,3 +41,4 @@ Desktop.ini
 
 ## Avalonia specific
 *.xoml.cs
+.vscode
